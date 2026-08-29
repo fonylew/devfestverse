@@ -321,7 +321,7 @@ graph LR
     subgraph GCP ["Google Cloud Platform (Project: gdg-cloud-bangkok-2026)"]
         CloudBuild["Cloud Build (Docker Container Build)"]
         ArtifactReg["Artifact Registry / Container Registry (gcr.io)"]
-        CloudRun["Google Cloud Run: 'devfestverse'<br/>Region: asia-southeast1<br/>Min Instances: 0 (Scale-to-Zero)<br/>Max Instances: 1<br/>Memory: 512Mi | CPU: 1"]
+        CloudRun["Google Cloud Run: 'devfestverse'<br/>Region: asia-southeast3<br/>Min Instances: 0 (Scale-to-Zero)<br/>Max Instances: 1<br/>Memory: 512Mi | CPU: 1"]
         FirestoreDB[("Cloud Firestore (Top-Level Event & Attendance)")]
     end
 

@@ -20,7 +20,7 @@ steps:
       - '--image'
       - 'gcr.io/$PROJECT_ID/devfestverse:$COMMIT_SHA'
       - '--region'
-      - 'asia-southeast1'
+      - 'asia-southeast3'
       - '--platform'
       - 'managed'
       - '--min-instances'

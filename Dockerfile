@@ -26,10 +26,7 @@ RUN uv sync --frozen --no-install-project
 # Copy application source code
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
-COPY architecture.md README.md ./
+COPY start.py architecture.md README.md ./
 
-# Expose standard Cloud Run port
-EXPOSE 8080
-
-# Run FastAPI backend with Uvicorn
-CMD ["uv", "run", "uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Run FastAPI backend with dynamic Cloud Run PORT binding
+CMD ["uv", "run", "python", "start.py"]

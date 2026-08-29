@@ -126,7 +126,7 @@ gcloud run deploy devfestverse \
     --project gdg-cloud-bangkok-2026 \
     --image gcr.io/gdg-cloud-bangkok-2026/devfestverse:latest \
     --platform managed \
-    --region asia-southeast1 \
+    --region asia-southeast3 \
     --min-instances 0 \
     --max-instances 1 \
     --memory 512Mi \

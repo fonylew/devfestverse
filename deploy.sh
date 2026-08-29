@@ -10,7 +10,7 @@ set -euo pipefail
 # Configuration Variables
 PROJECT_ID="${GCP_PROJECT:-gdg-cloud-bangkok-2026}"
 SERVICE_NAME="${CLOUD_RUN_SERVICE:-devfestverse}"
-REGION="${GCP_REGION:-asia-southeast1}"
+REGION="${GCP_REGION:-asia-southeast3}"
 IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}:latest"
 
 echo "============================================================"
