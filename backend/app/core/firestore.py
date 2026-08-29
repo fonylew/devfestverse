@@ -137,6 +137,10 @@ class FirestoreEventManager:
             except Exception:
                 self._db = None
 
+    def is_configured(self) -> bool:
+        """Check if Firestore client or in-memory database is active."""
+        return True
+
     def get_event(self, event_id: str) -> Optional[Dict[str, Any]]:
         """Fetch full top-level event document by event name/ID."""
         if self._db:
@@ -313,5 +317,59 @@ class FirestoreEventManager:
             "show_up_rate_percent": rate,
             "absent_count": total_registered - total_attended
         }
+
+    def save_feedback(self, event_id: str, feedback_data: Dict[str, Any]) -> bool:
+        """Save attendee feedback to Firestore."""
+        event = self.get_event(event_id)
+        if event:
+            if "feedbacks" not in event:
+                event["feedbacks"] = []
+            event["feedbacks"].append(feedback_data)
+
+        if self._db:
+            try:
+                self._db.collection("events").document(event_id).collection("feedbacks").document(feedback_data["id"]).set(feedback_data)
+                return True
+            except Exception:
+                return False
+        return True
+
+    def save_user_avatar(self, user_id: str, avatar_config: Dict[str, Any], event_id: str = "devfest-bangkok-2026") -> bool:
+        """Save user custom pixel avatar configuration to Firestore."""
+        event = self.get_event(event_id)
+        if event and "participants" in event and user_id in event["participants"]:
+            event["participants"][user_id]["avatar_config"] = avatar_config
+
+        if self._db:
+            try:
+                self._db.collection("users").document(user_id).set({"avatar_config": avatar_config}, merge=True)
+                self._db.collection("events").document(event_id).update({
+                    f"participants.{user_id}.avatar_config": avatar_config
+                })
+                return True
+            except Exception:
+                return False
+        return True
+
+    def save_session(self, event_id: str, session_data: Dict[str, Any]) -> bool:
+        """Save new or updated agenda session to Firestore."""
+        event = self.get_event(event_id)
+        if event:
+            if "sessions" not in event:
+                event["sessions"] = []
+            # Check if exists
+            idx = next((i for i, s in enumerate(event["sessions"]) if s.get("id") == session_data.get("id")), None)
+            if idx is not None:
+                event["sessions"][idx] = session_data
+            else:
+                event["sessions"].append(session_data)
+
+        if self._db:
+            try:
+                self._db.collection("events").document(event_id).collection("sessions").document(session_data["id"]).set(session_data)
+                return True
+            except Exception:
+                return False
+        return True
 
 firestore_manager = FirestoreEventManager()

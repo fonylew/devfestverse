@@ -48,19 +48,41 @@ let activeTouchDir = null; // 'up' | 'down' | 'left' | 'right' | null
 const keys = {};
 
 window.addEventListener('keydown', (e) => {
+  const isTyping = document.activeElement && (
+    document.activeElement.tagName === 'INPUT' || 
+    document.activeElement.tagName === 'TEXTAREA' || 
+    document.activeElement.isContentEditable
+  );
+
+  if (e.code === 'KeyE' || e.code === 'Space') {
+    if (!isTyping) {
+      if (isAnyModalActive()) {
+        e.preventDefault();
+        closeAllModals();
+        return;
+      } else if (player.nearHotspot) {
+        e.preventDefault();
+        triggerHotspotAction(player.nearHotspot);
+        return;
+      }
+    }
+  } else if (e.code === 'Escape') {
+    if (isAnyModalActive()) {
+      e.preventDefault();
+      closeAllModals();
+      return;
+    }
+  }
+
   keys[e.code] = true;
   player.targetX = null;
   player.targetY = null;
-  if ((e.code === 'KeyE' || e.code === 'Space') && player.nearHotspot && !isAnyModalActive()) {
-    e.preventDefault();
-    triggerHotspotAction(player.nearHotspot);
-  }
 });
 window.addEventListener('keyup', (e) => { keys[e.code] = false; });
 
 // Interactive Hotspots on the 2D Map
 const HOTSPOTS = [
-  { id: 'ticket-billboard', type: 'TICKET_BILLBOARD', x: 420, y: 270, width: 120, height: 50, label: '🎫 MAIN TICKET BILLBOARD', sub: 'Verify Ticket to Unlock', color: '#10B981', ringColor: '#34D399' },
+  { id: 'ticket-billboard', type: 'TICKET_BILLBOARD', x: 420, y: 270, width: 130, height: 52, label: '🎫 MAIN TICKET BILLBOARD', sub: 'Verify Ticket to Unlock', color: '#10B981', ringColor: '#34D399' },
   { id: 'workshop-zone', type: 'WORKSHOP_ZONE', x: 100, y: 190, width: 140, height: 60, label: '💻 WORKSHOP LABS', sub: 'Hands-on Seat Reservation', color: '#8B5CF6', ringColor: '#A78BFA' },
   { id: 'sponsor-google', type: 'SPONSOR_BOOTH', x: 720, y: 190, width: 140, height: 60, label: '🏢 GOOGLE CLOUD BOOTH', sub: 'Vertex AI & Cloud Run Expo', url: 'https://cloud.google.com', color: '#EA4335', ringColor: '#F87171' },
   { id: 'bb-fb-page', type: 'COMMUNITY_BILLBOARD', x: 80, y: 50, width: 75, height: 40, label: '📘 FB PAGE', url: 'https://www.facebook.com/gdgcloudbkk', color: '#4285F4', ringColor: '#60A5FA' },
@@ -68,8 +90,48 @@ const HOTSPOTS = [
   { id: 'bb-discord', type: 'COMMUNITY_BILLBOARD', x: 260, y: 50, width: 75, height: 40, label: '💬 DISCORD', url: 'https://discord.gg/gdgcloudbkk', color: '#5865F2', ringColor: '#818CF8' },
   { id: 'bb-instagram', type: 'COMMUNITY_BILLBOARD', x: 350, y: 50, width: 85, height: 40, label: '📷 INSTAGRAM', url: 'https://www.instagram.com/gdgcloudbkk', color: '#E1306C', ringColor: '#F472B6' },
   { id: 'bb-youtube', type: 'COMMUNITY_BILLBOARD', x: 450, y: 50, width: 80, height: 40, label: '▶️ YOUTUBE', url: 'https://www.youtube.com/@gdgcloudbkk', color: '#FF0000', ringColor: '#F87171' },
-  { id: 'stage-screen', type: 'STAGE_SCREEN', x: 570, y: 45, width: 150, height: 48, label: '🎤 MAIN STAGE AGENDA', sub: 'Live Gemini Transcripts', color: '#FBBC04', ringColor: '#FDE047' }
+  { id: 'stage-screen', type: 'STAGE_SCREEN', x: 570, y: 45, width: 150, height: 48, label: '🎤 MAIN STAGE AGENDA', sub: 'Live Gemini Transcripts', color: '#FBBC04', ringColor: '#FDE047' },
+  { id: 'feedback-kiosk', type: 'FEEDBACK_KIOSK', x: 420, y: 460, width: 130, height: 48, label: '📝 EVENT FEEDBACK', sub: 'Rate Talks & Share Ideas', color: '#EC4899', ringColor: '#F472B6' }
 ];
+
+function resizeCanvas() {
+  const container = document.getElementById('game-container');
+  if (!container || !canvas) return;
+
+  const w = container.clientWidth || window.innerWidth;
+  const h = container.clientHeight || window.innerHeight - 80;
+
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = Math.max(960, w);
+    canvas.height = Math.max(540, h);
+    repositionHotspots(canvas.width, canvas.height);
+  }
+}
+
+function repositionHotspots(w, h) {
+  // Center Main Stage
+  const stage = HOTSPOTS.find(s => s.id === 'stage-screen');
+  if (stage) { stage.x = Math.floor(w / 2 - 75); stage.y = 45; }
+
+  // Center Ticket Billboard
+  const ticket = HOTSPOTS.find(s => s.id === 'ticket-billboard');
+  if (ticket) { ticket.x = Math.floor(w / 2 - 65); ticket.y = Math.floor(h / 2 - 26); }
+
+  // Center Feedback Kiosk (Bottom)
+  const fb = HOTSPOTS.find(s => s.id === 'feedback-kiosk');
+  if (fb) { fb.x = Math.floor(w / 2 - 65); fb.y = Math.floor(h - 80); }
+
+  // Workshop Labs (Left)
+  const ws = HOTSPOTS.find(s => s.id === 'workshop-zone');
+  if (ws) { ws.x = 70; ws.y = Math.floor(h / 2 - 30); }
+
+  // Google Booth (Right)
+  const google = HOTSPOTS.find(s => s.id === 'sponsor-google');
+  if (google) { google.x = Math.floor(w - 210); google.y = Math.floor(h / 2 - 30); }
+}
+
+window.addEventListener('resize', resizeCanvas);
+setTimeout(resizeCanvas, 50);
 
 function updatePlayer() {
   player.moving = false;
@@ -173,7 +235,9 @@ function updateProximityHint(spot) {
 }
 
 function triggerMobileAction() {
-  if (player.nearHotspot) {
+  if (isAnyModalActive()) {
+    closeAllModals();
+  } else if (player.nearHotspot) {
     triggerHotspotAction(player.nearHotspot);
   } else {
     showToast('Walk close to any booth or billboard to interact! 🚶', '💬');
@@ -189,6 +253,8 @@ function triggerHotspotAction(spot) {
     openModal('workshops-modal');
   } else if (spot.type === 'STAGE_SCREEN') {
     openModal('agenda-modal');
+  } else if (spot.type === 'FEEDBACK_KIOSK') {
+    openModal('feedback-modal');
   }
 }
 
@@ -247,7 +313,7 @@ function initMobileControls() {
 
 
 // --- SPRITE RENDERING ENGINE ---
-function drawCharacterSprite(renderCtx, x, y, config, isMoving, stepFrame, bobOffset, direction, scale = 1, showBadge = true) {
+function drawCharacterSprite(renderCtx, x, y, config, isMoving, stepFrame, bobOffset, direction, scale = 1, showBadge = true, customName = null, customRole = null, customVerified = null) {
   renderCtx.save();
   renderCtx.translate(x, y);
   renderCtx.scale(scale, scale);
@@ -450,35 +516,268 @@ function drawCharacterSprite(renderCtx, x, y, config, isMoving, stepFrame, bobOf
     renderCtx.fill();
   }
 
-  // 8. Overhead Nametag & Badges (World Canvas only)
+// 8. Overhead Nametag & Badges
   if (showBadge) {
     const badgeY = hy - 14;
-    // Verified Badge Tag
-    if (currentUser.verified_ticket) {
+    const isVerified = (customVerified !== null) ? customVerified : currentUser.verified_ticket;
+    const name = customName || currentUser.display_name;
+    const role = customRole || currentUser.role;
+
+    if (isVerified) {
       renderCtx.fillStyle = '#10B981';
-      renderCtx.font = 'bold 9px Plus Jakarta Sans, Segoe UI, sans-serif';
+      renderCtx.font = 'bold 8px JetBrains Mono, monospace';
       renderCtx.textAlign = 'center';
       renderCtx.fillText('✔ VERIFIED', 0, badgeY);
     }
     
-    // Player Name
     renderCtx.fillStyle = '#FFFFFF';
-    renderCtx.font = 'bold 11px Plus Jakarta Sans, Segoe UI, sans-serif';
+    renderCtx.font = 'bold 9px JetBrains Mono, monospace';
     renderCtx.textAlign = 'center';
-    renderCtx.shadowColor = 'rgba(0,0,0,0.8)';
+    renderCtx.shadowColor = 'rgba(0,0,0,0.85)';
     renderCtx.shadowBlur = 4;
-    renderCtx.fillText(currentUser.display_name, 0, badgeY + (currentUser.verified_ticket ? 10 : 0));
+    renderCtx.fillText(name, 0, badgeY + (isVerified ? 9 : 0));
     renderCtx.shadowBlur = 0;
   }
 
   renderCtx.restore();
 }
 
+function drawSpeechBubble(renderCtx, x, y, text) {
+  if (!text) return;
+  renderCtx.save();
+  renderCtx.font = '600 8.5px JetBrains Mono, monospace';
+  const textWidth = renderCtx.measureText(text).width;
+  const bubbleW = textWidth + 16;
+  const bubbleH = 22;
+  const bx = x - bubbleW / 2;
+  const by = y - bubbleH;
+
+  // Shadow
+  renderCtx.fillStyle = 'rgba(0,0,0,0.4)';
+  renderCtx.beginPath();
+  renderCtx.roundRect(bx + 2, by + 3, bubbleW, bubbleH, 6);
+  renderCtx.fill();
+
+  // Bubble
+  renderCtx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+  renderCtx.strokeStyle = '#38BDF8';
+  renderCtx.lineWidth = 1.2;
+  renderCtx.beginPath();
+  renderCtx.roundRect(bx, by, bubbleW, bubbleH, 6);
+  renderCtx.fill();
+  renderCtx.stroke();
+
+  // Tail
+  renderCtx.fillStyle = '#0F172A';
+  renderCtx.beginPath();
+  renderCtx.moveTo(x - 4, by + bubbleH);
+  renderCtx.lineTo(x + 4, by + bubbleH);
+  renderCtx.lineTo(x, by + bubbleH + 5);
+  renderCtx.closePath();
+  renderCtx.fill();
+
+  renderCtx.strokeStyle = '#38BDF8';
+  renderCtx.beginPath();
+  renderCtx.moveTo(x - 4, by + bubbleH);
+  renderCtx.lineTo(x, by + bubbleH + 5);
+  renderCtx.lineTo(x + 4, by + bubbleH);
+  renderCtx.stroke();
+
+  // Text
+  renderCtx.fillStyle = '#F8FAFC';
+  renderCtx.textAlign = 'center';
+  renderCtx.fillText(text, x, by + 14);
+  renderCtx.restore();
+}
+
+// --- ACTIVE PARTICIPANTS PRESENCE (MULTIPLAYER / NPCS) ---
+const OTHER_PARTICIPANTS = [
+  {
+    id: 'user-spk-1',
+    name: 'Dr. Agent',
+    role: 'SPEAKER',
+    verified: true,
+    x: 645,
+    y: 85,
+    direction: 'down',
+    moving: false,
+    stepFrame: 0,
+    bobFrame: 0.5,
+    avatar: {
+      skin_tone: '#FBBF24',
+      hair_style: 'spiky',
+      hair_color: '#3B82F6',
+      outfit_style: 'suit',
+      outfit_color: '#3B82F6',
+      headwear: 'vr_visor',
+      aura: 'sparkles'
+    },
+    speech: '✨ Keynote starting on Gemini 2.0!',
+    speechTimer: 240,
+    patrol: { minX: 590, maxX: 700, minY: 75, maxY: 95, targetX: 645, targetY: 85, pause: 60 }
+  },
+  {
+    id: 'user-org-1',
+    name: 'GDG Lead',
+    role: 'ORGANIZER',
+    verified: true,
+    x: 480,
+    y: 215,
+    direction: 'down',
+    moving: false,
+    stepFrame: 0,
+    bobFrame: 1.2,
+    avatar: {
+      skin_tone: '#FCD34D',
+      hair_style: 'curly',
+      hair_color: '#1E293B',
+      outfit_style: 'gdg_hoodie',
+      outfit_color: '#EF4444',
+      headwear: 'devfest_cap',
+      aura: 'matrix'
+    },
+    speech: '👋 Welcome to DevFest Bangkok!',
+    speechTimer: 300,
+    patrol: { minX: 430, maxX: 530, minY: 200, maxY: 235, targetX: 480, targetY: 215, pause: 90 }
+  },
+  {
+    id: 'user-staff-1',
+    name: 'Alex Staff',
+    role: 'STAFF',
+    verified: true,
+    x: 170,
+    y: 225,
+    direction: 'right',
+    moving: false,
+    stepFrame: 0,
+    bobFrame: 2.1,
+    avatar: {
+      skin_tone: '#F59E0B',
+      hair_style: 'short',
+      hair_color: '#0F172A',
+      outfit_style: 'gdg_hoodie',
+      outfit_color: '#F59E0B',
+      headwear: 'glasses',
+      aura: 'none'
+    },
+    speech: '💻 Workshop Lab seats ready in Room W1!',
+    speechTimer: 200,
+    patrol: { minX: 130, maxX: 210, minY: 210, maxY: 240, targetX: 170, targetY: 225, pause: 80 }
+  },
+  {
+    id: 'user-partic-2',
+    name: 'Sara Cloud',
+    role: 'PARTICIPANT',
+    verified: true,
+    x: 360,
+    y: 420,
+    direction: 'right',
+    moving: false,
+    stepFrame: 0,
+    bobFrame: 0.8,
+    avatar: {
+      skin_tone: '#FDE68A',
+      hair_style: 'long',
+      hair_color: '#EC4899',
+      outfit_style: 'tshirt',
+      outfit_color: '#10B981',
+      headwear: 'headphones',
+      aura: 'cloud_pet'
+    },
+    speech: '☕ This coffee lounge is so cozy!',
+    speechTimer: 260,
+    patrol: { minX: 330, maxX: 410, minY: 400, maxY: 450, targetX: 360, targetY: 420, pause: 120 }
+  },
+  {
+    id: 'user-partic-3',
+    name: 'Neo Dev',
+    role: 'PARTICIPANT',
+    verified: false,
+    x: 780,
+    y: 250,
+    direction: 'left',
+    moving: false,
+    stepFrame: 0,
+    bobFrame: 1.7,
+    avatar: {
+      skin_tone: '#D97706',
+      hair_style: 'ponytail',
+      hair_color: '#F59E0B',
+      outfit_style: 'retro_jacket',
+      outfit_color: '#8B5CF6',
+      headwear: 'cat_ears',
+      aura: 'none'
+    },
+    speech: '🏢 Vertex AI demo at Google booth is awesome!',
+    speechTimer: 320,
+    patrol: { minX: 740, maxX: 820, minY: 230, maxY: 270, targetX: 780, targetY: 250, pause: 100 }
+  }
+];
+
+function updateOtherParticipants() {
+  OTHER_PARTICIPANTS.forEach(p => {
+    p.speechTimer = (p.speechTimer || 0) - 1;
+    if (p.speechTimer <= 0) {
+      p.speechTimer = Math.floor(Math.random() * 350) + 250;
+    }
+
+    // Autonomous wandering in assigned zone
+    if (p.patrol) {
+      if (p.patrol.pause > 0) {
+        p.patrol.pause--;
+        p.moving = false;
+        p.bobFrame = (p.bobFrame || 0) + 0.06;
+      } else {
+        const dx = p.patrol.targetX - p.x;
+        const dy = p.patrol.targetY - p.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < 3) {
+          p.x = p.patrol.targetX;
+          p.y = p.patrol.targetY;
+          p.moving = false;
+          p.patrol.pause = Math.floor(Math.random() * 100) + 70;
+          p.patrol.targetX = p.patrol.minX + Math.random() * (p.patrol.maxX - p.patrol.minX);
+          p.patrol.targetY = p.patrol.minY + Math.random() * (p.patrol.maxY - p.patrol.minY);
+        } else {
+          const speed = 1.0;
+          const angle = Math.atan2(dy, dx);
+          p.x += Math.cos(angle) * speed;
+          p.y += Math.sin(angle) * speed;
+          p.moving = true;
+          p.stepFrame = (p.stepFrame || 0) + 0.2;
+
+          if (Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle))) {
+            p.direction = Math.cos(angle) > 0 ? 'right' : 'left';
+          } else {
+            p.direction = Math.sin(angle) > 0 ? 'down' : 'up';
+          }
+        }
+      }
+    }
+  });
+}
+
 function renderWorld() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const time = Date.now() * 0.002;
 
-  // 1. Tech Campus Floor Grid
-  ctx.strokeStyle = '#151F33';
+  // 1. Tech Campus Floor - Brighter, Modern Tech Venue Slate
+  ctx.fillStyle = '#1A243B';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Subtle alternating tech tiles
+  for (let x = 0; x < canvas.width; x += 40) {
+    for (let y = 0; y < canvas.height; y += 40) {
+      if ((x / 40 + y / 40) % 2 === 0) {
+        ctx.fillStyle = '#1E2C48';
+        ctx.fillRect(x, y, 40, 40);
+      }
+    }
+  }
+
+  // Crisp grid lines
+  ctx.strokeStyle = '#283A60';
   ctx.lineWidth = 1;
   for (let x = 0; x < canvas.width; x += 40) {
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
@@ -487,33 +786,194 @@ function renderWorld() {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
   }
 
-  // 2. Google Color Circuit Paths on Floor
-  const time = Date.now() * 0.002;
-  ctx.lineWidth = 3;
-  // Blue circuit line
-  ctx.strokeStyle = '#2563EB33';
+  // 2. Bright Ambient Venue Spotlights under Key Areas
+  // Stage Spotlight (Warm Gold/Amber Glow)
+  const stageGlow = ctx.createRadialGradient(645, 65, 10, 645, 65, 140);
+  stageGlow.addColorStop(0, 'rgba(251, 191, 36, 0.25)');
+  stageGlow.addColorStop(1, 'rgba(251, 191, 36, 0)');
+  ctx.fillStyle = stageGlow;
+  ctx.beginPath(); ctx.arc(645, 65, 140, 0, Math.PI * 2); ctx.fill();
+
+  // Google Cloud Booth Spotlight (Google Blue/Cyan Glow)
+  const gcpGlow = ctx.createRadialGradient(790, 220, 10, 790, 220, 130);
+  gcpGlow.addColorStop(0, 'rgba(66, 133, 244, 0.28)');
+  gcpGlow.addColorStop(1, 'rgba(66, 133, 244, 0)');
+  ctx.fillStyle = gcpGlow;
+  ctx.beginPath(); ctx.arc(790, 220, 130, 0, Math.PI * 2); ctx.fill();
+
+  // Workshop Labs Spotlight (Purple Glow)
+  const wsGlow = ctx.createRadialGradient(170, 220, 10, 170, 220, 130);
+  wsGlow.addColorStop(0, 'rgba(139, 92, 246, 0.25)');
+  wsGlow.addColorStop(1, 'rgba(139, 92, 246, 0)');
+  ctx.fillStyle = wsGlow;
+  ctx.beginPath(); ctx.arc(170, 220, 130, 0, Math.PI * 2); ctx.fill();
+
+  // Central Ticket Billboard Spotlight (Emerald Glow)
+  const ticketGlow = ctx.createRadialGradient(480, 290, 10, 480, 290, 120);
+  ticketGlow.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+  ticketGlow.addColorStop(1, 'rgba(16, 185, 129, 0)');
+  ctx.fillStyle = ticketGlow;
+  ctx.beginPath(); ctx.arc(480, 290, 120, 0, Math.PI * 2); ctx.fill();
+
+  // 3. COZY ZONE 1: Warm Keynote Wooden Stage (North-East)
+  ctx.fillStyle = '#3A2010';
+  ctx.beginPath();
+  ctx.roundRect(540, 24, 210, 80, [10, 10, 6, 6]);
+  ctx.fill();
+  ctx.strokeStyle = '#B45309';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Wood planks
+  ctx.strokeStyle = 'rgba(251, 191, 36, 0.18)';
+  for (let py = 36; py < 100; py += 12) {
+    ctx.beginPath(); ctx.moveTo(542, py); ctx.lineTo(748, py); ctx.stroke();
+  }
+  // Stage Footlights (Google 4-Colors)
+  const stageLights = ['#4285F4', '#EA4335', '#FBBC05', '#34A853'];
+  stageLights.forEach((col, idx) => {
+    const lx = 560 + idx * 45;
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(lx, 102, 3.5, 0, Math.PI * 2); ctx.fill();
+    // Soft light glow
+    ctx.fillStyle = col + '55';
+    ctx.beginPath(); ctx.arc(lx, 102, 10 + Math.sin(time * 2 + idx) * 3, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // Stage Podium with Microphone
+  ctx.fillStyle = '#78350F';
+  ctx.fillRect(640, 72, 14, 18);
+  ctx.fillStyle = '#E2E8F0';
+  ctx.fillRect(646, 62, 2, 10);
+  ctx.beginPath(); ctx.arc(647, 60, 3, 0, Math.PI * 2); ctx.fill();
+
+  // 4. COZY ZONE 2: Warm Velvet Lounge & Cafe (South-Center)
+  // Large Rounded Area Rug
+  ctx.fillStyle = '#1A294A';
+  ctx.beginPath();
+  ctx.roundRect(280, 360, 400, 145, 20);
+  ctx.fill();
+  ctx.strokeStyle = '#F59E0B';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([8, 4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Cozy Sofas
+  // Left Sofa (Navy)
+  ctx.fillStyle = '#243456';
+  ctx.beginPath(); ctx.roundRect(300, 390, 35, 75, 8); ctx.fill();
+  ctx.strokeStyle = '#38BDF8'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = '#162238';
+  ctx.fillRect(305, 395, 25, 65);
+
+  // Right Sofa (Emerald Cozy Armchair)
+  ctx.fillStyle = '#243456';
+  ctx.beginPath(); ctx.roundRect(625, 390, 35, 75, 8); ctx.fill();
+  ctx.strokeStyle = '#34D399'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = '#064E3B';
+  ctx.fillRect(630, 395, 25, 65);
+
+  // Center Coffee Table (Wood & Glass)
+  ctx.fillStyle = '#92400E';
+  ctx.beginPath(); ctx.roundRect(435, 415, 90, 42, 8); ctx.fill();
+  ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = '#B45309';
+  ctx.fillRect(440, 420, 80, 32);
+
+  // Laptop on Table
+  ctx.fillStyle = '#F1F5F9';
+  ctx.fillRect(450, 425, 18, 12);
+  ctx.fillStyle = '#38BDF8';
+  ctx.fillRect(452, 426, 14, 9); // Glowing screen
+
+  // Steaming Coffee Cups on Table
+  ctx.fillStyle = '#FFFFFF';
+  ctx.beginPath(); ctx.arc(485, 432, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#78350F';
+  ctx.beginPath(); ctx.arc(485, 432, 2.5, 0, Math.PI * 2); ctx.fill();
+  // Animated Steam Wisps
+  const steamY = (time * 15) % 12;
+  ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(485, 427 - steamY);
+  ctx.quadraticCurveTo(488, 423 - steamY, 485, 419 - steamY);
+  ctx.stroke();
+
+  // Cozy Beanbag Chairs
+  ctx.fillStyle = '#A78BFA';
+  ctx.beginPath(); ctx.ellipse(370, 455, 14, 11, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#F472B6';
+  ctx.beginPath(); ctx.ellipse(590, 455, 14, 11, 0, 0, Math.PI * 2); ctx.fill();
+
+  // 5. Lush Indoor Planters & Monsteras
+  const plantPositions = [[275, 365], [680, 365], [75, 485], [885, 485], [515, 30]];
+  plantPositions.forEach(([px, py]) => {
+    // Ceramic Pot
+    ctx.fillStyle = '#D97706';
+    ctx.beginPath(); ctx.roundRect(px - 7, py, 14, 14, [2, 2, 6, 6]); ctx.fill();
+    ctx.fillStyle = '#B45309';
+    ctx.fillRect(px - 8, py, 16, 3);
+    // Monstera Green Leaves
+    ctx.fillStyle = '#34D399';
+    ctx.beginPath(); ctx.ellipse(px - 6, py - 6, 8, 5, -0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(px + 6, py - 6, 8, 5, 0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#10B981';
+    ctx.beginPath(); ctx.ellipse(px, py - 10, 6, 9, 0, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // 6. Hanging Festive / Fairy String Lights (Top Ceiling Canopy)
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, 18);
+  ctx.quadraticCurveTo(240, 35, 480, 18);
+  ctx.quadraticCurveTo(720, 35, 960, 18);
+  ctx.stroke();
+
+  // Light Bulbs along string
+  for (let lx = 30; lx < 940; lx += 45) {
+    const ly = 18 + Math.sin((lx / 960) * Math.PI * 2) * 10;
+    const bulbColor = (lx % 90 === 0) ? '#FBBF24' : (lx % 60 === 0) ? '#38BDF8' : '#F472B6';
+    ctx.fillStyle = bulbColor;
+    ctx.beginPath(); ctx.arc(lx, ly, 3, 0, Math.PI * 2); ctx.fill();
+    // Warm Ambient Light Bloom
+    ctx.fillStyle = bulbColor + '33';
+    ctx.beginPath(); ctx.arc(lx, ly, 8 + Math.sin(time * 3 + lx) * 2, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // 7. Floating Ambient Sparkle Dust Particles
+  for (let i = 0; i < 20; i++) {
+    const partX = (i * 55 + Math.sin(time + i) * 40 + canvas.width) % canvas.width;
+    const partY = (i * 32 + Math.cos(time + i * 2) * 30 + canvas.height) % canvas.height;
+    ctx.fillStyle = 'rgba(251, 191, 36, 0.4)';
+    ctx.beginPath(); ctx.arc(partX, partY, 1.3, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // 8. Google Color Circuit Paths on Floor
+  ctx.lineWidth = 3.5;
+  ctx.strokeStyle = '#3B82F655';
   ctx.beginPath(); ctx.moveTo(100, 100); ctx.lineTo(480, 100); ctx.lineTo(480, 360); ctx.stroke();
-  // Red circuit line
-  ctx.strokeStyle = '#DC262633';
+  ctx.strokeStyle = '#EF444455';
   ctx.beginPath(); ctx.moveTo(780, 100); ctx.lineTo(480, 100); ctx.stroke();
-  // Green circuit line
-  ctx.strokeStyle = '#16A34A33';
+  ctx.strokeStyle = '#10B98155';
   ctx.beginPath(); ctx.moveTo(170, 290); ctx.lineTo(420, 290); ctx.stroke();
 
-  // 3. Hotspot Holographic Platforms & Billboards
+  // 9. Hotspot Holographic Platforms & Billboards
   HOTSPOTS.forEach(spot => {
     const cx = spot.x + spot.width / 2;
     const cy = spot.y + spot.height / 2;
 
     // Glowing pulsating ring under hotspot
     const pulse = Math.sin(time + spot.x) * 3;
-    ctx.fillStyle = spot.ringColor + '22';
+    ctx.fillStyle = spot.ringColor + '33';
     ctx.beginPath();
-    ctx.ellipse(cx, cy + spot.height / 2, spot.width / 2 + 8 + pulse, 12 + pulse / 2, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy + spot.height / 2, spot.width / 2 + 10 + pulse, 14 + pulse / 2, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Billboard / Booth Box
-    ctx.fillStyle = '#0F172A';
+    ctx.fillStyle = '#111C33';
     ctx.beginPath();
     ctx.roundRect(spot.x, spot.y, spot.width, spot.height, 8);
     ctx.fill();
@@ -528,20 +988,20 @@ function renderWorld() {
     ctx.roundRect(spot.x, spot.y, spot.width, 6, [8, 8, 0, 0]);
     ctx.fill();
 
-    // Label Text
+    // Label Text in Monospace
     ctx.fillStyle = '#FFF';
-    ctx.font = 'bold 10px Plus Jakarta Sans, Segoe UI';
+    ctx.font = 'bold 9.5px JetBrains Mono, monospace';
     ctx.textAlign = 'center';
     ctx.fillText(spot.label, cx, spot.y + spot.height / 2 + (spot.sub ? -2 : 3));
 
     if (spot.sub) {
       ctx.fillStyle = '#94A3B8';
-      ctx.font = '8px Plus Jakarta Sans, Segoe UI';
+      ctx.font = '7.5px JetBrains Mono, monospace';
       ctx.fillText(spot.sub, cx, spot.y + spot.height / 2 + 10);
     }
   });
 
-  // 4. Tap-to-Move Glowing Destination Ring
+  // 10. Tap-to-Move Glowing Destination Ring
   if (player.targetX !== null && player.targetY !== null) {
     const pulse = (Date.now() * 0.006) % (Math.PI * 2);
     ctx.strokeStyle = '#00E5FF';
@@ -556,8 +1016,41 @@ function renderWorld() {
     ctx.fill();
   }
 
-  // 5. Render Player Sprite
-  const bobOffset = !player.moving ? Math.sin(player.bobFrame) * 3 : 0;
+  // 11. Render Other Active Participants (Multiplayer & NPCs)
+  updateOtherParticipants();
+  OTHER_PARTICIPANTS.forEach(p => {
+    // Dynamic bouncy bobbing when walking + cute breathing bob when idle!
+    const pBob = p.moving
+      ? -Math.abs(Math.sin((p.stepFrame || 0) * 1.5)) * 4.5
+      : Math.sin(p.bobFrame || 0) * 3.5;
+
+    drawCharacterSprite(
+      ctx,
+      p.x,
+      p.y,
+      p.avatar,
+      p.moving,
+      p.stepFrame || 0,
+      pBob,
+      p.direction || 'down',
+      1.05,
+      true,
+      p.name,
+      p.role,
+      p.verified
+    );
+
+    // Floating Speech Bubble if talking
+    if (p.speech && p.speechTimer > 80) {
+      drawSpeechBubble(ctx, p.x, p.y - 50, p.speech);
+    }
+  });
+
+  // 12. Render Local Player Sprite with Bouncy Step Animation!
+  const bobOffset = player.moving
+    ? -Math.abs(Math.sin(player.stepFrame * 1.5)) * 5
+    : Math.sin(player.bobFrame) * 3.5;
+
   drawCharacterSprite(
     ctx,
     player.x,
@@ -568,10 +1061,13 @@ function renderWorld() {
     bobOffset,
     player.direction,
     1.1,
-    true
+    true,
+    currentUser.display_name,
+    currentUser.role,
+    currentUser.verified_ticket
   );
 
-  // 6. Mini-Map Radar on Bottom-Right
+  // 13. Mini-Map Radar on Bottom-Right
   renderRadar();
 }
 
@@ -830,7 +1326,69 @@ async function generateWithGeminiAI() {
 }
 
 // --- AUTH & GOOGLE ONBOARDING ---
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
+
+async function handleGoogleCredentialResponse(response) {
+  if (!response || !response.credential) return;
+  const payload = parseJwt(response.credential);
+  const email = payload ? payload.email : `dev.${Math.floor(Math.random() * 1000)}@gmail.com`;
+  const name = payload ? payload.name : 'Google Developer';
+  const picture = payload ? payload.picture : null;
+
+  try {
+    const data = await fetchAPI('/auth/google-login', {
+      method: 'POST',
+      body: JSON.stringify({
+        google_token: response.credential,
+        email: email,
+        display_name: name,
+        avatar_url: picture,
+        avatar_config: studioConfig
+      })
+    });
+
+    if (data.user) {
+      currentUser = data.user;
+      if (currentUser.avatar_config) {
+        studioConfig = { ...currentUser.avatar_config };
+      }
+      updateUserUI();
+      closeModal('signin-modal');
+      showToast(`Welcome ${currentUser.display_name}! Signed in via Google & avatar saved!`, '🚀');
+    }
+  } catch (err) {
+    showToast('Google Sign-In failed.', '⚠️');
+  }
+}
+
 async function loginWithGoogle() {
+  if (window.google && window.google.accounts && window.google.accounts.id) {
+    try {
+      window.google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          // Fallback to direct demo login if Google One-Tap is dismissed
+          loginWithMockGoogle();
+        }
+      });
+      return;
+    } catch (e) {
+      loginWithMockGoogle();
+      return;
+    }
+  }
+  loginWithMockGoogle();
+}
+
+async function loginWithMockGoogle() {
   const mockEmail = `dev.${Math.floor(Math.random() * 1000)}@gmail.com`;
   const mockName = `Google Dev ${Math.floor(Math.random() * 1000)}`;
 
@@ -852,7 +1410,7 @@ async function loginWithGoogle() {
       }
       updateUserUI();
       closeModal('signin-modal');
-      showToast(`Welcome ${currentUser.display_name}! Signed in via Google`, '🚀');
+      showToast(`Welcome ${currentUser.display_name}! Signed in via Google & avatar saved!`, '🚀');
     } else {
       showToast(data.detail || 'Google Sign-in failed', '⚠️');
     }
@@ -898,6 +1456,11 @@ function updateUserUI() {
     studioCharBadge.className = `badge ${currentUser.role.toLowerCase()}`;
   }
 
+  const googleSigninText = document.getElementById('google-signin-text');
+  if (googleSigninText) {
+    googleSigninText.innerText = currentUser.email ? `Switch Account` : `Sign in with Google`;
+  }
+
   // Back Office button visibility - Only visible to ORGANIZER and STAFF
   const backofficeBtn = document.getElementById('backoffice-hud-btn');
   if (backofficeBtn) {
@@ -930,6 +1493,7 @@ function openModal(id) {
       return;
     }
     loadAdminSessions();
+    loadAdminFeedback();
   }
 
   const el = document.getElementById(id);
@@ -942,6 +1506,7 @@ function openModal(id) {
   if (id === 'workshops-modal') loadWorkshops();
   if (id === 'qna-modal') loadQnA();
   if (id === 'bgm-modal') loadBGM();
+  if (id === 'feedback-modal') setFeedbackStar(5);
 }
 
 function closeModal(id) {
@@ -956,7 +1521,99 @@ function closeAllModals() {
 function openBillboardModal(title, url) {
   document.getElementById('billboard-modal-title').innerText = title;
   document.getElementById('billboard-new-tab-btn').href = url;
-  document.getElementById('billboard-iframe-viewport').src = url;
+  const body = document.getElementById('billboard-modal-body');
+
+  if (url.includes('youtube.com')) {
+    // Official YouTube Embed Player (100% permitted by YouTube CSP/X-Frame-Options)
+    body.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; background:#000; box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+          <iframe 
+            style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" 
+            src="https://www.youtube-nocookie.com/embed/5qap5aO4i9A?autoplay=1" 
+            title="GDG Cloud Bangkok Keynote Video" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; background:#1A243B; padding:14px 18px; border-radius:10px; border:1px solid var(--card-border);">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:40px; height:40px; border-radius:50%; background:#FF0000; display:flex; align-items:center; justify-content:center; font-size:1.3rem;">▶️</div>
+            <div>
+              <div style="font-weight:700; font-size:0.95rem; color:#FFF;">GDG Cloud Bangkok YouTube</div>
+              <div style="font-size:0.75rem; color:#94A3B8;">Watch talk replays, tech demos, and community workshops</div>
+            </div>
+          </div>
+          <a href="${url}" target="_blank" rel="noopener noreferrer" class="hud-btn" style="background:#EF4444; border-color:#F87171; color:#FFF; text-decoration:none;">
+            📺 Subscribe & Watch Channel
+          </a>
+        </div>
+      </div>
+    `;
+  } else if (url.includes('discord.gg')) {
+    body.innerHTML = `
+      <div style="background:linear-gradient(135deg, #5865F222, #1E1F22); border:1.5px solid #5865F288; border-radius:14px; padding:24px; text-align:center;">
+        <div style="font-size:3rem; margin-bottom:10px;">💬</div>
+        <h3 style="color:#FFF; font-size:1.3rem; margin-bottom:6px;">GDG Cloud Bangkok Discord Server</h3>
+        <p style="color:#94A3B8; font-size:0.85rem; max-width:480px; margin:0 auto 18px;">Join 4,500+ cloud architects, AI builders, and engineers for real-time discussion, session Q&A, and event networking.</p>
+        <div style="display:flex; justify-content:center; gap:12px; margin-bottom:20px;">
+          <span style="background:#5865F233; color:#818CF8; border:1px solid #5865F266; padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:700;">🟢 1,200+ Online</span>
+          <span style="background:#10B98122; color:#34D399; border:1px solid #10B98144; padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:700;">✨ #devfest-qa Active</span>
+        </div>
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="hud-btn primary" style="display:inline-flex; padding:12px 28px; font-size:0.9rem; font-weight:700; text-decoration:none; background:#5865F2; border-color:#818CF8;">
+          🚀 Join Discord Community
+        </a>
+      </div>
+    `;
+  } else if (url.includes('facebook.com')) {
+    body.innerHTML = `
+      <div style="background:linear-gradient(135deg, #1877F222, #0F172A); border:1.5px solid #1877F288; border-radius:14px; padding:24px; text-align:center;">
+        <div style="font-size:3rem; margin-bottom:10px;">📘</div>
+        <h3 style="color:#FFF; font-size:1.3rem; margin-bottom:6px;">GDG Cloud Bangkok on Facebook</h3>
+        <p style="color:#94A3B8; font-size:0.85rem; max-width:480px; margin:0 auto 18px;">Stay up to date with official GDG meetup announcements, photo albums, DevFest updates, and local community discussions.</p>
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="hud-btn primary" style="display:inline-flex; padding:12px 28px; font-size:0.9rem; font-weight:700; text-decoration:none; background:#1877F2; border-color:#60A5FA;">
+          👍 Follow & Join on Facebook
+        </a>
+      </div>
+    `;
+  } else if (url.includes('instagram.com')) {
+    body.innerHTML = `
+      <div style="background:linear-gradient(135deg, #E1306C22, #0F172A); border:1.5px solid #E1306C88; border-radius:14px; padding:24px; text-align:center;">
+        <div style="font-size:3rem; margin-bottom:10px;">📷</div>
+        <h3 style="color:#FFF; font-size:1.3rem; margin-bottom:6px;">@gdgcloudbkk on Instagram</h3>
+        <p style="color:#94A3B8; font-size:0.85rem; max-width:480px; margin:0 auto 18px;">Check out live behind-the-scenes event stories, speaker spotlights, and swag giveaways from DevFest Bangkok.</p>
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="hud-btn" style="display:inline-flex; padding:12px 28px; font-size:0.9rem; font-weight:700; text-decoration:none; background:#E1306C; border-color:#F472B6; color:#FFF;">
+          📸 Follow on Instagram
+        </a>
+      </div>
+    `;
+  } else if (url.includes('cloud.google.com')) {
+    body.innerHTML = `
+      <div style="background:linear-gradient(135deg, #4285F422, #0F172A); border:1.5px solid #4285F488; border-radius:14px; padding:24px; text-align:center;">
+        <div style="font-size:3rem; margin-bottom:10px;">🏢</div>
+        <h3 style="color:#FFF; font-size:1.3rem; margin-bottom:6px;">Google Cloud Expo & Vertex AI Booth</h3>
+        <p style="color:#94A3B8; font-size:0.85rem; max-width:480px; margin:0 auto 18px;">Explore Google Cloud Run serverless containers, Vertex AI generative agents, BigQuery analytics, and cloud developer documentation.</p>
+        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+          <span style="background:#4285F422; color:#60A5FA; border:1px solid #4285F466; padding:4px 10px; border-radius:6px; font-size:0.75rem;">⚡ Cloud Run</span>
+          <span style="background:#34A85322; color:#4ADE80; border:1px solid #34A85366; padding:4px 10px; border-radius:6px; font-size:0.75rem;">🤖 Vertex AI</span>
+          <span style="background:#FBBC0422; color:#FDE047; border:1px solid:#FBBC0466; padding:4px 10px; border-radius:6px; font-size:0.75rem;">🔥 Cloud Firestore</span>
+        </div>
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="hud-btn primary" style="display:inline-flex; padding:12px 28px; font-size:0.9rem; font-weight:700; text-decoration:none;">
+          🚀 Open Google Cloud Platform
+        </a>
+      </div>
+    `;
+  } else {
+    body.innerHTML = `
+      <div style="padding:20px; text-align:center;">
+        <p style="color:#94A3B8; margin-bottom:16px;">External link: <a href="${url}" target="_blank" style="color:#38BDF8;">${url}</a></p>
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="hud-btn primary" style="display:inline-flex; text-decoration:none;">
+          🔗 Visit Website in New Tab
+        </a>
+      </div>
+    `;
+  }
+
   openModal('billboard-iframe-modal');
 }
 
@@ -1271,9 +1928,10 @@ function showAdminTab(tabId) {
   if (target) target.style.display = 'block';
   if (tabId === 'agenda-admin-tab') {
     loadAdminSessions();
-  }
-  if (tabId === 'firestore-admin-tab') {
+  } else if (tabId === 'firestore-admin-tab') {
     loadFirestoreEventData();
+  } else if (tabId === 'feedback-admin-tab') {
+    loadAdminFeedback();
   }
 }
 
@@ -1400,6 +2058,55 @@ async function loadAdminSessions() {
   }
 }
 
+// AI Agenda Generation & Autofill
+async function autoFillAgendaWithAI() {
+  const promptInput = document.getElementById('ai-agenda-prompt');
+  const prompt = promptInput ? promptInput.value.trim() : '';
+  if (!prompt) {
+    showToast('Please type or paste a talk description for AI!', '⚠️');
+    return;
+  }
+
+  showToast('✨ Gemini AI analyzing session details & generating fields...', '🤖');
+  try {
+    const data = await fetchAPI('/backoffice/ai-agenda-generate', {
+      method: 'POST',
+      body: JSON.stringify({ prompt })
+    });
+
+    if (data.generated_session) {
+      const s = data.generated_session;
+      document.getElementById('sess-edit-title').value = s.title || '';
+      document.getElementById('sess-edit-speaker').value = s.speaker_name || '';
+      document.getElementById('sess-edit-track').value = s.track || 'Track 1: AI & Agents';
+      document.getElementById('sess-edit-room').value = s.room || 'Room A1';
+      document.getElementById('sess-edit-start').value = s.start_time || '10:00 AM';
+      document.getElementById('sess-edit-end').value = s.end_time || '11:00 AM';
+      document.getElementById('sess-edit-desc').value = s.description || '';
+
+      // Highlight fields with pulsing animation
+      const fieldIds = ['sess-edit-title', 'sess-edit-speaker', 'sess-edit-room', 'sess-edit-start', 'sess-edit-end', 'sess-edit-desc'];
+      fieldIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.borderColor = '#38BDF8';
+          el.style.boxShadow = '0 0 10px rgba(56, 189, 248, 0.4)';
+          setTimeout(() => {
+            el.style.borderColor = 'var(--card-border)';
+            el.style.boxShadow = 'none';
+          }, 3500);
+        }
+      });
+
+      showToast('✨ Session details generated & auto-filled by AI! Review and click Save.', '🎉');
+    } else {
+      showToast(data.detail || 'Failed to generate session details.', '⚠️');
+    }
+  } catch (err) {
+    showToast('Error communicating with AI Agenda generator.', '⚠️');
+  }
+}
+
 async function saveAdminSession() {
   const editId = document.getElementById('sess-edit-id').value;
   const title = document.getElementById('sess-edit-title').value.trim();
@@ -1428,7 +2135,7 @@ async function saveAdminSession() {
       const data = await fetchAPI('/sessions', { method: 'POST', body: JSON.stringify(payload) });
       showToast(data.message || `Added session "${title}" to schedule!`, '🎉');
     }
-    clearAdminSessionForm();
+    resetAdminSessionForm();
     loadAdminSessions();
     loadAgenda();
   } catch (err) {
@@ -1451,7 +2158,7 @@ function editAdminSession(sessionId) {
   showToast(`Loaded "${sess.title}" into editor`, '✏️');
 }
 
-function clearAdminSessionForm() {
+function resetAdminSessionForm() {
   document.getElementById('sess-edit-id').value = '';
   document.getElementById('sess-edit-title').value = '';
   document.getElementById('sess-edit-speaker').value = '';
@@ -1459,7 +2166,13 @@ function clearAdminSessionForm() {
   document.getElementById('sess-edit-start').value = '';
   document.getElementById('sess-edit-end').value = '';
   document.getElementById('sess-edit-desc').value = '';
+  const aiPrompt = document.getElementById('ai-agenda-prompt');
+  if (aiPrompt) aiPrompt.value = '';
   document.getElementById('admin-session-form-title').innerText = 'Add / Edit Agenda Session';
+}
+
+function clearAdminSessionForm() {
+  resetAdminSessionForm();
 }
 
 async function deleteAdminSession(sessionId) {
@@ -1528,6 +2241,109 @@ async function triggerLuckyDraw() {
     showToast('Error executing lucky draw raffle.', '⚠️');
   }
 }
+
+// --- ATTENDEE EVENT FEEDBACK & RATINGS ---
+let currentOverallStarRating = 5;
+
+function setFeedbackStar(val) {
+  currentOverallStarRating = val;
+  const buttons = document.querySelectorAll('#feedback-stars .star-btn');
+  buttons.forEach((btn, idx) => {
+    if (idx < val) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+async function submitEventFeedback() {
+  const comments = document.getElementById('feedback-comments-input')?.value.trim() || '';
+  if (!comments) {
+    showToast('Please enter your feedback comments or suggestions!', '⚠️');
+    return;
+  }
+
+  const contentRating = parseInt(document.getElementById('feedback-content-rating')?.value || '5');
+  const venueRating = parseInt(document.getElementById('feedback-venue-rating')?.value || '5');
+  const npsScore = parseInt(document.getElementById('feedback-nps')?.value || '10');
+
+  try {
+    const data = await fetchAPI('/feedback', {
+      method: 'POST',
+      body: JSON.stringify({
+        overall_rating: currentOverallStarRating,
+        content_rating: contentRating,
+        venue_rating: venueRating,
+        nps_score: npsScore,
+        comments: comments,
+        event_id: 'devfest-bangkok-2026'
+      })
+    });
+
+    showToast(data.message || '🎉 Thank you for your feedback! Saved to Firestore.', '⭐');
+    if (document.getElementById('feedback-comments-input')) {
+      document.getElementById('feedback-comments-input').value = '';
+    }
+    closeModal('feedback-modal');
+  } catch (err) {
+    showToast('Error submitting feedback.', '⚠️');
+  }
+}
+
+async function loadAdminFeedback() {
+  try {
+    const data = await fetchAPI('/feedback/all');
+    if (document.getElementById('admin-fb-total')) {
+      document.getElementById('admin-fb-total').innerText = data.total_responses || 0;
+    }
+    if (document.getElementById('admin-fb-avg-overall')) {
+      document.getElementById('admin-fb-avg-overall').innerText = (data.average_overall || 5.0) + ' ⭐';
+    }
+    if (document.getElementById('admin-fb-avg-content')) {
+      document.getElementById('admin-fb-avg-content').innerText = (data.average_content || 5.0) + ' ⭐';
+    }
+    if (document.getElementById('admin-fb-nps')) {
+      document.getElementById('admin-fb-nps').innerText = (data.nps_score >= 0 ? '+' : '') + (data.nps_score || 0);
+    }
+
+    const list = document.getElementById('admin-feedback-list');
+    if (!list) return;
+    if (!data.feedbacks || data.feedbacks.length === 0) {
+      list.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:10px;">No attendee feedback recorded yet.</div>';
+      return;
+    }
+
+    list.innerHTML = data.feedbacks.map(fb => `
+      <div style="background:#0F172A; border:1px solid var(--card-border); border-radius:8px; padding:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <div style="font-weight:700; color:#FFF; font-size:0.85rem;">👤 ${fb.user_name || 'Attendee'}</div>
+          <div style="color:#FBBF24; font-size:0.82rem;">${'⭐'.repeat(fb.overall_rating || 5)} (${fb.overall_rating}/5) &nbsp;|&nbsp; NPS: <strong style="color:#EC4899;">${fb.nps_score || 10}</strong></div>
+        </div>
+        <p style="color:#CBD5E1; font-size:0.82rem; margin:0 0 6px;">"${fb.comments}"</p>
+        <div style="font-size:0.72rem; color:var(--text-muted);">Keynote: ${fb.content_rating || 5}/5 • Venue: ${fb.venue_rating || 5}/5 • ${fb.created_at ? new Date(fb.created_at).toLocaleTimeString() : 'Just now'}</div>
+      </div>
+    `).join('');
+  } catch (err) {
+    console.error('Error loading admin feedback:', err);
+  }
+}
+
+// Google Identity Services setup on window load
+window.addEventListener('load', () => {
+  if (window.google && window.google.accounts && window.google.accounts.id) {
+    try {
+      window.google.accounts.id.initialize({
+        client_id: '1084297839210-devfestverse.apps.googleusercontent.com',
+        callback: handleGoogleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+    } catch (e) {
+      console.log('Google Identity Services initialized');
+    }
+  }
+});
 
 // Initialize on load
 initStudioControls();

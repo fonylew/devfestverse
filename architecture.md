@@ -307,6 +307,74 @@ sequenceDiagram
 
 ---
 
+## Google Identity Services & Avatar Sync Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Attendee / Organizer
+    participant GIS as Google Identity Services (GIS)
+    participant Client as Frontend PWA
+    participant API as FastAPI Backend (/auth/google-login)
+    participant FS as Cloud Firestore (users/{id})
+
+    User->>GIS: Click "Sign in with Google" / GIS One-Tap
+    GIS-->>Client: Return Credential JWT (sub, email, name, picture)
+    Client->>API: POST /api/v1/auth/google-login {google_token, email, display_name, avatar_config}
+    API->>FS: Upsert user record & avatar_config into users/{id}
+    API-->>Client: 200 OK with authenticated user profile & avatar_config
+    Client-->>User: Update HUD Profile, Apply Custom Pixel Avatar, Save to Cloud Firestore
+```
+
+---
+
+## AI Agenda Generation & Auto-Fill Architecture
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Org as Organizer / Staff
+    participant Client as Back Office Console
+    participant AI_API as AI Agenda Generator (/backoffice/ai-agenda-generate)
+    participant SessionAPI as Session Service (/sessions)
+    participant FS as Cloud Firestore (events/{id}/sessions)
+
+    Org->>Client: Pastes raw talk description or prompt into AI Auto-Fill
+    Client->>AI_API: POST /api/v1/backoffice/ai-agenda-generate {prompt: "..."}
+    AI_API->>AI_API: NLP structured extraction (title, speaker, track, room, start_time, end_time, description)
+    AI_API-->>Client: Return structured JSON {title, speaker_name, track, room, times, description}
+    Client-->>Org: Auto-populates all form inputs with pulsing glow animation
+    Org->>Client: Reviews & clicks "Save Session"
+    Client->>SessionAPI: POST /api/v1/sessions
+    SessionAPI->>FS: Persist session to Cloud Firestore
+    SessionAPI-->>Client: 200 OK (Schedule Updated across all clients)
+```
+
+---
+
+## Attendee Feedback & NPS Satisfaction Architecture
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Attendee
+    participant Client as 2D Campus / Feedback Modal
+    participant API as Feedback Service (/api/v1/feedback)
+    participant FS as Cloud Firestore (events/{id}/feedbacks)
+    participant BackOffice as Back Office Analytics
+
+    User->>Client: Interacts with 📝 FEEDBACK KIOSK or HUD Button
+    Client-->>User: Renders Star Rating, Category Selectors, NPS Slider (0-10), and Comments Box
+    User->>Client: Submits Feedback
+    Client->>API: POST /api/v1/feedback {overall_rating, content_rating, venue_rating, nps_score, comments}
+    API->>FS: Write feedback record to Cloud Firestore
+    API-->>Client: 200 OK Recorded
+    BackOffice->>API: GET /api/v1/feedback/all (Organizer / Staff)
+    API-->>BackOffice: Live KPIs (Total Responses, Average Overall, Content, Venue, Net Promoter Score)
+```
+
+---
+
 ## Google Cloud Run Deployment Architecture
 
 Deployed to **Google Cloud Platform (GCP)** under project `gdg-cloud-bangkok-2026` with cost-optimized scaling to 0 and single instance capping.
@@ -322,7 +390,7 @@ graph LR
         CloudBuild["Cloud Build (Docker Container Build)"]
         ArtifactReg["Artifact Registry / Container Registry (gcr.io)"]
         CloudRun["Google Cloud Run: 'devfestverse'<br/>Region: asia-southeast3<br/>Min Instances: 0 (Scale-to-Zero)<br/>Max Instances: 1<br/>Memory: 512Mi | CPU: 1"]
-        FirestoreDB[("Cloud Firestore (Top-Level Event & Attendance)")]
+        FirestoreDB[("Cloud Firestore (Top-Level Event, Attendance, Feedback, Sessions)")]
     end
 
     SourceCode --> DeployScript
@@ -336,15 +404,17 @@ graph LR
 
 ## Verification & Test Plan
 
-Automated test suites covering all microservice endpoints:
+Automated test suites covering all microservice endpoints (36 passed tests via `uv run pytest`):
 - `backend/tests/test_auth_invites.py`: Tests user registration, role promotion, and invitation link generation.
 - `backend/tests/test_tickets.py`: Tests official ticket reference verification.
 - `backend/tests/test_billboards_sponsors.py`: Tests community billboard links and sponsor booth configurations.
 - `backend/tests/test_firestore_events.py`: Tests top-level Firestore event hierarchy, date/venue metadata updates, and participant check-in / live show-up rate calculations.
 - `backend/tests/test_workshops.py`: Tests workshop seat capacity reservations and cancellation.
 - `backend/tests/test_sessions_transcribe.py`: Tests multi-track agenda filtering, favorites toggle, backoffice session CRUD, and Gemini transcript streaming.
-- `backend/tests/test_backoffice_apis.py`: Tests role changes, lessons learned retrospectives, active user tracking, and RBAC enforcement.
+- `backend/tests/test_backoffice_apis.py`: Tests role changes, AI agenda prompt generation, active user tracking, and RBAC enforcement.
+- `backend/tests/test_feedback.py`: Tests attendee feedback submission, category ratings, NPS calculations, and organizer KPI summaries.
 - `backend/tests/test_avatar_auth.py`: Tests 2D avatar customization, Google sign-in integration, and Gemini AI avatar synthesis.
+
 
 
 

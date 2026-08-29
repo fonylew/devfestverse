@@ -8,43 +8,37 @@
 
 ## Key Features
 
-- **Google Sign-In & Onboarding Flow**: Seamless authentication with Google OAuth profile integration, instant demo account switcher, and profile card HUD chip.
-- **2D Character Customizer Studio**:
-  - Live animated preview with real-time idle bobbing and step animations.
-  - Granular customization for skin tones, hair styles & colors, outfit types & colorways.
-  - Headwear accessories: DevFest Caps, VR Visors, Google Glasses, DJ Headphones, Cat Ears, and Space Helmets.
-  - Special aura & companions: Orbiting Google Cloud Pets, AI Energy Sparkles, and Matrix Green Glow.
-- **Gemini AI Character Synthesizer**: Generate full 2D pixel avatars directly from natural language prompts (e.g., *"Google Cloud Architect with glowing VR visor and cyan pet"*).
-- **Mobile & Touch Navigation Engine**:
-  - **On-Screen Virtual Touch D-Pad**: Directional touch controls (⬆️ ⬇️ ⬅️ ➡️) for one-thumb walking on mobile devices.
-  - **Tap-to-Move Pathfinding**: Tap or click anywhere on the 2D canvas to smoothly move the character with animated target rings.
-  - **Floating Action Touch Button**: Contextual touch button that glows and pulses when approaching interactive booths, stages, and billboards.
-  - **Mobile Bottom Navigation Bar**: Fixed bottom navigation bar (`World`, `Agenda`, `Labs`, `Studio`, `More`) on screens < 768px.
-  - **Responsive Layout**: Fluid canvas scaling, stacked mobile customizer studio, and touch-optimized modal dialogs.
-- **Blue Elephant Favicon & PWA Branding**: Custom multi-resolution `.ico` and `.png` favicon featuring a blue elephant 🐘 with GDG sparkle accents.
+- **Real Sign in with Google (GIS) & Avatar Cloud Persistence**:
+  - Integrated **Google Identity Services (GIS)** OAuth flow.
+  - Custom pixel avatars designed in the **Character Studio** are permanently saved to **Cloud Firestore** under the user's profile and synchronized across all sessions.
+- **Fullscreen Responsive 2D Virtual Canvas**:
+  - Automatically resizes and scales dynamically to fill 100% of the screen across desktop widescreen monitors, tablets, and smartphones.
+  - Spatially balances booths, keynote stages, and lounges to comfortably support high-density attendee roaming.
+- **AI Agenda Auto-Fill & Generator (Back Office)**:
+  - Organizers and staff can describe talks or paste abstracts in natural language (e.g. *"Dr. Alice Chen on Scalable AI Agents with LangGraph on Cloud Run at 1:30 PM in Room B1"*).
+  - Gemini AI extracts and auto-fills title, speaker, track, room, start/end times, and description with glowing animations.
+- **Attendee Event Feedback & NPS Satisfaction System**:
+  - Interactive **📝 EVENT FEEDBACK** kiosk in the 2D venue and accessible from the HUD header / mobile drawer.
+  - ⭐ 1-5 Star ratings for overall experience, talk content, and venue.
+  - **Net Promoter Score (NPS 0-10)** slider and qualitative feedback suggestions.
+  - Dedicated **📝 Feedback Analytics** tab in Back Office displaying average ratings, NPS, and real-time review feeds.
+- **Bouncy Character Walking & Idle Physics**: Dynamic step cycle that bobs and bounces the avatar up and down with each footstep and breathes playfully when idle.
+- **Modern Monospace Tech Typography**: Styled with Google Fonts `'JetBrains Mono'`, `'Space Mono'`, and `'Fira Code'` across the entire HUD, billboards, modals, and canvas labels.
+- **Brighter Tech Event Venue & Ambient Lighting**:
+  - Bright modern slate-blue tech floor with alternating acoustic tiles and crisp grid lines.
+  - Radiant ambient downlights and color glow pools under the Keynote Stage (Amber/Gold), Google Cloud Booth (Blue), Workshop Labs (Purple), and Ticket Plaza (Emerald).
+  - Warm velvet lounge with coffee table, laptops, steaming coffee cups ☕, beanbags, and potted monsteras 🌿.
 - **Multi-Directional Sprite Rendering Engine**: 4-way directional walking animations (Down, Up, Left, Right), animated limb step cycles, shadows, and floating role tags.
-- **2D Tech Campus World & Proximity HUD**: Interactive Google-themed campus with circuit pathways, pulsating holographic pads, proximity interaction tooltips (`Press [E] or Click to Open`), and mini-map radar.
+- **Seamless Hotkey Navigation & Modal Toggle**:
+  - Press <kbd>E</kbd> or <kbd>Space</kbd> when approaching any billboard or booth to open the pop-up.
+  - Press <kbd>E</kbd>, <kbd>Space</kbd>, or <kbd>Esc</kbd> again while a pop-up is active to instantly close it without needing to click the `×` button.
 - **Main Event Ticket Verification Billboard**: Central 2D spawn billboard where participants verify their official DevFest tickets to earn an in-game "Verified Ticket Badge" and unlock Lucky Draw entry.
-- **GDG Cloud Bangkok Community Billboards**: Interactive billboards for Facebook Page, Facebook Group, Discord, Instagram, and YouTube.
-- **Clickable Billboard UX**: Clicking a billboard opens an embedded `iframe` view modal first, featuring an explicit **"Open in New Tab"** header button.
-- **Interactive Sponsor Booths**: Embedded sponsor website `iframe` popups and promo banners.
-- **Multi-Track Agenda & Schedule System**:
-  - Filter sessions by track (`Main Keynote`, `Track 1: AI & Agents`, `Track 2: Cloud & DevOps`, `Track 3: Web & Frontend`, etc.).
-  - Real-time search across session titles, speaker names, descriptions, and tracks.
-- **My Agenda & Favorites**:
-  - One-click favorite button (❤️ / 🤍) on any session card.
-  - Dedicated **"⭐ My Agenda"** tab aggregating all favorited talks across all conference tracks into a personalized schedule.
-- **Back Office Agenda & Track Management**:
-  - Organizers and staff can dynamically create, edit session times/rooms/speakers, and delete sessions via the Back Office console with real-time sync.
-- **Session-Linked Gemini Transcriptions**: Speech-to-text transcriptions streamed via Gemini, displayed as live stage HUD captions, and indexed by Session ID & Speaker ID.
-- **5 User Roles & Role Invitation Links**:
-  - **Organizer**: Full administrative access, role switcher, SVG asset studio, lucky draw runner, agenda & track manager.
-  - **Staff**: Staff console, internal team communication channel, Q&A/photo moderation, workshop check-in scanner.
-  - **Speaker**: Speaker dashboard, session materials, and talk transcripts.
-  - **Sponsor**: Sponsor portal, booth profile editor, iframe URL manager, visitor analytics.
-  - **Participant**: 2D world exploration, avatar generator, multi-track agenda & favorites, shop iframe, public Q&A, feedback.
-- **Role Invitation Links**: Organizers generate invite links (`/invite/speaker`, `/invite/sponsor`, `/invite/staff`) for elevated roles.
-- **Workshop Room Registration & Cancellation**: Real-time seat capacity reservation engine with digital passes, live seat status, and cancellation / unregister support.
+- **GDG Cloud Bangkok Community Billboards & Media Hub**:
+  - Authorized YouTube embed player (`youtube-nocookie.com/embed/...`) with full video playback.
+  - Branded Community Hub cards for Discord, Facebook, Instagram, and Google Cloud Expo.
+- **Multi-Track Agenda & Schedule System**: Filter sessions by track (`Main Keynote`, `Track 1: AI & Agents`, `Track 2: Cloud & DevOps`, `Track 3: Web & Frontend`) and search talks.
+- **My Agenda & Favorites**: Dedicated **"⭐ My Agenda"** tab aggregating all favorited talks into a personalized schedule.
+- **Workshop Room Registration & Cancellation**: Real-time seat capacity reservation engine with digital passes, live seat status, and cancellation support.
 - **Background Music (BGM)**: Zone-based audio player supporting YouTube URL embeds and GCS audio tracks.
 - **Comprehensive Back Office APIs**: REST & WebSocket API suite for organizers and staff.
 

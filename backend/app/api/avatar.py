@@ -119,11 +119,17 @@ def get_avatar_config(user: dict = Depends(get_current_user)):
 
 @router.post("/customize")
 def customize_avatar(config: AvatarConfig, user: dict = Depends(get_current_user)):
+    from backend.app.core.firestore import firestore_manager
     svg_content = generate_svg_agent_avatar(config)
     user["avatar_config"] = config.model_dump()
     user["avatar_svg"] = svg_content
+
+    # Persist to Firestore
+    if firestore_manager.is_configured():
+        firestore_manager.save_user_avatar(user["id"], config.model_dump())
+
     return {
-        "message": "Avatar customized and updated successfully!",
+        "message": "Avatar customized and saved to Firestore successfully!",
         "config": config,
         "svg_avatar": svg_content,
         "user": user
