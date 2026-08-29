@@ -1,0 +1,43 @@
+steps:
+  # 1. Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/devfestverse:$COMMIT_SHA', '-t', 'gcr.io/$PROJECT_ID/devfestverse:latest', '.']
+
+  # 2. Push image to Container Registry / Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/devfestverse:$COMMIT_SHA']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/devfestverse:latest']
+
+  # 3. Deploy to Google Cloud Run with min 0 and max 1 instances
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'devfestverse'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/devfestverse:$COMMIT_SHA'
+      - '--region'
+      - 'asia-southeast1'
+      - '--platform'
+      - 'managed'
+      - '--min-instances'
+      - '0'
+      - '--max-instances'
+      - '1'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'GCP_PROJECT=gdg-cloud-bangkok-2026'
+
+images:
+  - 'gcr.io/$PROJECT_ID/devfestverse:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/devfestverse:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

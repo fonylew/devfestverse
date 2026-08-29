@@ -247,15 +247,104 @@ sequenceDiagram
 
 ---
 
+## Firestore Event Document Hierarchy & Attendance Tracking
+
+The database on Google Cloud Firestore uses the **Event Name / Slug as the top-level document key** under the `events` collection.
+
+```mermaid
+graph TD
+    subgraph FirestoreRoot ["Google Cloud Firestore: Collection ('events')"]
+        EventDoc["Document: events/{event_id} (e.g. 'devfest-bangkok-2026')"]
+    end
+
+    subgraph EventPayload ["Top-Level Event Document Fields"]
+        EventMeta["Metadata: {theme, year, organizer, expected_capacity, registration_url}"]
+        EventDate["Date: '2026-11-28'"]
+        EventVenue["Venue: {name, address, rooms: ['Grand Ballroom', 'Room A1', 'Room B1', ...]}"]
+        EventSpeakers["Speakers: [ {id, name, title, bio, avatar_url}, ... ]"]
+        EventSessions["Sessions: [ {id, title, track, room, start_time, end_time, speaker_name}, ... ]"]
+        EventSponsors["Sponsors: [ {id, name, tier, booth_url, description}, ... ]"]
+        EventWorkshops["Workshops: [ {id, title, instructor, capacity, reserved_count, room_code}, ... ]"]
+        EventSummary["Attendance Summary: {total_registered, total_attended, show_up_rate_percent, absent_count}"]
+    end
+
+    subgraph AttendanceSub ["Participants / Attendance Map on Date"]
+        Partic1["Participant: user-partic-1<br/>ticket_ref: 'TICKET-DEV-001'<br/>attended: true<br/>checked_in_at: '2026-11-28T09:15:30Z'<br/>scanned_by: 'user-staff-1'"]
+        Partic2["Participant: user-partic-2<br/>ticket_ref: 'TICKET-DEV-002'<br/>attended: false<br/>checked_in_at: null<br/>scanned_by: null"]
+    end
+
+    EventDoc --> EventMeta
+    EventDoc --> EventDate
+    EventDoc --> EventVenue
+    EventDoc --> EventSpeakers
+    EventDoc --> EventSessions
+    EventDoc --> EventSponsors
+    EventDoc --> EventWorkshops
+    EventDoc --> EventSummary
+    EventDoc --> AttendanceSub
+```
+
+### Participant Check-In & Show-Up Rate Tracking Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Attendee as Participant
+    actor Staff as Staff / Organizer (Gate Scanner)
+    participant Client as Back Office Console
+    participant API as Firestore API (/api/v1/firestore/events)
+    participant FS as Google Cloud Firestore
+
+    Note over Attendee,FS: On Event Date (Check-In & Attendance)
+    Attendee->>Staff: Shows Ticket QR / Reference (TICKET-DEV-001)
+    Staff->>Client: Enters / Scans Ticket Ref into Check-In Scanner
+    Client->>API: POST /firestore/events/{event_id}/checkin {ticket_ref: "TICKET-DEV-001"}
+    API->>FS: Update participant.attended=true, checked_in_at=NOW, scanned_by=Staff.id
+    API->>FS: Recalculate show_up_rate_percent = (total_attended / total_registered) * 100
+    API-->>Client: 200 OK with updated participant and live attendance_summary
+    Client-->>Staff: Live Success Toast & Updates Attendance Dashboard (Show-Up Rate %)
+```
+
+---
+
+## Google Cloud Run Deployment Architecture
+
+Deployed to **Google Cloud Platform (GCP)** under project `gdg-cloud-bangkok-2026` with cost-optimized scaling to 0 and single instance capping.
+
+```mermaid
+graph LR
+    subgraph DevMachine ["Local / CI Pipeline"]
+        SourceCode["Codebase (uv, FastAPI, Static PWA)"]
+        DeployScript["deploy.sh / cloudbuild.yaml"]
+    end
+
+    subgraph GCP ["Google Cloud Platform (Project: gdg-cloud-bangkok-2026)"]
+        CloudBuild["Cloud Build (Docker Container Build)"]
+        ArtifactReg["Artifact Registry / Container Registry (gcr.io)"]
+        CloudRun["Google Cloud Run: 'devfestverse'<br/>Region: asia-southeast1<br/>Min Instances: 0 (Scale-to-Zero)<br/>Max Instances: 1<br/>Memory: 512Mi | CPU: 1"]
+        FirestoreDB[("Cloud Firestore (Top-Level Event & Attendance)")]
+    end
+
+    SourceCode --> DeployScript
+    DeployScript --> CloudBuild
+    CloudBuild --> ArtifactReg
+    ArtifactReg --> CloudRun
+    CloudRun --> FirestoreDB
+```
+
+---
+
 ## Verification & Test Plan
 
 Automated test suites covering all microservice endpoints:
 - `backend/tests/test_auth_invites.py`: Tests user registration, role promotion, and invitation link generation.
 - `backend/tests/test_tickets.py`: Tests official ticket reference verification.
 - `backend/tests/test_billboards_sponsors.py`: Tests community billboard links and sponsor booth configurations.
+- `backend/tests/test_firestore_events.py`: Tests top-level Firestore event hierarchy, date/venue metadata updates, and participant check-in / live show-up rate calculations.
 - `backend/tests/test_workshops.py`: Tests workshop seat capacity reservations and cancellation.
 - `backend/tests/test_sessions_transcribe.py`: Tests multi-track agenda filtering, favorites toggle, backoffice session CRUD, and Gemini transcript streaming.
 - `backend/tests/test_backoffice_apis.py`: Tests role changes, lessons learned retrospectives, active user tracking, and RBAC enforcement.
 - `backend/tests/test_avatar_auth.py`: Tests 2D avatar customization, Google sign-in integration, and Gemini AI avatar synthesis.
+
 
 

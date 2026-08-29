@@ -1269,6 +1269,103 @@ function showAdminTab(tabId) {
   if (tabId === 'agenda-admin-tab') {
     loadAdminSessions();
   }
+  if (tabId === 'firestore-admin-tab') {
+    loadFirestoreEventData();
+  }
+}
+
+async function loadFirestoreEventData() {
+  try {
+    const event = await fetchAPI('/firestore/events/devfest-bangkok-2026');
+    const detailsContainer = document.getElementById('firestore-event-details');
+    const statsContainer = document.getElementById('firestore-attendance-stats');
+    const listContainer = document.getElementById('firestore-participants-list');
+
+    if (detailsContainer && event) {
+      detailsContainer.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:8px;">
+          <div><strong>📅 Date:</strong> ${event.date}</div>
+          <div><strong>🏛️ Venue:</strong> ${event.venue?.name || 'N/A'}</div>
+          <div><strong>📍 Address:</strong> ${event.venue?.address || 'N/A'}</div>
+          <div><strong>🏷️ Theme:</strong> ${event.metadata?.theme || 'N/A'}</div>
+          <div><strong>👥 Expected Capacity:</strong> ${event.metadata?.expected_capacity || 'N/A'}</div>
+          <div><strong>🎤 Speakers:</strong> ${event.speakers?.length || 0} Listed</div>
+          <div><strong>📚 Sessions:</strong> ${event.sessions?.length || 0} Registered</div>
+          <div><strong>🏢 Sponsors:</strong> ${event.sponsors?.length || 0} Configured</div>
+        </div>
+      `;
+    }
+
+    if (statsContainer && event.attendance_summary) {
+      const s = event.attendance_summary;
+      const rateColor = s.show_up_rate_percent >= 50 ? '#10B981' : '#F59E0B';
+      statsContainer.innerHTML = `
+        <div style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+          <div style="font-size:0.75rem; color:#94A3B8;">Total Registered</div>
+          <div style="font-size:1.3rem; font-weight:800; color:#38BDF8;">${s.total_registered}</div>
+        </div>
+        <div style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+          <div style="font-size:0.75rem; color:#94A3B8;">Showed Up / Attended</div>
+          <div style="font-size:1.3rem; font-weight:800; color:#10B981;">${s.total_attended}</div>
+        </div>
+        <div style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+          <div style="font-size:0.75rem; color:#94A3B8;">Absent / Pending</div>
+          <div style="font-size:1.3rem; font-weight:800; color:#F87171;">${s.absent_count}</div>
+        </div>
+        <div style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+          <div style="font-size:0.75rem; color:#94A3B8;">Show-Up Rate</div>
+          <div style="font-size:1.3rem; font-weight:800; color:${rateColor};">${s.show_up_rate_percent}%</div>
+        </div>
+      `;
+    }
+
+    if (listContainer && event.participants) {
+      const pList = Object.values(event.participants);
+      listContainer.innerHTML = pList.map(p => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#090E1A; border:1px solid var(--card-border); border-radius:6px; margin-bottom:6px; font-size:0.82rem;">
+          <div>
+            <strong>${p.name}</strong> <span style="color:#64748B;">(${p.ticket_ref})</span>
+            <div style="font-size:0.72rem; color:#94A3B8;">${p.email} | Scanned by: ${p.scanned_by || 'N/A'}</div>
+          </div>
+          <div>
+            ${p.attended ? `<span class="badge verified" style="font-size:0.7rem;">✔ ATTENDED</span>` : `<span class="badge" style="font-size:0.7rem; background:#334155;">⏳ NOT ARRIVED</span>`}
+          </div>
+        </div>
+      `).join('');
+    }
+  } catch (err) {
+    console.error('Error loading Firestore event data:', err);
+  }
+}
+
+async function submitParticipantCheckin() {
+  const inputEl = document.getElementById('checkin-ticket-input');
+  const notesEl = document.getElementById('checkin-notes-input');
+  const val = inputEl ? inputEl.value.trim() : '';
+  const notes = notesEl ? notesEl.value.trim() : '';
+
+  if (!val) {
+    showToast('Please enter a ticket ref or user ID to check in.', '⚠️');
+    return;
+  }
+
+  try {
+    const data = await fetchAPI('/firestore/events/devfest-bangkok-2026/checkin', {
+      method: 'POST',
+      body: JSON.stringify({ ticket_ref_or_user_id: val, notes: notes })
+    });
+
+    if (data.participant) {
+      showToast(`✅ Check-in recorded for ${data.participant.name}!`, '🎉');
+      if (inputEl) inputEl.value = '';
+      if (notesEl) notesEl.value = '';
+      loadFirestoreEventData();
+    } else {
+      showToast(data.detail || 'Check-in failed.', '⚠️');
+    }
+  } catch (err) {
+    showToast('Error recording participant check-in.', '⚠️');
+  }
 }
 
 async function loadAdminSessions() {

@@ -955,6 +955,7 @@
         <div style="display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid var(--card-border); padding-bottom:12px; flex-wrap:wrap;">
           <button class="hud-btn primary" onclick="showAdminTab('roles-tab')">Role Switcher & Invites</button>
           <button class="hud-btn" onclick="showAdminTab('agenda-admin-tab')">Manage Agenda & Tracks</button>
+          <button class="hud-btn" onclick="showAdminTab('firestore-admin-tab')">🔥 Firestore & Attendance</button>
           <button class="hud-btn" onclick="showAdminTab('announcements-tab')">Publish Announcements</button>
           <button class="hud-btn" onclick="showAdminTab('lucky-draw-tab')">Trigger Lucky Draw</button>
         </div>
@@ -1055,6 +1056,41 @@
             <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Randomly selects a winner from verified ticket participants.</p>
             <button class="hud-btn primary" onclick="triggerLuckyDraw()">🎰 Run Lucky Draw Raffle</button>
             <div id="lucky-draw-result" style="margin-top:12px;"></div>
+          </div>
+        </div>
+
+        <!-- Tab 5: Firestore Event & Attendance Check-In -->
+        <div id="firestore-admin-tab" class="admin-tab" style="display:none;">
+          <div class="card-item" style="border-color:#F59E0B; background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(15, 23, 42, 0.9));">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+              <h4 style="color:#FBBF24; display:flex; align-items:center; gap:6px;">🔥 Top-Level Event Metadata (Firestore)</h4>
+              <span class="badge" style="background:#F59E0B;">Project: gdg-cloud-bangkok-2026</span>
+            </div>
+            <div id="firestore-event-details" style="font-size:0.85rem; line-height:1.6; color:#CBD5E1;">
+              <!-- Populated dynamically via JavaScript -->
+            </div>
+          </div>
+
+          <!-- Live Attendance & Show-Up Rate Dashboard -->
+          <div class="card-item">
+            <h4 style="margin-bottom:8px; color:#38BDF8;">📊 Event Date Show-Up & Attendance Tracker</h4>
+            <div id="firestore-attendance-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:16px;">
+              <!-- Dynamic stats -->
+            </div>
+
+            <!-- Check-in Action Bar -->
+            <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">Scan Ticket Reference / User ID to Check In:</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+              <input type="text" id="checkin-ticket-input" placeholder="e.g. TICKET-DEV-001 or user-partic-1" style="flex:2; min-width:200px; padding:10px 14px; border-radius:8px; border:1px solid var(--card-border); background:#0F172A; color:#FFF; font-size:0.85rem;">
+              <input type="text" id="checkin-notes-input" placeholder="Optional notes (e.g. Gate A VIP)" style="flex:1; min-width:140px; padding:10px 14px; border-radius:8px; border:1px solid var(--card-border); background:#0F172A; color:#FFF; font-size:0.85rem;">
+              <button class="hud-btn primary" onclick="submitParticipantCheckin()">✅ Check In Attendee</button>
+            </div>
+
+            <!-- Participant Attendance List -->
+            <h5 style="margin:16px 0 8px; font-size:0.85rem; color:#94A3B8;">Participants & Show-Up Status on Firestore:</h5>
+            <div id="firestore-participants-list" style="max-height:240px; overflow-y:auto;">
+              <!-- Dynamic attendee list -->
+            </div>
           </div>
         </div>
       </div>

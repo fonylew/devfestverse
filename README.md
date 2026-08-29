@@ -89,6 +89,53 @@ Open `http://localhost:3000` in your browser.
 
 ---
 
+## Firestore Data Hierarchy & Live Attendance Tracking
+
+Data on Google Cloud Firestore is structured with the **event name / slug as the top-level document key** under the `events` collection:
+
+- **Collection**: `events`
+- **Document ID**: Event Name / Slug (e.g. `events/devfest-bangkok-2026`)
+  - `date`: Event date (e.g., `2026-11-28`)
+  - `venue`: Venue details (`name`, `address`, `rooms: [...]`)
+  - `metadata`: `{ theme, year, organizer, expected_capacity, registration_url }`
+  - `speakers`: Array of speaker profiles, titles, and bios
+  - `sessions`: Multi-track session agenda items
+  - `sponsors`: Sponsor tiers, booth URLs, and promo configs
+  - `workshops`: Workshop labs, seat capacities, and reserved counts
+  - `participants`: Map of registered attendees tracking show-up status on the date:
+    - `attended: true / false`
+    - `checked_in_at: ISO timestamp`
+    - `scanned_by: staff_id`
+    - `ticket_ref: TICKET-DEV-001`
+  - `attendance_summary`: Real-time show-up rate statistics (`total_registered`, `total_attended`, `show_up_rate_percent`, `absent_count`).
+
+---
+
+## Deploying to Google Cloud Run
+
+To deploy DevFestVerse to **Google Cloud Run** under project **`gdg-cloud-bangkok-2026`** with scale-down to 0 and max 1 instance cap:
+
+### Run Deployment Script
+```bash
+./deploy.sh
+```
+
+Or deploy directly via `gcloud`:
+```bash
+gcloud run deploy devfestverse \
+    --project gdg-cloud-bangkok-2026 \
+    --image gcr.io/gdg-cloud-bangkok-2026/devfestverse:latest \
+    --platform managed \
+    --region asia-southeast1 \
+    --min-instances 0 \
+    --max-instances 1 \
+    --memory 512Mi \
+    --cpu 1 \
+    --allow-unauthenticated
+```
+
+---
+
 ## Architecture Reference
 
 For detailed system design, ER diagrams, and Mermaid charts, see [architecture.md](architecture.md).

@@ -17,7 +17,8 @@ from backend.app.api import (
     lucky_draw,
     bgm,
     events,
-    backoffice
+    backoffice,
+    firestore_admin
 )
 
 app = FastAPI(
@@ -53,9 +54,21 @@ app.include_router(lucky_draw.router, prefix=api_v1_prefix)
 app.include_router(bgm.router, prefix=api_v1_prefix)
 app.include_router(events.router, prefix=api_v1_prefix)
 app.include_router(backoffice.router, prefix=api_v1_prefix)
+app.include_router(firestore_admin.router, prefix=api_v1_prefix)
+
+import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
+
+# Static Frontend mounting for standalone container deployment
+frontend_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend")
+if os.path.exists(frontend_path):
+    app.mount("/static-frontend", StaticFiles(directory=frontend_path, html=True), name="frontend")
 
 @app.get("/")
 def root():
+    if os.path.exists(os.path.join(frontend_path, "index.html")):
+        return RedirectResponse(url="/static-frontend/index.html")
     return {
         "app": settings.PROJECT_NAME,
         "community": "GDG Cloud Bangkok",
@@ -65,4 +78,4 @@ def root():
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy"}
+    return {"status": "healthy", "service": "devfestverse", "project": "gdg-cloud-bangkok-2026"}
