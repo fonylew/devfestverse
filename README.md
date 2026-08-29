@@ -21,6 +21,7 @@
   - **Floating Action Touch Button**: Contextual touch button that glows and pulses when approaching interactive booths, stages, and billboards.
   - **Mobile Bottom Navigation Bar**: Fixed bottom navigation bar (`World`, `Agenda`, `Labs`, `Studio`, `More`) on screens < 768px.
   - **Responsive Layout**: Fluid canvas scaling, stacked mobile customizer studio, and touch-optimized modal dialogs.
+- **Blue Elephant Favicon & PWA Branding**: Custom multi-resolution `.ico` and `.png` favicon featuring a blue elephant 🐘 with GDG sparkle accents.
 - **Multi-Directional Sprite Rendering Engine**: 4-way directional walking animations (Down, Up, Left, Right), animated limb step cycles, shadows, and floating role tags.
 - **2D Tech Campus World & Proximity HUD**: Interactive Google-themed campus with circuit pathways, pulsating holographic pads, proximity interaction tooltips (`Press [E] or Click to Open`), and mini-map radar.
 - **Main Event Ticket Verification Billboard**: Central 2D spawn billboard where participants verify their official DevFest tickets to earn an in-game "Verified Ticket Badge" and unlock Lucky Draw entry.

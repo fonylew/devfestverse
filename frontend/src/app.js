@@ -1,4 +1,7 @@
-const API_BASE = 'http://localhost:8000/api/v1';
+// Dynamic API Base URL supporting both local dev and production Cloud Run
+const API_BASE = window.location.origin.includes('localhost:3000') 
+  ? 'http://localhost:8000/api/v1' 
+  : `${window.location.origin}/api/v1`;
 
 // --- AUTH & USER STATE ---
 let currentUser = {

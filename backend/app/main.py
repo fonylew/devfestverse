@@ -58,23 +58,50 @@ app.include_router(firestore_admin.router, prefix=api_v1_prefix)
 
 import os
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse
 
 # Static Frontend mounting for standalone container deployment
 frontend_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend")
+
 if os.path.exists(frontend_path):
-    app.mount("/static-frontend", StaticFiles(directory=frontend_path, html=True), name="frontend")
+    # Mount subdirectories
+    src_dir = os.path.join(frontend_path, "src")
+    if os.path.exists(src_dir):
+        app.mount("/src", StaticFiles(directory=src_dir), name="src")
+    
+    public_dir = os.path.join(frontend_path, "public")
+    if os.path.exists(public_dir):
+        app.mount("/public", StaticFiles(directory=public_dir), name="public")
+        
+    assets_dir = os.path.join(frontend_path, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
 @app.get("/")
-def root():
-    if os.path.exists(os.path.join(frontend_path, "index.html")):
-        return RedirectResponse(url="/static-frontend/index.html")
+def serve_root():
+    index_file = os.path.join(frontend_path, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
     return {
         "app": settings.PROJECT_NAME,
         "community": "GDG Cloud Bangkok",
         "status": "online",
         "docs": "/docs"
     }
+
+@app.get("/favicon.ico")
+def serve_favicon():
+    fav = os.path.join(frontend_path, "favicon.ico")
+    if os.path.exists(fav):
+        return FileResponse(fav)
+    return {"detail": "favicon not found"}
+
+@app.get("/favicon.png")
+def serve_favicon_png():
+    fav = os.path.join(frontend_path, "favicon.png")
+    if os.path.exists(fav):
+        return FileResponse(fav)
+    return {"detail": "favicon not found"}
 
 @app.get("/health")
 def health_check():
