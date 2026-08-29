@@ -29,6 +29,9 @@ WORKSHOPS_DB = [
 class ReserveSeatRequest(BaseModel):
     workshop_id: str
 
+class CancelSeatRequest(BaseModel):
+    workshop_id: str
+
 @router.get("")
 def list_workshops():
     return WORKSHOPS_DB
@@ -56,3 +59,21 @@ def reserve_workshop_seat(req: ReserveSeatRequest, user: dict = Depends(get_curr
         "pass_code": f"PASS-{ws['id']}-{user['id'][:6]}",
         "room_code": ws["room_code"]
     }
+
+@router.post("/cancel")
+def cancel_workshop_seat(req: CancelSeatRequest, user: dict = Depends(get_current_user)):
+    ws = next((w for w in WORKSHOPS_DB if w["id"] == req.workshop_id), None)
+    if not ws:
+        raise HTTPException(status_code=404, detail="Workshop room not found.")
+    
+    if user["id"] not in ws["attendees"]:
+        raise HTTPException(status_code=400, detail="You are not registered for this workshop.")
+    
+    ws["attendees"].remove(user["id"])
+    ws["reserved_count"] = max(0, ws["reserved_count"] - 1)
+    return {
+        "message": f"Cancelled reservation for '{ws['title']}'. Seat released!",
+        "workshop_id": ws["id"],
+        "reserved_count": ws["reserved_count"]
+    }
+

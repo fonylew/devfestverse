@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevFestVerse - GDG Cloud Bangkok 2D Platform</title>
+  <link rel="manifest" href="/public/manifest.json">
+  <meta name="theme-color" content="#4285F4">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --g-blue: #4285F4;
+      --g-red: #EA4335;
+      --g-yellow: #FBBC04;
+      --g-green: #34A853;
+      --bg-dark: #0B0F19;
+      --card-bg: #131B2E;
+      --card-border: #23314D;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-main); overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+    
+    /* Top HUD Header */
+    header {
+      background: rgba(11, 15, 25, 0.92);
+      backdrop-filter: blur(12px);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      z-index: 100;
+    }
+    
+    .brand-section { display: flex; align-items: center; gap: 14px; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.15rem;
+      background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .gdg-badge {
+      display: flex;
+      gap: 3px;
+      margin-right: 4px;
+    }
+    .gdg-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+    /* Profile Chip */
+    .user-profile-chip {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 30px;
+      padding: 4px 12px 4px 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .user-profile-chip:hover {
+      border-color: var(--g-blue);
+      background: #1A2642;
+      transform: translateY(-1px);
+    }
+    .avatar-mini-thumb {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #1E293B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1.5px solid var(--g-blue);
+    }
+    .user-name-text { font-size: 0.85rem; font-weight: 700; color: #FFF; }
+    
+    .hud-controls { display: flex; gap: 8px; align-items: center; }
+    
+    .hud-btn {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+      padding: 7px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.82rem;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+    .hud-btn:hover { background: #1E293B; color: #38BDF8; border-color: #38BDF8; transform: translateY(-1px); }
+    .hud-btn.primary { background: linear-gradient(135deg, #2563EB, #1D4ED8); border-color: #3B82F6; color: #FFF; box-shadow: 0 2px 8px rgba(37,99,235,0.3); }
+    .hud-btn.primary:hover { background: linear-gradient(135deg, #3B82F6, #2563EB); border-color: #60A5FA; }
+    .hud-btn.studio { background: linear-gradient(135deg, #7C3AED, #4F46E5); border-color: #8B5CF6; color: #FFF; box-shadow: 0 2px 8px rgba(124,58,237,0.3); }
+    .hud-btn.studio:hover { background: linear-gradient(135deg, #8B5CF6, #6D28D9); border-color: #A78BFA; }
+    .hud-btn.admin { background: rgba(236, 72, 153, 0.15); border-color: #EC4899; color: #F472B6; }
+    .hud-btn.admin:hover { background: #EC4899; color: #FFF; }
+
+    /* Announcement Ticker Bar */
+    .ticker-bar {
+      background: linear-gradient(90deg, #0369A1 0%, #1D4ED8 100%);
+      color: #FFF;
+      padding: 6px 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .ticker-tag {
+      background: rgba(255,255,255,0.2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .ticker-content { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+    /* 2D Canvas Container */
+    #game-container {
+      flex: 1;
+      position: relative;
+      background: #090D16;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    canvas#gameCanvas {
+      background: #0A0F1D;
+      border-radius: 8px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+      cursor: crosshair;
+    }
+
+    /* Floating Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(8, 11, 20, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 780px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.08);
+      overflow: hidden;
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalPop {
+      0% { transform: scale(0.94) translateY(10px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .modal-header {
+      padding: 16px 24px;
+      background: #0C1220;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 { font-size: 1.15rem; color: var(--text-main); font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+    .modal-actions { display: flex; gap: 10px; align-items: center; }
+    .close-btn {
+      background: #1E293B;
+      border: 1px solid var(--card-border);
+      color: #94A3B8;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .close-btn:hover { color: #FFF; background: var(--g-red); border-color: var(--g-red); }
+
+    /* Iframe Viewport inside Modal */
+    .iframe-viewport { width: 100%; height: 520px; border: none; border-radius: 8px; background: #FFF; }
+
+    /* Badge Styles */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: var(--g-blue);
+      color: #FFF;
+      letter-spacing: 0.3px;
+    }
+    .badge.verified { background: #10B981; }
+    .badge.staff { background: #F59E0B; }
+    .badge.speaker { background: #8B5CF6; }
+    .badge.sponsor { background: #EC4899; }
+    .badge.organizer { background: #EF4444; }
+
+    .card-item {
+      background: #0C1220;
+      border: 1px solid var(--card-border);
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s ease;
+    }
+    .card-item:hover { border-color: #38BDF8; }
+
+    /* Character Customizer Studio Styles */
+    .studio-layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; }
+    .studio-preview-box {
+      background: #090E1A;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .preview-canvas-wrap {
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle, #1E293B 0%, #0B0F19 80%);
+      border: 2px dashed #334155;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .studio-tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 16px; }
+    .studio-tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .studio-tab-btn.active {
+      background: #1E293B;
+      color: #38BDF8;
+      border-color: #334155;
+    }
+    .swatch-grid { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px; }
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .color-swatch:hover { transform: scale(1.15); }
+    .color-swatch.selected { border-color: #FFF; transform: scale(1.15); box-shadow: 0 0 8px rgba(255,255,255,0.4); }
+    .chip-selector { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px; }
+    .option-chip {
+      background: #0C1220;
+      border: 1px solid var(--card-border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .option-chip:hover { color: #FFF; border-color: #475569; }
+    .option-chip.selected { background: #1E293B; color: #38BDF8; border-color: #38BDF8; font-weight: 700; }
+
+    /* Google Sign In Modal Styles */
+    .google-signin-btn {
+      width: 100%;
+      background: #FFF;
+      color: #1F2937;
+      border: 1px solid #E5E7EB;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      margin-bottom: 16px;
+    }
+    .google-signin-btn:hover {
+      background: #F3F4F6;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      transform: translateY(-1px);
+    }
+    .quick-account-btn {
+      background: #0C1220;
+      border: 1px solid var(--card-border);
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: #FFF;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .quick-account-btn:hover { border-color: #38BDF8; background: #1A2642; }
+
+    /* Proximity Tooltip on Canvas */
+    #proximity-hint {
+      position: absolute;
+      display: none;
+      background: rgba(12, 18, 32, 0.92);
+      border: 1px solid var(--g-blue);
+      padding: 6px 12px;
+      border-radius: 8px;
+      color: #FFF;
+      font-size: 0.78rem;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 12px rgba(66,133,244,0.4);
+      pointer-events: none;
+      z-index: 60;
+      transform: translate(-50%, -100%);
+      transition: opacity 0.15s ease;
+    }
+
+    /* Controls Overlay HUD */
+    .controls-hint {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(11, 15, 25, 0.85);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(6px);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .key-badge { background: #1E293B; border: 1px solid #475569; padding: 2px 6px; border-radius: 4px; color: #FFF; font-weight: bold; font-size: 0.7rem; }
+
+    /* Toast Notification Container */
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .toast {
+      background: #131B2E;
+      border: 1px solid #38BDF8;
+      color: #FFF;
+      padding: 12px 18px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+    }
+    /* Mobile Virtual Touch Controls */
+    #mobile-touch-controls {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+      z-index: 80;
+    }
+    .virtual-dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 44px);
+      grid-template-rows: repeat(3, 44px);
+      gap: 4px;
+      pointer-events: auto;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .dpad-btn {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1.5px solid rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      color: #FFF;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 0.1s, transform 0.1s, border-color 0.1s;
+    }
+    .dpad-btn:active, .dpad-btn.pressed {
+      background: rgba(56, 189, 248, 0.4);
+      border-color: #38BDF8;
+      transform: scale(0.92);
+    }
+    .virtual-action-btn {
+      pointer-events: auto;
+      background: linear-gradient(135deg, #10B981, #059669);
+      border: 2px solid #34D399;
+      color: #FFF;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 0.72rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+      cursor: pointer;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: all 0.15s;
+    }
+    .virtual-action-btn:active {
+      transform: scale(0.9);
+      background: #047857;
+    }
+    .virtual-action-btn.active-pulse {
+      animation: pulseGlow 1s infinite alternate;
+      border-color: #FDE047;
+      background: linear-gradient(135deg, #2563EB, #7C3AED);
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 10px #38BDF8; transform: scale(1); }
+      100% { box-shadow: 0 0 25px #A78BFA, 0 0 35px #38BDF8; transform: scale(1.08); }
+    }
+
+    /* Mobile Bottom Navigation Bar */
+    #mobile-bottom-nav {
+      display: none;
+      background: rgba(11, 15, 25, 0.95);
+      border-top: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      padding: 6px 12px calc(6px + env(safe-area-inset-bottom));
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: color 0.15s;
+    }
+    .mobile-nav-item:active, .mobile-nav-item.active {
+      color: #38BDF8;
+    }
+    .mobile-nav-item span.icon { font-size: 1.15rem; }
+
+    /* Responsive Media Queries */
+    @media (max-width: 768px) {
+      body { height: 100dvh; }
+      header .hud-controls { display: none; }
+      #mobile-bottom-nav { display: flex; }
+      .controls-hint { display: none; }
+      #game-container {
+        padding: 0;
+        align-items: center;
+      }
+      canvas#gameCanvas {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: calc(100dvh - 120px);
+        object-fit: contain;
+      }
+      .studio-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .modal-card {
+        width: 95%;
+        max-height: 90dvh;
+        margin: 8px;
+      }
+      .modal-body {
+        padding: 16px;
+      }
+      #toast-container {
+        bottom: 70px;
+        right: 12px;
+        left: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header HUD -->
+  <header>
+    <div class="brand-section">
+      <div class="gdg-badge">
+        <div class="gdg-dot" style="background: var(--g-blue);"></div>
+        <div class="gdg-dot" style="background: var(--g-red);"></div>
+        <div class="gdg-dot" style="background: var(--g-yellow);"></div>
+        <div class="gdg-dot" style="background: var(--g-green);"></div>
+      </div>
+      <div class="brand">DevFestVerse</div>
+      
+      <!-- Current User Profile Chip -->
+      <div class="user-profile-chip" onclick="openModal('signin-modal')" title="Click to Switch Account or Sign In">
+        <div id="hud-avatar-thumb" class="avatar-mini-thumb">
+          <span style="font-size: 1rem;">🧑‍💻</span>
+        </div>
+        <div>
+          <div id="user-display-name" class="user-name-text">Pixel Dev</div>
+          <span id="user-role-badge" class="badge">PARTICIPANT</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HUD Action Controls (Desktop) -->
+    <div class="hud-controls">
+      <button class="hud-btn studio" onclick="openModal('avatar-studio-modal')">🎨 Character Studio</button>
+      <button class="hud-btn" onclick="openModal('ticket-modal')">🎫 Ticket Check</button>
+      <button class="hud-btn" onclick="openModal('agenda-modal')">📅 Agenda & Transcripts</button>
+      <button class="hud-btn" onclick="openModal('workshops-modal')">💻 Workshops</button>
+      <button class="hud-btn" onclick="openModal('qna-modal')">💬 Q&A</button>
+      <button class="hud-btn" onclick="openModal('shop-modal')">🛍️ Store</button>
+      <button class="hud-btn" onclick="openModal('bgm-modal')">🎵 BGM</button>
+      <button id="backoffice-hud-btn" class="hud-btn admin" style="display:none;" onclick="openModal('backoffice-modal')">⚙️ Back Office</button>
+    </div>
+  </header>
+
+  <!-- Live Public Announcement Ticker Bar -->
+  <div class="ticker-bar">
+    <span class="ticker-tag">ANNOUNCEMENT</span>
+    <div id="ticker-content" class="ticker-content">Welcome to DevFestVerse! Sign in with Google, design your avatar in the Character Studio, and verify your ticket!</div>
+  </div>
+
+  <!-- 2D Canvas Game Area -->
+  <div id="game-container">
+    <canvas id="gameCanvas" width="960" height="540"></canvas>
+    
+    <!-- Proximity Interaction Tooltip -->
+    <div id="proximity-hint">
+      <span id="proximity-hint-text">Press [E] or Click to Open</span>
+    </div>
+
+    <!-- Controls Hint Bottom-Left (Desktop) -->
+    <div class="controls-hint">
+      🎮 Movement: <span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> / Arrows &nbsp;|&nbsp; Tap to Walk &nbsp;|&nbsp; Interact: <span class="key-badge">E</span> / Click
+    </div>
+
+    <!-- Mobile Virtual Touch Controls Overlay -->
+    <div id="mobile-touch-controls">
+      <!-- Touch D-Pad -->
+      <div class="virtual-dpad">
+        <div></div>
+        <button class="dpad-btn" id="dpad-up" data-dir="up">⬆️</button>
+        <div></div>
+        <button class="dpad-btn" id="dpad-left" data-dir="left">⬅️</button>
+        <button class="dpad-btn" id="dpad-center" style="font-size:0.75rem; color:#64748B;">●</button>
+        <button class="dpad-btn" id="dpad-right" data-dir="right">➡️</button>
+        <div></div>
+        <button class="dpad-btn" id="dpad-down" data-dir="down">⬇️</button>
+        <div></div>
+      </div>
+
+      <!-- Touch Action Button -->
+      <button class="virtual-action-btn" id="mobile-action-btn" onclick="triggerMobileAction()">
+        <span style="font-size:1.4rem;">💬</span>
+        <span id="mobile-action-label">ACTION</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav id="mobile-bottom-nav">
+    <button class="mobile-nav-item active" onclick="closeAllModals()">
+      <span class="icon">🗺️</span>
+      <span>World</span>
+    </button>
+    <button class="mobile-nav-item" onclick="openModal('agenda-modal')">
+      <span class="icon">📅</span>
+      <span>Agenda</span>
+    </button>
+    <button class="mobile-nav-item" onclick="openModal('workshops-modal')">
+      <span class="icon">💻</span>
+      <span>Labs</span>
+    </button>
+    <button class="mobile-nav-item" onclick="openModal('avatar-studio-modal')">
+      <span class="icon">🎨</span>
+      <span>Studio</span>
+    </button>
+    <button class="mobile-nav-item" onclick="openModal('mobile-menu-modal')">
+      <span class="icon">☰</span>
+      <span>More</span>
+    </button>
+  </nav>
+
+  <!-- MODAL 1: Google Sign-In & Onboarding -->
+  <div id="signin-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3>🔐 Sign in to DevFestVerse</h3>
+        <button class="close-btn" onclick="closeModal('signin-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; line-height: 1.5;">
+          Sign in with your Google account to unlock full DevFest experiences, customize your avatar, reserve workshop seats, and enter the Lucky Draw.
+        </p>
+
+        <!-- Google OAuth Button -->
+        <button class="google-signin-btn" onclick="loginWithGoogle()">
+          <svg width="20" height="20" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div style="text-align: center; margin: 16px 0; color: #475569; font-size: 0.8rem; font-weight: bold; position: relative;">
+          <span style="background: var(--card-bg); padding: 0 10px; position: relative; z-index: 1;">OR CHOOSE DEMO ROLE</span>
+          <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--card-border); z-index: 0;"></div>
+        </div>
+
+          <button class="quick-account-btn" onclick="selectDemoAccount('user-partic-1', 'Pixel Dev (Participant)', 'PARTICIPANT', false)">
+            <span style="font-size: 1.2rem;">🧑‍💻</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">Pixel Dev</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Participant / Attendee (Back Office Hidden)</div>
+            </div>
+            <span class="badge">PARTICIPANT</span>
+          </button>
+
+          <button class="quick-account-btn" onclick="selectDemoAccount('user-speaker-1', 'Dr. Agent (Speaker)', 'SPEAKER', true)">
+            <span style="font-size: 1.2rem;">🎤</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">Dr. Agent</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Keynote & AI Speaker (Back Office Hidden)</div>
+            </div>
+            <span class="badge speaker">SPEAKER</span>
+          </button>
+
+          <button class="quick-account-btn" onclick="selectDemoAccount('user-staff-1', 'Alex Staff (Staff)', 'STAFF', true)">
+            <span style="font-size: 1.2rem;">🛡️</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">Alex Staff</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Event Crew & Moderator (Back Office Visible)</div>
+            </div>
+            <span class="badge staff">STAFF</span>
+          </button>
+
+          <button class="quick-account-btn" onclick="selectDemoAccount('user-org-1', 'GDG Lead (Organizer)', 'ORGANIZER', true)">
+            <span style="font-size: 1.2rem;">⭐</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">GDG Lead</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Event Admin & Lead (Back Office Visible)</div>
+            </div>
+            <span class="badge organizer">ORGANIZER</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: 2D Character Generator Studio -->
+  <div id="avatar-studio-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 820px;">
+      <div class="modal-header">
+        <h3>🎨 2D Character Customizer & AI Avatar Studio</h3>
+        <button class="close-btn" onclick="closeModal('avatar-studio-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Gemini AI Prompt Bar -->
+        <div class="card-item" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)); border-color: #8B5CF6;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label style="font-weight:700; font-size:0.88rem; color:#A78BFA; display:flex; align-items:center; gap:6px;">
+              ✨ Gemini AI Character Synthesizer
+            </label>
+            <span style="font-size:0.72rem; color:#94A3B8;">Prompt to 2D Pixel Sprite</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="ai-avatar-prompt" placeholder="e.g. Google Cloud Architect with glowing VR visor and cyan pet" style="flex:1; padding:10px 14px; border-radius:8px; border:1px solid #475569; background:#0F172A; color:#FFF; font-size:0.85rem;">
+            <button class="hud-btn studio" onclick="generateWithGeminiAI()">✨ Generate with AI</button>
+          </div>
+        </div>
+
+        <div class="studio-layout">
+          <!-- Left: Live Preview -->
+          <div class="studio-preview-box">
+            <div class="preview-canvas-wrap">
+              <canvas id="studioPreviewCanvas" width="128" height="128"></canvas>
+            </div>
+            <div id="studio-char-name" style="font-weight:700; font-size:0.9rem; margin-bottom:4px;">Pixel Dev</div>
+            <div id="studio-char-badge" class="badge" style="margin-bottom:14px;">PARTICIPANT</div>
+            
+            <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+              <button class="hud-btn" style="justify-content:center;" onclick="randomizeCharacter()">🎲 Randomize Look</button>
+              <button class="hud-btn primary" style="justify-content:center;" onclick="saveAndApplyAvatar()">💾 Save & Apply Look</button>
+            </div>
+          </div>
+
+          <!-- Right: Customizer Tabs -->
+          <div>
+            <div class="studio-tabs">
+              <button class="studio-tab-btn active" onclick="switchStudioTab('tab-body')">Body & Skin</button>
+              <button class="studio-tab-btn" onclick="switchStudioTab('tab-hair')">Hair & Style</button>
+              <button class="studio-tab-btn" onclick="switchStudioTab('tab-outfit')">Outfit & Colors</button>
+              <button class="studio-tab-btn" onclick="switchStudioTab('tab-gear')">Headwear & Aura</button>
+            </div>
+
+            <!-- Tab 1: Body & Skin -->
+            <div id="tab-body" class="studio-tab-pane">
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted);">Skin Tone:</label>
+              <div class="swatch-grid" id="skin-swatches"></div>
+
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted); margin-top:10px; display:block;">Preset Theme Palettes:</label>
+              <div class="chip-selector" id="theme-presets"></div>
+            </div>
+
+            <!-- Tab 2: Hair -->
+            <div id="tab-hair" class="studio-tab-pane" style="display:none;">
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted);">Hair Style:</label>
+              <div class="chip-selector" id="hair-style-chips"></div>
+
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted);">Hair Color:</label>
+              <div class="swatch-grid" id="hair-swatches"></div>
+            </div>
+
+            <!-- Tab 3: Outfit -->
+            <div id="tab-outfit" class="studio-tab-pane" style="display:none;">
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted);">Outfit Style:</label>
+              <div class="chip-selector" id="outfit-style-chips"></div>
+
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted);">Outfit Primary Color:</label>
+              <div class="swatch-grid" id="outfit-swatches"></div>
+            </div>
+
+            <!-- Tab 4: Headwear & Aura -->
+            <div id="tab-gear" class="studio-tab-pane" style="display:none;">
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted);">Headwear / Accessories:</label>
+              <div class="chip-selector" id="headwear-chips"></div>
+
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted);">Special Aura & Pet:</label>
+              <div class="chip-selector" id="aura-chips"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Main Ticket Verification Billboard -->
+  <div id="ticket-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🎫 Main Event Ticket Verification</h3>
+        <button class="close-btn" onclick="closeModal('ticket-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 16px; color: var(--text-muted); line-height: 1.5;">
+          Verify your official GDG Cloud Bangkok DevFest Event Ticket to earn your in-game 
+          <strong style="color: #10B981;">Verified Ticket Badge</strong> and unlock Lucky Draw entries and Workshop seat reservations!
+        </p>
+        <div class="card-item">
+          <label style="display:block; margin-bottom:8px; font-weight:bold; font-size:0.88rem;">Enter Ticket Ref / Email:</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="ticket-ref-input" placeholder="e.g. TICKET-DEV-001" style="flex:1; padding:10px 14px; border-radius:8px; border:1px solid #475569; background:#0F172A; color:#FFF; font-size:0.9rem;">
+            <button class="hud-btn primary" onclick="verifyTicket()">Verify Official Ticket</button>
+          </div>
+        </div>
+        <p style="font-size:0.85rem; color:var(--text-muted);">Don't have a ticket yet? <a href="https://gdg.community.dev/events/details/google-gdg-cloud-bangkok-presents-devfest-bangkok/" target="_blank" style="color:#38BDF8; font-weight:600;">Register for DevFest Bangkok Ticket Here</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Clickable Billboard iframe Modal with "Open in New Tab" Button -->
+  <div id="billboard-iframe-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3 id="billboard-modal-title">Community Billboard</h3>
+        <div class="modal-actions">
+          <a id="billboard-new-tab-btn" href="#" target="_blank" rel="noopener noreferrer" class="hud-btn primary">🔗 Open in New Tab</a>
+          <button class="close-btn" onclick="closeModal('billboard-iframe-modal')">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding:0;">
+        <iframe id="billboard-iframe-viewport" class="iframe-viewport" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Event Agenda & Session Transcripts by Speaker -->
+  <div id="agenda-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 860px;">
+      <div class="modal-header">
+        <h3>📅 DevFest Agenda & Multi-Track Schedule</h3>
+        <button class="close-btn" onclick="closeModal('agenda-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Track Filter Tabs Bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+          <div id="agenda-track-tabs" style="display:flex; gap:6px; flex-wrap:wrap;">
+            <!-- Dynamically populated tracks: All, My Agenda, Track 1, Track 2, etc. -->
+          </div>
+          <input type="text" id="agenda-search-input" placeholder="🔍 Search talks, speakers..." oninput="onAgendaSearch(this.value)" style="padding:6px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.82rem; width:200px;">
+        </div>
+
+        <div id="agenda-list">
+          <!-- Rendered dynamically via JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Workshop Rooms Registration -->
+  <div id="workshops-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>💻 Workshop Room Seat Reservations</h3>
+        <button class="close-btn" onclick="closeModal('workshops-modal')">&times;</button>
+      </div>
+      <div class="modal-body" id="workshops-list">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Community Shop iframe -->
+  <div id="shop-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🛍️ GDG Cloud Bangkok Community Shop</h3>
+        <div class="modal-actions">
+          <a href="https://gdgcloudbkk.org/store" target="_blank" class="hud-btn primary">🔗 Open Store in New Tab</a>
+          <button class="close-btn" onclick="closeModal('shop-modal')">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding:0;">
+        <iframe class="iframe-viewport" src="https://gdg.community.dev"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Realtime Q&A -->
+  <div id="qna-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>💬 Realtime Session Q&A</h3>
+        <button class="close-btn" onclick="closeModal('qna-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="card-item">
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="qna-input" placeholder="Ask a question for the stage speakers..." style="flex:1; padding:10px 14px; border-radius:8px; border:1px solid #475569; background:#0F172A; color:#FFF;">
+            <button class="hud-btn primary" onclick="submitQuestion()">Submit Question</button>
+          </div>
+        </div>
+        <div id="qna-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BGM Music Player -->
+  <div id="bgm-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🎵 Zone Background Music Player</h3>
+        <button class="close-btn" onclick="closeModal('bgm-modal')">&times;</button>
+      </div>
+      <div class="modal-body" id="bgm-list">
+        <!-- BGM Tracks rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Back Office Administration Console -->
+  <div id="backoffice-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 880px;">
+      <div class="modal-header">
+        <h3>⚙️ Back Office Console (Organizers & Staff)</h3>
+        <button class="close-btn" onclick="closeModal('backoffice-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid var(--card-border); padding-bottom:12px; flex-wrap:wrap;">
+          <button class="hud-btn primary" onclick="showAdminTab('roles-tab')">Role Switcher & Invites</button>
+          <button class="hud-btn" onclick="showAdminTab('agenda-admin-tab')">Manage Agenda & Tracks</button>
+          <button class="hud-btn" onclick="showAdminTab('announcements-tab')">Publish Announcements</button>
+          <button class="hud-btn" onclick="showAdminTab('lucky-draw-tab')">Trigger Lucky Draw</button>
+        </div>
+
+        <!-- Tab 1: Roles & Invites -->
+        <div id="roles-tab" class="admin-tab">
+          <div class="card-item">
+            <h4 style="margin-bottom:6px;">Generate Role Invitation Link</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Create unique invite URLs for Speakers, Sponsors, and Staff.</p>
+            <div style="display:flex; gap:10px;">
+              <select id="invite-role-select" style="padding:8px 12px; border-radius:8px; background:#0F172A; border:1px solid #475569; color:#FFF;">
+                <option value="SPEAKER">Speaker</option>
+                <option value="SPONSOR">Sponsor</option>
+                <option value="STAFF">Staff</option>
+              </select>
+              <button class="hud-btn primary" onclick="generateInviteLink()">Generate Invite Token</button>
+            </div>
+            <div id="invite-result" style="margin-top:12px; word-break:break-all; color:#38BDF8; font-size:0.85rem;"></div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Agenda & Tracks Manager -->
+        <div id="agenda-admin-tab" class="admin-tab" style="display:none;">
+          <div class="card-item">
+            <h4 id="admin-session-form-title" style="margin-bottom:10px; color:#38BDF8;">Add / Edit Agenda Session</h4>
+            <input type="hidden" id="sess-edit-id">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Session Title:</label>
+                <input type="text" id="sess-edit-title" placeholder="e.g. Mastering Vector AI on Cloud Run" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Track Name:</label>
+                <select id="sess-edit-track" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+                  <option value="Main Keynote">Main Keynote</option>
+                  <option value="Track 1: AI & Agents">Track 1: AI & Agents</option>
+                  <option value="Track 2: Cloud & DevOps">Track 2: Cloud & DevOps</option>
+                  <option value="Track 3: Web & Frontend">Track 3: Web & Frontend</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:10px; margin-bottom:10px;">
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Speaker Name:</label>
+                <input type="text" id="sess-edit-speaker" placeholder="Speaker Name" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Room / Location:</label>
+                <input type="text" id="sess-edit-room" placeholder="Room A1" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Start Time:</label>
+                <input type="text" id="sess-edit-start" placeholder="10:00 AM" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">End Time:</label>
+                <input type="text" id="sess-edit-end" placeholder="11:00 AM" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Description:</label>
+              <textarea id="sess-edit-desc" rows="2" placeholder="Session description..." style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem; resize:none;"></textarea>
+            </div>
+
+            <div style="display:flex; gap:8px;">
+              <button class="hud-btn primary" onclick="saveAdminSession()">💾 Save Session to Schedule</button>
+              <button class="hud-btn" onclick="clearAdminSessionForm()">Clear / Reset</button>
+            </div>
+          </div>
+
+          <div class="card-item">
+            <h4 style="margin-bottom:10px;">All DevFest Sessions & Tracks</h4>
+            <div id="admin-sessions-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Announcements -->
+        <div id="announcements-tab" class="admin-tab" style="display:none;">
+          <div class="card-item">
+            <h4 style="margin-bottom:6px;">Publish Live Announcement</h4>
+            <select id="ann-channel" style="padding:8px 12px; border-radius:8px; background:#0F172A; border:1px solid #475569; color:#FFF; margin-bottom:10px;">
+              <option value="PUBLIC">Public Channel (All Clients)</option>
+              <option value="STAFF">Staff Internal Channel</option>
+            </select>
+            <input type="text" id="ann-text" placeholder="Announcement text..." style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #475569; background:#0F172A; color:#FFF; margin-bottom:10px;">
+            <button class="hud-btn primary" onclick="publishAnnouncement()">Broadcast Announcement</button>
+          </div>
+        </div>
+
+        <!-- Tab 4: Lucky Draw -->
+        <div id="lucky-draw-tab" class="admin-tab" style="display:none;">
+          <div class="card-item">
+            <h4 style="margin-bottom:6px;">Trigger Gamified Lucky Draw Raffle</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Randomly selects a winner from verified ticket participants.</p>
+            <button class="hud-btn primary" onclick="triggerLuckyDraw()">🎰 Run Lucky Draw Raffle</button>
+            <div id="lucky-draw-result" style="margin-top:12px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- MODAL: Mobile Quick Menu Drawer -->
+  <div id="mobile-menu-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3>📱 DevFestVerse Menu</h3>
+        <button class="close-btn" onclick="closeModal('mobile-menu-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button class="quick-account-btn" onclick="closeModal('mobile-menu-modal'); openModal('ticket-modal');">
+            <span style="font-size:1.4rem;">🎫</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">Official Ticket Verification</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Verify ticket & unlock lucky draw</div>
+            </div>
+            <span>➡️</span>
+          </button>
+
+          <button class="quick-account-btn" onclick="closeModal('mobile-menu-modal'); openModal('qna-modal');">
+            <span style="font-size:1.4rem;">💬</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">Stage Q&A</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Submit questions to speakers</div>
+            </div>
+            <span>➡️</span>
+          </button>
+
+          <button class="quick-account-btn" onclick="closeModal('mobile-menu-modal'); openModal('shop-modal');">
+            <span style="font-size:1.4rem;">🛍️</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">Community Store</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">GDG merchandise & swag</div>
+            </div>
+            <span>➡️</span>
+          </button>
+
+          <button class="quick-account-btn" onclick="closeModal('mobile-menu-modal'); openModal('bgm-modal');">
+            <span style="font-size:1.4rem;">🎵</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">Zone BGM Player</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Listen to spatial background tracks</div>
+            </div>
+            <span>➡️</span>
+          </button>
+
+          <button id="mobile-backoffice-btn" class="quick-account-btn" style="display:none; border-color:#EC4899; background:rgba(236,72,153,0.1);" onclick="closeModal('mobile-menu-modal'); openModal('backoffice-modal');">
+            <span style="font-size:1.4rem;">⚙️</span>
+            <div style="flex:1;">
+              <div style="font-weight:700; color:#F472B6;">Back Office Console</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Schedule, roles & lucky draw</div>
+            </div>
+            <span class="badge organizer">ADMIN</span>
+          </button>
+
+          <button class="quick-account-btn" onclick="closeModal('mobile-menu-modal'); openModal('signin-modal');">
+            <span style="font-size:1.4rem;">🔐</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">Account & Google Sign-In</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Switch profile or demo roles</div>
+            </div>
+            <span>➡️</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <script src="/src/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/public/sw.js').catch(err => console.log('SW Registration Failed', err));
+    }
+  </script>
+</body>
+</html>
+
