@@ -39,3 +39,16 @@ def test_generate_and_redeem_invite_link():
     red_resp = client.post("/api/v1/invites/redeem", json={"token": token, "user_id": "user-partic-1"})
     assert red_resp.status_code == 200
     assert red_resp.json()["user"]["role"] == "SPEAKER"
+
+def test_auth_config_serves_google_client_id_from_env(monkeypatch):
+    from backend.app.core.config import Settings
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "123456789-custom-container-client-id.apps.googleusercontent.com")
+    new_settings = Settings()
+    assert new_settings.GOOGLE_CLIENT_ID == "123456789-custom-container-client-id.apps.googleusercontent.com"
+    
+    # Test API endpoint
+    import backend.app.api.auth as auth_module
+    monkeypatch.setattr(auth_module.settings, "GOOGLE_CLIENT_ID", "123456789-custom-container-client-id.apps.googleusercontent.com")
+    resp = client.get("/api/v1/auth/config")
+    assert resp.status_code == 200
+    assert resp.json()["google_client_id"] == "123456789-custom-container-client-id.apps.googleusercontent.com"

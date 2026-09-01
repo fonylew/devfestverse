@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     GCP_PROJECT: str = os.getenv("GCP_PROJECT", os.getenv("GOOGLE_CLOUD_PROJECT", ""))
     
     # Google Identity Services (GIS) / Google Auth
-    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "")
     
     FIRESTORE_USERS_COLLECTION: str = "users"
     FIRESTORE_EVENTS_COLLECTION: str = "events"
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
-        case_sensitive=True
+        case_sensitive=False
     )
 
 settings = Settings()

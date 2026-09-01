@@ -140,23 +140,6 @@
     }
     .ticker-content { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
-    /* 2D Canvas Container */
-    #game-container {
-      flex: 1;
-      position: relative;
-      background: #090D16;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    canvas#gameCanvas {
-      background: #0A0F1D;
-      border-radius: 8px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
-      cursor: crosshair;
-    }
-
     /* Floating Modals */
     .modal-overlay {
       position: fixed;
@@ -355,22 +338,41 @@
     }
     .quick-account-btn:hover { border-color: #38BDF8; background: #1A2642; }
 
-    /* Proximity Tooltip on Canvas */
+    /* Proximity Tooltip on Canvas - Sleek Glassmorphic Pill with Blurry Backdrop */
     #proximity-hint {
       position: absolute;
       display: none;
-      background: rgba(12, 18, 32, 0.92);
-      border: 1px solid var(--g-blue);
-      padding: 6px 12px;
-      border-radius: 8px;
-      color: #FFF;
-      font-size: 0.78rem;
-      font-weight: 700;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 12px rgba(66,133,244,0.4);
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.75);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
+      backdrop-filter: blur(12px) saturate(180%);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      padding: 3px 10px;
+      border-radius: 20px;
+      color: #F8FAFC;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 10px rgba(56, 189, 248, 0.25);
       pointer-events: none;
       z-index: 60;
-      transform: translate(-50%, -100%);
-      transition: opacity 0.15s ease;
+      white-space: nowrap;
+      transform: translate(-50%, -125%);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    #proximity-hint .hint-key {
+      background: rgba(56, 189, 248, 0.22);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      color: #38BDF8;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.2;
     }
 
     /* Controls Hint Bottom-Left (Desktop) */
@@ -694,17 +696,129 @@
 
     /* Responsive Media Queries (Mobile Viewports) */
     @media (max-width: 768px) {
-      body { height: 100dvh; }
+      body {
+        height: 100vh;
+        height: 100dvh;
+      }
+      header {
+        padding: 6px 14px;
+        min-height: 46px;
+        background: rgba(10, 15, 29, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+      }
+      .brand-section {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .brand {
+        font-size: 0.92rem;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+      }
+      .google-signin-btn {
+        padding: 5px 10px;
+        font-size: 0.72rem;
+        border-radius: 8px;
+        gap: 5px;
+        white-space: nowrap;
+      }
+      .user-profile-chip {
+        padding: 3px 8px 3px 5px;
+        max-width: 150px;
+        gap: 6px;
+        border-radius: 20px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+      }
+      .avatar-mini-thumb {
+        width: 24px;
+        height: 24px;
+      }
+      .user-name-text {
+        font-size: 0.72rem;
+        font-weight: 700;
+        max-width: 75px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      #user-role-badge {
+        font-size: 0.55rem;
+        padding: 1.5px 5px;
+        border-radius: 4px;
+      }
+      .ticker-bar {
+        padding: 4px 14px;
+        font-size: 0.72rem;
+      }
+      .ticker-tag {
+        font-size: 0.62rem;
+        padding: 1.5px 6px;
+        border-radius: 4px;
+      }
       header .hud-controls { display: none; }
       #mobile-bottom-nav { display: flex; }
       .controls-hint { display: none; }
       #game-container {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
         padding: 0;
         align-items: center;
+        background: #0A0F1D;
       }
       canvas#gameCanvas {
         width: 100%;
         height: 100%;
+        display: block;
+        border-radius: 0;
+      }
+      #mobile-touch-controls {
+        bottom: 14px;
+        left: 14px;
+        right: 14px;
+        pointer-events: none;
+      }
+      .virtual-dpad {
+        pointer-events: auto;
+      }
+      .mobile-action-btn-container {
+        pointer-events: auto;
+      }
+      .dpad-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.95rem;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1.5px solid rgba(56, 189, 248, 0.35);
+        border-radius: 8px;
+        backdrop-filter: blur(8px);
+        transition: transform 0.1s, background 0.1s;
+      }
+      .dpad-btn:active, .dpad-btn.pressed {
+        background: rgba(56, 189, 248, 0.35);
+        border-color: #38BDF8;
+        transform: scale(0.92);
+      }
+      .virtual-action-btn {
+        width: 56px;
+        height: 56px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.92), rgba(5, 150, 105, 0.98));
+        border: 2px solid rgba(110, 231, 183, 0.85);
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);
+        transition: transform 0.1s, box-shadow 0.1s;
+      }
+      .virtual-action-btn:active {
+        transform: scale(0.92);
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
       }
       .studio-layout {
         display: flex;
@@ -720,10 +834,18 @@
         padding: 16px;
       }
       #toast-container {
-        bottom: 70px;
+        bottom: 66px;
         right: 12px;
         left: 12px;
       }
+    }
+
+    @media (max-width: 420px) {
+      .brand { font-size: 0.86rem; }
+      #google-signin-text { display: none; }
+      .google-signin-btn { padding: 5px; }
+      .user-profile-chip { max-width: 110px; }
+      .user-name-text { max-width: 55px; }
     }
   </style>
 </head>
@@ -1330,163 +1452,148 @@
           </div>
         </div>
 
-        <!-- Tab 3: Announcements -->
-        <div id="announcements-tab" class="admin-tab" style="display:none;">
+        <!-- Tab 3: Workshops Manager -->
+        <div id="workshops-admin-tab" class="admin-tab" style="display:none;">
           <div class="card-item">
-            <h4 style="margin-bottom:6px;">Broadcast Live Announcement</h4>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Pushes dynamic ticker notifications across all attendee screens.</p>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <select id="ann-channel" style="padding:8px 12px; border-radius:8px; background:#0F172A; border:1px solid #475569; color:#FFF;">
-                <option value="GENERAL">General Broadcast</option>
-                <option value="STAGE">Main Stage Announcement</option>
-                <option value="WORKSHOPS">Workshop Alert</option>
-              </select>
-              <textarea id="ann-text" rows="3" placeholder="Enter message to broadcast..." style="padding:10px; border-radius:8px; background:#0F172A; border:1px solid #475569; color:#FFF;"></textarea>
-              <button class="hud-btn primary" onclick="publishAnnouncement()">Broadcast Announcement</button>
-            </div>
+            <h4 style="margin-bottom:10px;">Workshop Room Capacity</h4>
+            <div id="admin-workshops-list"></div>
           </div>
         </div>
 
-        <!-- Tab 4: Lucky Draw -->
-        <div id="lucky-draw-tab" class="admin-tab" style="display:none;">
-          <div class="card-item">
-            <h4 style="margin-bottom:6px;">Execute Lucky Draw Raffle</h4>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Picks a verified ticket holder at random for DevFest prizes.</p>
-            <button class="hud-btn primary" onclick="triggerLuckyDraw()">🎰 Draw Random Winner</button>
-            <div id="lucky-draw-result" style="margin-top:16px;"></div>
+        <!-- Tab 4: Lucky Draw Raffle Engine -->
+        <div id="raffle-admin-tab" class="admin-tab" style="display:none;">
+          <div class="card-item" style="text-align:center; padding:24px;">
+            <div style="font-size:3rem; margin-bottom:10px;">🎁</div>
+            <h3>DevFest Attendee Lucky Draw Raffle</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; max-width:450px; margin:0 auto 16px;">Randomly draw lucky winners from active checked-in participants with verified tickets.</p>
+            <button class="hud-btn primary" onclick="triggerLuckyDraw()" style="font-size:1.05rem; padding:12px 28px; background:linear-gradient(135deg, #10B981, #059669); border-color:#34D399;">
+              🎉 Draw Lucky Winner
+            </button>
+            <div id="lucky-draw-winner-display" style="margin-top:20px; font-size:1.2rem; font-weight:800; color:#FBBF24;"></div>
           </div>
         </div>
 
-        <!-- Tab 5: Firestore & Attendance -->
-        <div id="firestore-admin-tab" class="admin-tab" style="display:none;">
-          <div class="card-item">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-              <div>
-                <h4 style="color:#F59E0B; margin-bottom:4px;">🔥 Cloud Firestore Event & Attendance</h4>
-                <div id="firestore-event-header-info" style="font-size:0.8rem; color:var(--text-muted);">Event: devfest-bangkok-2026</div>
-              </div>
-              <button class="hud-btn" onclick="loadFirestoreAttendance()">🔄 Refresh Firestore</button>
-            </div>
-
-            <!-- Attendance Stats KPI Cards -->
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:18px;">
-              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.75rem; color:var(--text-muted);">Total Registered</div>
-                <div id="firestore-kpi-registered" style="font-size:1.4rem; font-weight:800; color:#38BDF8;">0</div>
-              </div>
-              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.75rem; color:var(--text-muted);">Total Attended</div>
-                <div id="firestore-kpi-attended" style="font-size:1.4rem; font-weight:800; color:#10B981;">0</div>
-              </div>
-              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.75rem; color:var(--text-muted);">Show-Up Rate</div>
-                <div id="firestore-kpi-rate" style="font-size:1.4rem; font-weight:800; color:#F59E0B;">0.0%</div>
-              </div>
-              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.75rem; color:var(--text-muted);">Absent Count</div>
-                <div id="firestore-kpi-absent" style="font-size:1.4rem; font-weight:800; color:#EF4444;">0</div>
-              </div>
-            </div>
-
-            <!-- Check-in Action Bar -->
-            <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">Scan Ticket Reference / User ID to Check In:</label>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-              <input type="text" id="checkin-ticket-input" placeholder="e.g. TICKET-DEV-001 or user-partic-1" style="flex:2; min-width:200px; padding:10px 14px; border-radius:8px; border:1px solid var(--card-border); background:#0F172A; color:#FFF; font-size:0.85rem;">
-              <input type="text" id="checkin-notes-input" placeholder="Optional notes (e.g. Gate A VIP)" style="flex:1; min-width:140px; padding:10px 14px; border-radius:8px; border:1px solid var(--card-border); background:#0F172A; color:#FFF; font-size:0.85rem;">
-              <button class="hud-btn primary" onclick="submitParticipantCheckin()">✅ Check In Attendee</button>
-            </div>
-
-            <!-- Participant Attendance List -->
-            <h5 style="margin:16px 0 8px; font-size:0.85rem; color:#94A3B8;">Participants & Show-Up Status on Firestore:</h5>
-            <div id="firestore-participants-list" style="max-height:240px; overflow-y:auto;">
-              <!-- Dynamic attendee list -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 6: Attendee Feedback & NPS Analytics -->
+        <!-- Tab 5: Feedback Analytics -->
         <div id="feedback-admin-tab" class="admin-tab" style="display:none;">
           <div class="card-item">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-              <h4 style="color:#38BDF8; margin:0;">📝 Attendee Feedback & NPS Satisfaction Metrics</h4>
-              <button class="hud-btn" onclick="loadAdminFeedback()">🔄 Refresh Feedback</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+              <div>
+                <h4 style="margin:0 0 2px;">Attendee Feedback & NPS Analytics</h4>
+                <div style="font-size:0.78rem; color:var(--text-muted);">Real-time participant ratings and reviews stored in Cloud Firestore.</div>
+              </div>
+              <button class="hud-btn" onclick="loadAdminFeedback()" style="font-size:0.75rem; padding:4px 10px;">🔄 Refresh Feedback</button>
             </div>
-            
-            <!-- KPIs Row -->
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:18px;">
+
+            <!-- Feedback KPI Cards -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:16px;">
               <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.75rem; color:var(--text-muted);">Total Responses</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">Total Responses</div>
                 <div id="admin-fb-total" style="font-size:1.4rem; font-weight:800; color:#38BDF8;">0</div>
               </div>
               <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.75rem; color:var(--text-muted);">Overall Rating</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">Avg Overall Rating</div>
                 <div id="admin-fb-avg-overall" style="font-size:1.4rem; font-weight:800; color:#FBBF24;">5.0 ⭐</div>
               </div>
               <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.75rem; color:var(--text-muted);">Keynotes & Talks</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">Keynote Content</div>
                 <div id="admin-fb-avg-content" style="font-size:1.4rem; font-weight:800; color:#34D399;">5.0 ⭐</div>
               </div>
               <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.75rem; color:var(--text-muted);">Net Promoter Score</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">Net Promoter Score</div>
                 <div id="admin-fb-nps" style="font-size:1.4rem; font-weight:800; color:#EC4899;">+100</div>
               </div>
             </div>
 
-            <h5 style="margin:12px 0 8px; font-size:0.85rem; color:#94A3B8;">Attendee Reviews & Comments:</h5>
-            <div id="admin-feedback-list" style="max-height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
+            <!-- Feedback Feed List -->
+            <div id="admin-feedback-list" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
           </div>
         </div>
 
-        <!-- Tab 7: Sponsors & Gemini Sponsor Parser -->
+        <!-- Tab 7: Customizable Booth Designer Studio & Sponsors -->
         <div id="sponsors-admin-tab" class="admin-tab" style="display:none;">
           <div class="card-item">
-            <!-- Gemini AI Sponsor Parser Box -->
-            <div style="background:linear-gradient(135deg, rgba(234, 67, 53, 0.15), rgba(66, 133, 244, 0.15)); border:1.5px solid #EA4335; border-radius:10px; padding:14px; margin-bottom:18px;">
+            <!-- AI Sponsor & Booth Generator Prompt -->
+            <div style="background:linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(66, 133, 244, 0.15)); border:1.5px solid #F59E0B; border-radius:10px; padding:14px; margin-bottom:18px;">
               <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                <span style="font-size:1.2rem;">✨</span>
-                <span style="font-weight:700; font-size:0.88rem; color:#F87171;">Gemini AI Sponsor Details Parser</span>
-                <span class="badge" style="background:#DC2626; color:#FFF; font-size:0.65rem;">GEMINI 2.0 FLASH</span>
+                <span style="font-size:1.3rem;">🎨</span>
+                <span style="font-weight:700; font-size:0.9rem; color:#FBBF24;">Customizable Booth Designer & AI Generator</span>
+                <span class="badge" style="background:#D97706; color:#FFF; font-size:0.65rem;">GEMINI POWERED</span>
               </div>
-              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">Paste a company pitch, sponsor agreement text, or website URL and Gemini AI will automatically extract booth details, tier, swag perks, and descriptions.</p>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">Design official Swag Stores, Sponsor Pavilions, AI Sandboxes, and Gaming Lounges with live 2D preview.</p>
+              
+              <!-- Quick Inspiration Presets -->
+              <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+                <button type="button" class="rating-chip" onclick="applyBoothDesignPreset('swag_shop')" style="font-size:0.72rem; padding:4px 8px;">🛍️ Swag Shop Preset</button>
+                <button type="button" class="rating-chip" onclick="applyBoothDesignPreset('title_sponsor')" style="font-size:0.72rem; padding:4px 8px;">🏢 Title Sponsor Pavilion</button>
+                <button type="button" class="rating-chip" onclick="applyBoothDesignPreset('ai_hub')" style="font-size:0.72rem; padding:4px 8px;">🤖 AI Agent Sandbox</button>
+                <button type="button" class="rating-chip" onclick="applyBoothDesignPreset('arcade')" style="font-size:0.72rem; padding:4px 8px;">🎮 Community Arcade</button>
+              </div>
+
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <input type="text" id="ai-sponsor-prompt" placeholder="e.g. Cloudflare is a Title Sponsor at https://cloudflare.com empowering edge worker compute and DDoS security" style="flex:1; min-width:260px; padding:8px 12px; border-radius:8px; border:1px solid #475569; background:#0F172A; color:#FFF; font-size:0.82rem;">
-                <button class="hud-btn primary" onclick="autoFillSponsorWithGemini()" style="white-space:nowrap; background:linear-gradient(135deg, #EA4335, #E11D48); border-color:#F87171;">✨ Parse with Gemini</button>
+                <input type="text" id="ai-sponsor-prompt" placeholder="e.g. Official GDG Swag Store linked to https://shop.line.me/@837etxse with golden neon look" style="flex:1; min-width:260px; padding:8px 12px; border-radius:8px; border:1px solid #475569; background:#0F172A; color:#FFF; font-size:0.82rem;">
+                <button class="hud-btn primary" onclick="autoFillSponsorWithGemini()" style="white-space:nowrap; background:linear-gradient(135deg, #F59E0B, #EA580C); border-color:#FBBF24;">✨ AI Auto-Design</button>
               </div>
             </div>
 
-            <h4 id="admin-sponsor-form-title" style="margin-bottom:10px; color:#F87171;">Edit Sponsor Booth Details</h4>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+            <!-- Interactive 2D Live Booth Canvas Preview & Form -->
+            <div style="display:grid; grid-template-columns: 240px 1fr; gap:16px; margin-bottom:16px; align-items:start;">
+              <!-- Live 2D Canvas Preview -->
+              <div style="background:#0F172A; border:1.5px solid var(--card-border); border-radius:10px; padding:12px; text-align:center;">
+                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; margin-bottom:6px;">LIVE 2D BOOTH PREVIEW</div>
+                <canvas id="booth-design-canvas" width="210" height="100" style="background:#090D16; border-radius:8px; border:1px solid #334155; margin-bottom:8px; width:100%; height:auto;"></canvas>
+                <div id="booth-preview-label" style="font-size:0.8rem; font-weight:700; color:#38BDF8;">🛍️ GDG Swag Shop</div>
+                <div id="booth-preview-sub" style="font-size:0.7rem; color:#94A3B8;">LINE Shopping @837etxse</div>
+              </div>
+
+              <!-- Booth Configuration Form -->
               <div>
-                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Sponsor / Company Name:</label>
-                <input type="text" id="sponsor-edit-name" placeholder="e.g. Google Cloud" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+                <input type="hidden" id="sponsor-edit-id" value="booth-swag-shop">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                  <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Booth / Brand Name:</label>
+                    <input type="text" id="sponsor-edit-name" value="GDG Swag & Merch Shop" oninput="updateBoothPreviewCanvas()" placeholder="e.g. GDG Swag Shop" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+                  </div>
+                  <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Category / Tier:</label>
+                    <select id="sponsor-edit-tier" onchange="updateBoothPreviewCanvas()" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+                      <option value="Official Merchandise">Official Merchandise (Swag Shop)</option>
+                      <option value="Title Sponsor">Title Sponsor (Grand Pavilion)</option>
+                      <option value="Platinum Sponsor">Platinum Sponsor</option>
+                      <option value="Gold Sponsor">Gold Sponsor</option>
+                      <option value="AI Sandbox">AI Sandbox & Demos</option>
+                      <option value="Community Partner">Community Partner</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 120px; gap:10px; margin-bottom:10px;">
+                  <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Interactive Link / Store URL:</label>
+                    <input type="url" id="sponsor-edit-url" value="https://shop.line.me/@837etxse" placeholder="https://shop.line.me/@837etxse" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+                  </div>
+                  <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Theme Color:</label>
+                    <input type="color" id="sponsor-edit-color" value="#F59E0B" onchange="updateBoothPreviewCanvas()" style="width:100%; height:38px; border-radius:6px; border:1px solid var(--card-border); background:#0F172A; cursor:pointer;">
+                  </div>
+                </div>
+
+                <div style="margin-bottom:10px;">
+                  <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Subtitle / Tagline:</label>
+                  <input type="text" id="sponsor-edit-sub" value="LINE Shopping @837etxse" oninput="updateBoothPreviewCanvas()" placeholder="e.g. LINE Shopping @837etxse" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+                </div>
+
+                <div style="margin-bottom:12px;">
+                  <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Booth Description & Developer Pitch:</label>
+                  <textarea id="sponsor-edit-desc" rows="2" placeholder="Official GDG Cloud Bangkok Hoodies, developer tees, stickers & pins on LINE Shopping." style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">Official GDG Cloud Bangkok Hoodies, developer tees, stickers & pins on LINE Shopping.</textarea>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-bottom:18px;">
+                  <button class="hud-btn primary" onclick="saveAdminSponsorBooth()" style="background:linear-gradient(135deg, #10B981, #059669); border-color:#34D399; font-weight:700;">🚀 Save & Deploy Booth to Venue</button>
+                </div>
               </div>
-              <div>
-                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Sponsorship Tier:</label>
-                <select id="sponsor-edit-tier" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
-                  <option value="Title Sponsor">Title Sponsor (Grand Booth)</option>
-                  <option value="Platinum Sponsor">Platinum Sponsor</option>
-                  <option value="Gold Sponsor">Gold Sponsor</option>
-                  <option value="Silver Sponsor">Silver Sponsor</option>
-                  <option value="Community Partner">Community Partner</option>
-                </select>
-              </div>
             </div>
 
-            <div style="margin-bottom:10px;">
-              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Interactive Iframe / Website URL:</label>
-              <input type="url" id="sponsor-edit-url" placeholder="https://cloud.google.com" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
-            </div>
-
-            <div style="margin-bottom:12px;">
-              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Booth Description & Developer Pitch:</label>
-              <textarea id="sponsor-edit-desc" rows="2" placeholder="Empowering developers to build..." style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;"></textarea>
-            </div>
-
-            <div style="display:flex; gap:10px; margin-bottom:18px;">
-              <button class="hud-btn primary" onclick="saveAdminSponsorBooth()" style="background:linear-gradient(135deg, #EA4335, #B91C1C); border-color:#F87171;">Save Sponsor Booth</button>
-            </div>
-
-            <h5 style="margin:12px 0 8px; font-size:0.85rem; color:#94A3B8;">Active Sponsor Booths on 2D Map:</h5>
+            <h5 style="margin:12px 0 8px; font-size:0.85rem; color:#94A3B8;">Active Booths & Pavilions on Venue Floor:</h5>
             <div id="admin-sponsors-list" style="display:flex; flex-direction:column; gap:8px;"></div>
           </div>
         </div>

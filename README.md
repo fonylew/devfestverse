@@ -39,8 +39,18 @@
   - **📷 Instagram**: [https://www.instagram.com/gdgcloudbkk](https://www.instagram.com/gdgcloudbkk) (@gdgcloudbkk event stories & highlights)
   - **▶️ YouTube Channel**: [https://www.youtube.com/@gdgcloudbangkok](https://www.youtube.com/@gdgcloudbangkok) (Recorded talks & livestreams)
   - **💬 Discord Server**: [https://discord.gg/CBbPpNvmS](https://discord.gg/CBbPpNvmS) (Real-time live chat & agent hacking channels)
+- **🛍️ Official GDG Swag & Merch Shop (LINE Shopping Integration)**:
+  - Dedicated **"🛍️ GDG SWAG SHOP"** interactive booth on the 2D venue floor and direct modal navigation.
+  - Showcases official merchandise: GDG Cyberpunk Limited Edition Hoodies, DevFest 2026 Developer Tees, Enamel Lapel Pins, Holographic Sticker Packs, and Thermal Stainless Tumblers.
+  - Direct checkout & ordering via **LINE Shopping** channel: [https://shop.line.me/@837etxse](https://shop.line.me/@837etxse).
+- **🎨 Customizable Booth Design Studio & AI Generator (Back Office Tab 7)**:
+  - Interactive generator allowing organizers and sponsors to design custom booths (Swag Stores, Title Sponsor Pavilions, AI Sandboxes, Community Arcades).
+  - Configurable themes (Cyberpunk Neon, Google Cloud 4-Color, Sunset Glass, Emerald Matrix), custom accent colors, target URLs, and descriptions.
+  - **Live 2D Pixel Booth Preview Canvas**: Real-time canvas rendering showing exactly how the customized booth sprite will appear on the virtual campus.
+  - **✨ AI Auto-Design with Gemini**: Natural language prompt bar that automatically configures booth parameters from sponsor pitch decks or descriptions.
+  - **Instant Live Deployment**: Deploys updated booth branding to the live 2D canvas and syncs with backend REST APIs (`/api/v1/sponsors` & `/api/v1/sponsors/generate-booth`).
 - **DevFest Builder Showcase & Live Iframe Demo Hub**:
-  - Dedicated **"🛠️ BUILDER ZONE"** hotspot in the 2D venue and accessible from the HUD header / mobile drawer.
+  - Dedicated centerpiece **"🛠️ BUILDER ZONE"** pavilion with glowing cybernetic grid, neon laser corner brackets, and interactive kiosks.
   - Interactive project cards showcasing community web apps, AI tools, and games built by DevFest developers.
   - **Built-in Interactive Iframe Viewport**: Launch and test live web applications inside an embedded, sandboxed in-app runner with fullscreen and "Open in New Tab" controls.
   - **Community Claps & Upvotes**: Attendees can upvote (👏) their favorite developer projects in real time.

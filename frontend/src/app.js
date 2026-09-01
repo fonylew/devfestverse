@@ -82,18 +82,32 @@ window.addEventListener('keyup', (e) => { keys[e.code] = false; });
 
 // Interactive Hotspots on the 2D Map
 const HOTSPOTS = [
-  { id: 'ticket-billboard', type: 'TICKET_BILLBOARD', x: 420, y: 270, width: 130, height: 52, label: '🎫 MAIN TICKET BILLBOARD', sub: 'Verify Ticket to Unlock', color: '#10B981', ringColor: '#34D399' },
-  { id: 'builder-zone', type: 'BUILDER_ZONE', x: 260, y: 270, width: 140, height: 52, label: '🛠️ BUILDER ZONE', sub: 'Live App Showcase & Demos', color: '#0284C7', ringColor: '#38BDF8' },
-  { id: 'workshop-zone', type: 'WORKSHOP_ZONE', x: 100, y: 190, width: 140, height: 60, label: '💻 WORKSHOP LABS', sub: 'Hands-on Seat Reservation', color: '#8B5CF6', ringColor: '#A78BFA' },
-  { id: 'sponsor-google', type: 'SPONSOR_BOOTH', x: 720, y: 190, width: 140, height: 60, label: '🏢 GOOGLE CLOUD BOOTH', sub: 'Vertex AI & Cloud Run Expo', url: 'https://cloud.google.com', color: '#EA4335', ringColor: '#F87171' },
-  { id: 'bb-gdg-chapter', type: 'COMMUNITY_BILLBOARD', x: 40, y: 48, width: 85, height: 42, label: '🌐 CHAPTER', sub: 'GDG Cloud BKK', url: 'https://gdg.community.dev/gdg-cloud-bangkok/', color: '#4285F4', ringColor: '#60A5FA' },
-  { id: 'bb-fb-page', type: 'COMMUNITY_BILLBOARD', x: 135, y: 48, width: 80, height: 42, label: '📘 FB PAGE', sub: 'Official Page', url: 'https://www.facebook.com/profile.php?id=61583002384772', color: '#1877F2', ringColor: '#60A5FA' },
-  { id: 'bb-fb-group', type: 'COMMUNITY_BILLBOARD', x: 225, y: 48, width: 80, height: 42, label: '👥 FB GROUP', sub: 'Developer Group', url: 'https://www.facebook.com/groups/gdgcloudbkk/', color: '#34A853', ringColor: '#4ADE80' },
-  { id: 'bb-discord', type: 'COMMUNITY_BILLBOARD', x: 315, y: 48, width: 80, height: 42, label: '💬 DISCORD', sub: 'Community Hub', url: 'https://discord.gg/CBbPpNvmS', color: '#5865F2', ringColor: '#818CF8' },
-  { id: 'bb-instagram', type: 'COMMUNITY_BILLBOARD', x: 405, y: 48, width: 85, height: 42, label: '📷 INSTAGRAM', sub: '@gdgcloudbkk', url: 'https://www.instagram.com/gdgcloudbkk', color: '#E1306C', ringColor: '#F472B6' },
-  { id: 'bb-youtube', type: 'COMMUNITY_BILLBOARD', x: 500, y: 48, width: 85, height: 42, label: '▶️ YOUTUBE', sub: '@gdgcloudbangkok', url: 'https://www.youtube.com/@gdgcloudbangkok', color: '#FF0000', ringColor: '#F87171' },
-  { id: 'stage-screen', type: 'STAGE_SCREEN', x: 600, y: 45, width: 150, height: 48, label: '🎤 MAIN STAGE AGENDA', sub: 'Live Gemini Transcripts', color: '#FBBC04', ringColor: '#FDE047' },
-  { id: 'feedback-kiosk', type: 'FEEDBACK_KIOSK', x: 420, y: 460, width: 130, height: 48, label: '📝 EVENT FEEDBACK', sub: 'Rate Talks & Share Ideas', color: '#EC4899', ringColor: '#F472B6' }
+  // 1. Centerpiece: Builder Zone Pavilion
+  { id: 'builder-zone', type: 'BUILDER_ZONE', x: 360, y: 220, width: 240, height: 64, label: '🛠️ BUILDER ZONE', sub: 'Live App Demos & Web Showcase', color: '#00E5FF', ringColor: '#38BDF8' },
+
+  // 2. Top Center: Main Stage & Keynote Screen
+  { id: 'stage-screen', type: 'STAGE_SCREEN', x: 380, y: 30, width: 210, height: 52, label: '🎤 MAIN STAGE', sub: 'Live Gemini Transcripts', color: '#FBBC04', ringColor: '#FDE047' },
+
+  // 3. Top Left Wing: Community Arcades
+  { id: 'bb-gdg-chapter', type: 'COMMUNITY_BILLBOARD', x: 30, y: 36, width: 95, height: 42, label: '🌐 CHAPTER', sub: 'GDG Cloud BKK', url: 'https://gdg.community.dev/gdg-cloud-bangkok/', color: '#4285F4', ringColor: '#60A5FA' },
+  { id: 'bb-fb-page', type: 'COMMUNITY_BILLBOARD', x: 135, y: 36, width: 95, height: 42, label: '📘 FB PAGE', sub: 'Official Page', url: 'https://www.facebook.com/profile.php?id=61583002384772', color: '#1877F2', ringColor: '#60A5FA' },
+  { id: 'bb-fb-group', type: 'COMMUNITY_BILLBOARD', x: 240, y: 36, width: 95, height: 42, label: '👥 FB GROUP', sub: 'Dev Community', url: 'https://www.facebook.com/groups/gdgcloudbkk/', color: '#34A853', ringColor: '#4ADE80' },
+
+  // 4. Top Right Wing: Community Arcades
+  { id: 'bb-discord', type: 'COMMUNITY_BILLBOARD', x: 660, y: 36, width: 95, height: 42, label: '💬 DISCORD', sub: 'Community Hub', url: 'https://discord.gg/CBbPpNvmS', color: '#5865F2', ringColor: '#818CF8' },
+  { id: 'bb-instagram', type: 'COMMUNITY_BILLBOARD', x: 765, y: 36, width: 95, height: 42, label: '📷 INSTAGRAM', sub: '@gdgcloudbkk', url: 'https://www.instagram.com/gdgcloudbkk', color: '#E1306C', ringColor: '#F472B6' },
+  { id: 'bb-youtube', type: 'COMMUNITY_BILLBOARD', x: 870, y: 36, width: 95, height: 42, label: '▶️ YOUTUBE', sub: '@gdgcloudbkk', url: 'https://www.youtube.com/@gdgcloudbangkok', color: '#FF0000', ringColor: '#F87171' },
+
+  // 5. Left Wing: Workshop Codelabs
+  { id: 'workshop-zone', type: 'WORKSHOP_ZONE', x: 40, y: 220, width: 165, height: 60, label: '💻 WORKSHOP LABS', sub: 'Hands-on Codelabs', color: '#8B5CF6', ringColor: '#A78BFA' },
+
+  // 6. Right Wing: Google Cloud Expo & Swag Shop Booth
+  { id: 'sponsor-google', type: 'SPONSOR_BOOTH', x: 780, y: 190, width: 170, height: 54, label: '🏢 GOOGLE CLOUD', sub: 'Vertex AI & Cloud Run Expo', url: 'https://cloud.google.com', color: '#EA4335', ringColor: '#F87171' },
+  { id: 'booth-swag-shop', type: 'SWAG_BOOTH', x: 780, y: 255, width: 170, height: 54, label: '🛍️ GDG SWAG SHOP', sub: 'LINE Shopping @837etxse', url: 'https://shop.line.me/@837etxse', color: '#F59E0B', ringColor: '#FDE047' },
+
+  // 7. Bottom Floor: Ticket & Feedback
+  { id: 'ticket-billboard', type: 'TICKET_BILLBOARD', x: 280, y: 455, width: 180, height: 50, label: '🎫 TICKET VERIFY', sub: 'Verify Ticket to Unlock', color: '#10B981', ringColor: '#34D399' },
+  { id: 'feedback-kiosk', type: 'FEEDBACK_KIOSK', x: 535, y: 455, width: 180, height: 50, label: '📝 EVENT FEEDBACK', sub: 'Rate Talks & Reviews', color: '#EC4899', ringColor: '#F472B6' }
 ];
 
 function resizeCanvas() {
@@ -101,39 +115,157 @@ function resizeCanvas() {
   if (!container || !canvas) return;
 
   const w = container.clientWidth || window.innerWidth;
-  const h = container.clientHeight || window.innerHeight - 80;
+  const h = container.clientHeight || (window.innerHeight - 100);
 
   if (canvas.width !== w || canvas.height !== h) {
-    canvas.width = Math.max(960, w);
-    canvas.height = Math.max(540, h);
+    canvas.width = w;
+    canvas.height = h;
     repositionHotspots(canvas.width, canvas.height);
+    // Keep player within visible bounds
+    player.x = Math.max(30, Math.min(canvas.width - 30, player.x));
+    player.y = Math.max(30, Math.min(canvas.height - 30, player.y));
   }
 }
 
 function repositionHotspots(w, h) {
-  // Center Main Stage
-  const stage = HOTSPOTS.find(s => s.id === 'stage-screen');
-  if (stage) { stage.x = Math.floor(w / 2 - 75); stage.y = 45; }
+  const isMobile = w < 650;
 
-  // Builder Zone (Center-Left)
-  const bz = HOTSPOTS.find(s => s.id === 'builder-zone');
-  if (bz) { bz.x = Math.floor(w / 2 - 165); bz.y = Math.floor(h / 2 - 26); }
+  if (isMobile) {
+    // 1. Top Stage (Center Top)
+    const stage = HOTSPOTS.find(s => s.id === 'stage-screen');
+    if (stage) { stage.x = Math.floor(w / 2 - 100); stage.y = 16; stage.width = 200; stage.height = 42; }
 
-  // Ticket Billboard (Center-Right)
-  const ticket = HOTSPOTS.find(s => s.id === 'ticket-billboard');
-  if (ticket) { ticket.x = Math.floor(w / 2 + 25); ticket.y = Math.floor(h / 2 - 26); }
+    const colW = Math.min(130, Math.floor(w * 0.44));
+    const leftX = 14;
+    const rightX = Math.floor(w - colW - 14);
 
-  // Center Feedback Kiosk (Bottom)
-  const fb = HOTSPOTS.find(s => s.id === 'feedback-kiosk');
-  if (fb) { fb.x = Math.floor(w / 2 - 65); fb.y = Math.floor(h - 80); }
+    // 2. Upper Community Columns (Left & Right 2-column layout with open central hallway)
+    const ch = HOTSPOTS.find(s => s.id === 'bb-gdg-chapter');
+    if (ch) { ch.x = leftX; ch.y = 74; ch.width = colW; ch.height = 36; }
+    const fbp = HOTSPOTS.find(s => s.id === 'bb-fb-page');
+    if (fbp) { fbp.x = leftX; fbp.y = 118; fbp.width = colW; fbp.height = 36; }
+    const fbg = HOTSPOTS.find(s => s.id === 'bb-fb-group');
+    if (fbg) { fbg.x = leftX; fbg.y = 162; fbg.width = colW; fbg.height = 36; }
 
-  // Workshop Labs (Far Left)
-  const ws = HOTSPOTS.find(s => s.id === 'workshop-zone');
-  if (ws) { ws.x = 70; ws.y = Math.floor(h / 2 - 30); }
+    const disc = HOTSPOTS.find(s => s.id === 'bb-discord');
+    if (disc) { disc.x = rightX; disc.y = 74; disc.width = colW; disc.height = 36; }
+    const ig = HOTSPOTS.find(s => s.id === 'bb-instagram');
+    if (ig) { ig.x = rightX; ig.y = 118; ig.width = colW; ig.height = 36; }
+    const yt = HOTSPOTS.find(s => s.id === 'bb-youtube');
+    if (yt) { yt.x = rightX; yt.y = 162; yt.width = colW; yt.height = 36; }
 
-  // Google Booth (Far Right)
-  const google = HOTSPOTS.find(s => s.id === 'sponsor-google');
-  if (google) { google.x = Math.floor(w - 210); google.y = Math.floor(h / 2 - 30); }
+    // 3. Centerpiece: Builder Zone Pavilion (Centered with generous vertical margins)
+    const bzY = Math.max(220, Math.floor(h * 0.36));
+    const bz = HOTSPOTS.find(s => s.id === 'builder-zone');
+    if (bz) { bz.x = Math.floor(w / 2 - 110); bz.y = bzY; bz.width = 220; bz.height = 58; }
+
+    // 4. Middle Pavilions (Left & Right Flanks)
+    const midY1 = Math.max(bzY + 80, Math.floor(h * 0.50));
+    const midY2 = midY1 + 54;
+    const ws = HOTSPOTS.find(s => s.id === 'workshop-zone');
+    if (ws) { ws.x = leftX; ws.y = midY1; ws.width = colW; ws.height = 48; }
+
+    const google = HOTSPOTS.find(s => s.id === 'sponsor-google');
+    if (google) { google.x = rightX; google.y = midY1; google.width = colW; google.height = 46; }
+    const swag = HOTSPOTS.find(s => s.id === 'booth-swag-shop');
+    if (swag) { swag.x = rightX; swag.y = midY2; swag.width = colW; swag.height = 46; }
+
+    // 5. Bottom Kiosks (Placed comfortably at h - 165px, safely above the bottom 140px touch D-pad area!)
+    const botY = Math.max(midY2 + 58, Math.floor(h - 165));
+    const ticket = HOTSPOTS.find(s => s.id === 'ticket-billboard');
+    if (ticket) { ticket.x = leftX; ticket.y = botY; ticket.width = colW; ticket.height = 46; }
+    const fb = HOTSPOTS.find(s => s.id === 'feedback-kiosk');
+    if (fb) { fb.x = rightX; fb.y = botY; fb.width = colW; fb.height = 46; }
+  } else {
+    // Desktop layout (Spacious, balanced symmetrical grid)
+    const stage = HOTSPOTS.find(s => s.id === 'stage-screen');
+    if (stage) { stage.x = Math.floor(w / 2 - 105); stage.y = 30; stage.width = 210; stage.height = 48; }
+
+    const ch = HOTSPOTS.find(s => s.id === 'bb-gdg-chapter');
+    if (ch) { ch.x = 30; ch.y = 36; ch.width = 95; ch.height = 42; }
+    const fbp = HOTSPOTS.find(s => s.id === 'bb-fb-page');
+    if (fbp) { fbp.x = 135; fbp.y = 36; fbp.width = 95; fbp.height = 42; }
+    const fbg = HOTSPOTS.find(s => s.id === 'bb-fb-group');
+    if (fbg) { fbg.x = 240; fbg.y = 36; fbg.width = 95; fbg.height = 42; }
+
+    const disc = HOTSPOTS.find(s => s.id === 'bb-discord');
+    if (disc) { disc.x = Math.floor(w - 325); disc.y = 36; disc.width = 95; disc.height = 42; }
+    const ig = HOTSPOTS.find(s => s.id === 'bb-instagram');
+    if (ig) { ig.x = Math.floor(w - 220); ig.y = 36; ig.width = 95; ig.height = 42; }
+    const yt = HOTSPOTS.find(s => s.id === 'bb-youtube');
+    if (yt) { yt.x = Math.floor(w - 115); yt.y = 36; yt.width = 95; yt.height = 42; }
+
+    const bz = HOTSPOTS.find(s => s.id === 'builder-zone');
+    if (bz) { bz.x = Math.floor(w / 2 - 125); bz.y = Math.floor(h / 2 - 34); bz.width = 250; bz.height = 66; }
+
+    const ws = HOTSPOTS.find(s => s.id === 'workshop-zone');
+    if (ws) { ws.x = 40; ws.y = Math.floor(h / 2 - 32); ws.width = 165; ws.height = 60; }
+
+    const google = HOTSPOTS.find(s => s.id === 'sponsor-google');
+    if (google) { google.x = Math.floor(w - 210); google.y = Math.floor(h / 2 - 68); google.width = 170; google.height = 54; }
+    const swag = HOTSPOTS.find(s => s.id === 'booth-swag-shop');
+    if (swag) { swag.x = Math.floor(w - 210); swag.y = Math.floor(h / 2 + 10); swag.width = 170; swag.height = 54; }
+
+    const ticket = HOTSPOTS.find(s => s.id === 'ticket-billboard');
+    if (ticket) { ticket.x = Math.floor(w / 2 - 200); ticket.y = Math.floor(h - 80); ticket.width = 180; ticket.height = 50; }
+    const fb = HOTSPOTS.find(s => s.id === 'feedback-kiosk');
+    if (fb) { fb.x = Math.floor(w / 2 + 20); fb.y = Math.floor(h - 80); fb.width = 180; fb.height = 50; }
+  }
+}
+
+function repositionNPCs(w, h) {
+  const isMobile = w < 650;
+  if (!Array.isArray(OTHER_PARTICIPANTS)) return;
+
+  // Speaker Dr. Agent near top stage
+  const spk = OTHER_PARTICIPANTS.find(p => p.id === 'user-spk-1');
+  if (spk) {
+    spk.x = Math.floor(w / 2 + (isMobile ? 40 : 80));
+    spk.y = isMobile ? 32 : 45;
+    spk.patrol = { minX: spk.x - 15, maxX: spk.x + 15, minY: spk.y - 8, maxY: spk.y + 8, targetX: spk.x, targetY: spk.y, pause: 80 };
+  }
+
+  // Organizer GDG Lead near center hallway
+  const org = OTHER_PARTICIPANTS.find(p => p.id === 'user-org-1');
+  if (org) {
+    org.x = Math.floor(w / 2);
+    org.y = isMobile ? Math.floor(h * 0.25) : Math.floor(h * 0.22);
+    org.patrol = { minX: org.x - 25, maxX: org.x + 25, minY: org.y - 12, maxY: org.y + 12, targetX: org.x, targetY: org.y, pause: 90 };
+  }
+
+  // Alex Staff near workshop labs aisle
+  const staff = OTHER_PARTICIPANTS.find(p => p.id === 'user-staff-1');
+  if (staff) {
+    staff.x = isMobile ? 32 : 60;
+    staff.y = isMobile ? Math.floor(h * 0.44) : Math.floor(h * 0.42);
+    staff.patrol = { minX: staff.x - 12, maxX: staff.x + 20, minY: staff.y - 8, maxY: staff.y + 8, targetX: staff.x, targetY: staff.y, pause: 100 };
+  }
+
+  // Sara Cloud in coffee lounge area
+  const sara = OTHER_PARTICIPANTS.find(p => p.id === 'user-partic-2');
+  if (sara) {
+    sara.x = isMobile ? 35 : 280;
+    sara.y = isMobile ? Math.floor(h * 0.72) : Math.floor(h / 2 + 50);
+    sara.patrol = { minX: sara.x - 15, maxX: sara.x + 15, minY: sara.y - 8, maxY: sara.y + 8, targetX: sara.x, targetY: sara.y, pause: 120 };
+  }
+}
+
+function resizeCanvas() {
+  const container = document.getElementById('game-container');
+  if (!container || !canvas) return;
+
+  const w = container.clientWidth || window.innerWidth;
+  const h = container.clientHeight || (window.innerHeight - 100);
+
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
+    repositionHotspots(canvas.width, canvas.height);
+    repositionNPCs(canvas.width, canvas.height);
+    // Keep player within visible bounds
+    player.x = Math.max(30, Math.min(canvas.width - 30, player.x));
+    player.y = Math.max(30, Math.min(canvas.height - 30, player.y));
+  }
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -197,15 +329,23 @@ function updatePlayer() {
   player.x = Math.max(30, Math.min(canvas.width - 30, player.x));
   player.y = Math.max(30, Math.min(canvas.height - 30, player.y));
 
-  // Check proximity to Hotspots
+  // Check proximity to Hotspots (Exact rectangle bounding-box distance)
   let closestSpot = null;
-  let minDist = 70;
+  let minProximityDist = 36; // Maximum distance outside bounding box to trigger proximity
 
   HOTSPOTS.forEach(spot => {
-    const cx = spot.x + spot.width / 2;
-    const cy = spot.y + spot.height / 2;
-    const dist = Math.hypot(player.x - cx, player.y - cy);
-    if (dist < minDist) {
+    const boxX = spot.x;
+    const boxY = spot.y;
+    const boxW = spot.width;
+    const boxH = spot.height;
+
+    // Exact distance from player to the hotspot rectangle bounds
+    const dx = Math.max(boxX - player.x, 0, player.x - (boxX + boxW));
+    const dy = Math.max(boxY - player.y, 0, player.y - (boxY + boxH));
+    const dist = Math.hypot(dx, dy);
+
+    if (dist < minProximityDist) {
+      minProximityDist = dist;
       closestSpot = spot;
     }
   });
@@ -222,10 +362,13 @@ function updateProximityHint(spot) {
 
   if (spot && !isAnyModalActive()) {
     const rect = canvas.getBoundingClientRect();
-    hintEl.style.display = 'block';
+    hintEl.style.display = 'inline-flex';
     hintEl.style.left = `${rect.left + (player.x / canvas.width) * rect.width}px`;
-    hintEl.style.top = `${rect.top + (player.y / canvas.height) * rect.height - 45}px`;
-    textEl.innerText = `💬 Press [E] or Click: ${spot.label}`;
+    hintEl.style.top = `${rect.top + (player.y / canvas.height) * rect.height - 38}px`;
+
+    // Extract clean name without double emojis
+    const cleanLabel = spot.label.replace(/^[^\w\s]+/, '').trim() || spot.label;
+    textEl.innerHTML = `<span class="hint-key">E</span> <span>${cleanLabel}</span>`;
 
     if (mobileActionBtn) {
       mobileActionBtn.classList.add('active-pulse');
@@ -253,6 +396,8 @@ function triggerMobileAction() {
 function triggerHotspotAction(spot) {
   if (spot.type === 'TICKET_BILLBOARD') {
     openModal('ticket-modal');
+  } else if (spot.id === 'booth-swag-shop' || spot.type === 'SWAG_BOOTH') {
+    openModal('shop-modal');
   } else if (spot.type === 'COMMUNITY_BILLBOARD' || spot.type === 'SPONSOR_BOOTH') {
     openBillboardModal(spot.label, spot.url);
   } else if (spot.type === 'WORKSHOP_ZONE') {
@@ -273,9 +418,17 @@ function handleCanvasPointer(clientX, clientY) {
   const clickY = (clientY - rect.top) * (canvas.height / rect.height);
 
   let clickedHotspot = null;
+  let minClickDist = Infinity;
+
   HOTSPOTS.forEach(spot => {
     if (clickX >= spot.x && clickX <= spot.x + spot.width && clickY >= spot.y && clickY <= spot.y + spot.height) {
-      clickedHotspot = spot;
+      const cx = spot.x + spot.width / 2;
+      const cy = spot.y + spot.height / 2;
+      const dist = Math.hypot(clickX - cx, clickY - cy);
+      if (dist < minClickDist) {
+        minClickDist = dist;
+        clickedHotspot = spot;
+      }
     }
   });
 
@@ -526,25 +679,35 @@ function drawCharacterSprite(renderCtx, x, y, config, isMoving, stepFrame, bobOf
 
 // 8. Overhead Nametag & Badges
   if (showBadge) {
-    const badgeY = hy - 14;
     const isVerified = (customVerified !== null) ? customVerified : currentUser.verified_ticket;
     const name = customName || currentUser.display_name;
     const role = customRole || currentUser.role;
+    const badgeY = hy - 16;
 
     if (isVerified) {
       renderCtx.fillStyle = '#10B981';
-      renderCtx.font = 'bold 8px JetBrains Mono, monospace';
+      renderCtx.font = 'bold 9px JetBrains Mono, monospace';
       renderCtx.textAlign = 'center';
-      renderCtx.fillText('✔ VERIFIED', 0, badgeY);
+      renderCtx.shadowColor = 'rgba(0,0,0,0.9)';
+      renderCtx.shadowBlur = 4;
+      renderCtx.fillText('✔ VERIFIED', 0, badgeY - 10);
+      renderCtx.shadowBlur = 0;
     }
     
+    // Nametag Pill Background
+    renderCtx.font = 'bold 11px JetBrains Mono, monospace';
+    const nameW = renderCtx.measureText(name).width + 12;
+    renderCtx.fillStyle = 'rgba(11, 17, 33, 0.85)';
+    renderCtx.strokeStyle = isVerified ? '#10B98188' : 'rgba(56, 189, 248, 0.4)';
+    renderCtx.lineWidth = 1;
+    renderCtx.beginPath();
+    renderCtx.roundRect(-nameW / 2, badgeY - 8, nameW, 16, 5);
+    renderCtx.fill();
+    renderCtx.stroke();
+
     renderCtx.fillStyle = '#FFFFFF';
-    renderCtx.font = 'bold 9px JetBrains Mono, monospace';
     renderCtx.textAlign = 'center';
-    renderCtx.shadowColor = 'rgba(0,0,0,0.85)';
-    renderCtx.shadowBlur = 4;
-    renderCtx.fillText(name, 0, badgeY + (isVerified ? 9 : 0));
-    renderCtx.shadowBlur = 0;
+    renderCtx.fillText(name, 0, badgeY + 4);
   }
 
   renderCtx.restore();
@@ -553,48 +716,49 @@ function drawCharacterSprite(renderCtx, x, y, config, isMoving, stepFrame, bobOf
 function drawSpeechBubble(renderCtx, x, y, text) {
   if (!text) return;
   renderCtx.save();
-  renderCtx.font = '600 8.5px JetBrains Mono, monospace';
+  renderCtx.font = 'bold 11px JetBrains Mono, monospace';
   const textWidth = renderCtx.measureText(text).width;
-  const bubbleW = textWidth + 16;
-  const bubbleH = 22;
+  const bubbleW = Math.max(70, textWidth + 20);
+  const bubbleH = 26;
   const bx = x - bubbleW / 2;
-  const by = y - bubbleH;
+  const by = y - bubbleH - 4;
 
   // Shadow
-  renderCtx.fillStyle = 'rgba(0,0,0,0.4)';
+  renderCtx.fillStyle = 'rgba(0,0,0,0.5)';
   renderCtx.beginPath();
-  renderCtx.roundRect(bx + 2, by + 3, bubbleW, bubbleH, 6);
+  renderCtx.roundRect(bx + 2, by + 3, bubbleW, bubbleH, 7);
   renderCtx.fill();
 
-  // Bubble
-  renderCtx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+  // Bubble Body
+  renderCtx.fillStyle = 'rgba(15, 23, 42, 0.96)';
   renderCtx.strokeStyle = '#38BDF8';
-  renderCtx.lineWidth = 1.2;
+  renderCtx.lineWidth = 1.5;
   renderCtx.beginPath();
-  renderCtx.roundRect(bx, by, bubbleW, bubbleH, 6);
+  renderCtx.roundRect(bx, by, bubbleW, bubbleH, 7);
   renderCtx.fill();
   renderCtx.stroke();
 
   // Tail
   renderCtx.fillStyle = '#0F172A';
   renderCtx.beginPath();
-  renderCtx.moveTo(x - 4, by + bubbleH);
-  renderCtx.lineTo(x + 4, by + bubbleH);
-  renderCtx.lineTo(x, by + bubbleH + 5);
+  renderCtx.moveTo(x - 5, by + bubbleH);
+  renderCtx.lineTo(x + 5, by + bubbleH);
+  renderCtx.lineTo(x, by + bubbleH + 6);
   renderCtx.closePath();
   renderCtx.fill();
 
   renderCtx.strokeStyle = '#38BDF8';
   renderCtx.beginPath();
-  renderCtx.moveTo(x - 4, by + bubbleH);
-  renderCtx.lineTo(x, by + bubbleH + 5);
-  renderCtx.lineTo(x + 4, by + bubbleH);
+  renderCtx.moveTo(x - 5, by + bubbleH);
+  renderCtx.lineTo(x, by + bubbleH + 6);
+  renderCtx.lineTo(x + 5, by + bubbleH);
   renderCtx.stroke();
 
-  // Text
-  renderCtx.fillStyle = '#F8FAFC';
+  // Text inside bubble
+  renderCtx.fillStyle = '#FFFFFF';
   renderCtx.textAlign = 'center';
-  renderCtx.fillText(text, x, by + 14);
+  renderCtx.textBaseline = 'middle';
+  renderCtx.fillText(text, x, by + bubbleH / 2);
   renderCtx.restore();
 }
 
@@ -796,37 +960,48 @@ function renderWorld() {
 
   // 2. Bright Ambient Venue Spotlights under Key Areas
   // Stage Spotlight (Warm Gold/Amber Glow)
-  const stageGlow = ctx.createRadialGradient(645, 65, 10, 645, 65, 140);
-  stageGlow.addColorStop(0, 'rgba(251, 191, 36, 0.25)');
+  const stageCenterX = Math.floor(canvas.width / 2);
+  const stageGlow = ctx.createRadialGradient(stageCenterX, 60, 10, stageCenterX, 60, 160);
+  stageGlow.addColorStop(0, 'rgba(251, 191, 36, 0.28)');
   stageGlow.addColorStop(1, 'rgba(251, 191, 36, 0)');
   ctx.fillStyle = stageGlow;
-  ctx.beginPath(); ctx.arc(645, 65, 140, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(stageCenterX, 60, 160, 0, Math.PI * 2); ctx.fill();
 
-  // Google Cloud Booth Spotlight (Google Blue/Cyan Glow)
-  const gcpGlow = ctx.createRadialGradient(790, 220, 10, 790, 220, 130);
-  gcpGlow.addColorStop(0, 'rgba(66, 133, 244, 0.28)');
-  gcpGlow.addColorStop(1, 'rgba(66, 133, 244, 0)');
-  ctx.fillStyle = gcpGlow;
-  ctx.beginPath(); ctx.arc(790, 220, 130, 0, Math.PI * 2); ctx.fill();
+  // Builder Zone Spotlight (Cyber Cyan & Indigo Glow)
+  const bzCenterX = Math.floor(canvas.width / 2);
+  const bzCenterY = Math.floor(canvas.height / 2);
+  const bzGlow = ctx.createRadialGradient(bzCenterX, bzCenterY, 10, bzCenterX, bzCenterY, 180);
+  bzGlow.addColorStop(0, 'rgba(0, 229, 255, 0.25)');
+  bzGlow.addColorStop(0.6, 'rgba(79, 70, 229, 0.12)');
+  bzGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = bzGlow;
+  ctx.beginPath(); ctx.arc(bzCenterX, bzCenterY, 180, 0, Math.PI * 2); ctx.fill();
 
-  // Workshop Labs Spotlight (Purple Glow)
-  const wsGlow = ctx.createRadialGradient(170, 220, 10, 170, 220, 130);
+  // Right Wing Spotlight (Google Cloud & Swag Shop)
+  const rightCenterX = Math.floor(canvas.width - 130);
+  const rightGlow = ctx.createRadialGradient(rightCenterX, bzCenterY, 10, rightCenterX, bzCenterY, 150);
+  rightGlow.addColorStop(0, 'rgba(245, 158, 11, 0.22)');
+  rightGlow.addColorStop(1, 'rgba(245, 158, 11, 0)');
+  ctx.fillStyle = rightGlow;
+  ctx.beginPath(); ctx.arc(rightCenterX, bzCenterY, 150, 0, Math.PI * 2); ctx.fill();
+
+  // Left Wing Spotlight (Workshop Labs)
+  const wsGlow = ctx.createRadialGradient(130, bzCenterY, 10, 130, bzCenterY, 140);
   wsGlow.addColorStop(0, 'rgba(139, 92, 246, 0.25)');
   wsGlow.addColorStop(1, 'rgba(139, 92, 246, 0)');
   ctx.fillStyle = wsGlow;
-  ctx.beginPath(); ctx.arc(170, 220, 130, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(130, bzCenterY, 140, 0, Math.PI * 2); ctx.fill();
 
-  // Central Ticket Billboard Spotlight (Emerald Glow)
-  const ticketGlow = ctx.createRadialGradient(480, 290, 10, 480, 290, 120);
-  ticketGlow.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
-  ticketGlow.addColorStop(1, 'rgba(16, 185, 129, 0)');
-  ctx.fillStyle = ticketGlow;
-  ctx.beginPath(); ctx.arc(480, 290, 120, 0, Math.PI * 2); ctx.fill();
+  // 3. COZY ZONE 1: Warm Keynote Wooden Stage (North-Center)
+  const isMobile = canvas.width < 650;
+  const stageW = isMobile ? Math.min(230, canvas.width - 24) : 260;
+  const stageH = isMobile ? 56 : 80;
+  const stageX = Math.floor(canvas.width / 2 - stageW / 2);
+  const stageY = isMobile ? 10 : 16;
 
-  // 3. COZY ZONE 1: Warm Keynote Wooden Stage (North-East)
   ctx.fillStyle = '#3A2010';
   ctx.beginPath();
-  ctx.roundRect(540, 24, 210, 80, [10, 10, 6, 6]);
+  ctx.roundRect(stageX, stageY, stageW, stageH, [10, 10, 4, 4]);
   ctx.fill();
   ctx.strokeStyle = '#B45309';
   ctx.lineWidth = 2;
@@ -834,178 +1009,239 @@ function renderWorld() {
 
   // Wood planks
   ctx.strokeStyle = 'rgba(251, 191, 36, 0.18)';
-  for (let py = 36; py < 100; py += 12) {
-    ctx.beginPath(); ctx.moveTo(542, py); ctx.lineTo(748, py); ctx.stroke();
+  for (let py = stageY + 10; py < stageY + stageH; py += 10) {
+    ctx.beginPath(); ctx.moveTo(stageX + 2, py); ctx.lineTo(stageX + stageW - 2, py); ctx.stroke();
   }
   // Stage Footlights (Google 4-Colors)
   const stageLights = ['#4285F4', '#EA4335', '#FBBC05', '#34A853'];
+  const lightGap = Math.floor((stageW - 40) / 3);
   stageLights.forEach((col, idx) => {
-    const lx = 560 + idx * 45;
+    const lx = stageX + 20 + idx * lightGap;
+    const ly = isMobile ? stageY + stageH - 4 : stageY + stageH + 2;
     ctx.fillStyle = col;
-    ctx.beginPath(); ctx.arc(lx, 102, 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(lx, ly, 3.5, 0, Math.PI * 2); ctx.fill();
     // Soft light glow
     ctx.fillStyle = col + '55';
-    ctx.beginPath(); ctx.arc(lx, 102, 10 + Math.sin(time * 2 + idx) * 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(lx, ly, 8 + Math.sin(time * 2 + idx) * 2.5, 0, Math.PI * 2); ctx.fill();
   });
 
   // Stage Podium with Microphone
-  ctx.fillStyle = '#78350F';
-  ctx.fillRect(640, 72, 14, 18);
-  ctx.fillStyle = '#E2E8F0';
-  ctx.fillRect(646, 62, 2, 10);
-  ctx.beginPath(); ctx.arc(647, 60, 3, 0, Math.PI * 2); ctx.fill();
+  if (!isMobile) {
+    ctx.fillStyle = '#78350F';
+    ctx.fillRect(stageCenterX + 70, stageY + stageH - 24, 16, 20);
+    ctx.fillStyle = '#E2E8F0';
+    ctx.fillRect(stageCenterX + 77, stageY + stageH - 36, 2, 12);
+    ctx.beginPath(); ctx.arc(stageCenterX + 78, stageY + stageH - 38, 3.5, 0, Math.PI * 2); ctx.fill();
+  }
 
-  // 4. COZY ZONE 2: Warm Velvet Lounge & Cafe (South-Center)
-  // Large Rounded Area Rug
-  ctx.fillStyle = '#1A294A';
-  ctx.beginPath();
-  ctx.roundRect(280, 360, 400, 145, 20);
-  ctx.fill();
-  ctx.strokeStyle = '#F59E0B';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([8, 4]);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  // 4. PROMINENT HIGHLIGHT: Builder Zone Holographic Cyber Pavilion
+  const bzSpot = HOTSPOTS.find(s => s.id === 'builder-zone');
+  if (bzSpot) {
+    const bzPadX = isMobile ? 12 : 24;
+    const bzPadY = isMobile ? 10 : 20;
+    const bzPavX = bzSpot.x - bzPadX, bzPavY = bzSpot.y - bzPadY;
+    const bzPavW = bzSpot.width + bzPadX * 2, bzPavH = bzSpot.height + bzPadY * 2;
 
-  // Cozy Sofas
-  // Left Sofa (Navy)
-  ctx.fillStyle = '#243456';
-  ctx.beginPath(); ctx.roundRect(300, 390, 35, 75, 8); ctx.fill();
-  ctx.strokeStyle = '#38BDF8'; ctx.lineWidth = 1.5; ctx.stroke();
-  ctx.fillStyle = '#162238';
-  ctx.fillRect(305, 395, 25, 65);
+    // Cyber Grid Floor Mat
+    ctx.fillStyle = 'rgba(8, 20, 44, 0.9)';
+    ctx.beginPath();
+    ctx.roundRect(bzPavX, bzPavY, bzPavW, bzPavH, 14);
+    ctx.fill();
 
-  // Right Sofa (Emerald Cozy Armchair)
-  ctx.fillStyle = '#243456';
-  ctx.beginPath(); ctx.roundRect(625, 390, 35, 75, 8); ctx.fill();
-  ctx.strokeStyle = '#34D399'; ctx.lineWidth = 1.5; ctx.stroke();
-  ctx.fillStyle = '#064E3B';
-  ctx.fillRect(630, 395, 25, 65);
+    // Animated Neon Outer Border
+    ctx.strokeStyle = '#00E5FF';
+    ctx.lineWidth = 1.8;
+    ctx.setLineDash([10, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
 
-  // Center Coffee Table (Wood & Glass)
-  ctx.fillStyle = '#92400E';
-  ctx.beginPath(); ctx.roundRect(435, 415, 90, 42, 8); ctx.fill();
-  ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 1.5; ctx.stroke();
-  ctx.fillStyle = '#B45309';
-  ctx.fillRect(440, 420, 80, 32);
+    // Corner Neon Laser Brackets
+    const bracketLen = isMobile ? 10 : 14;
+    ctx.strokeStyle = '#38BDF8';
+    ctx.lineWidth = 2.5;
+    // Top-Left
+    ctx.beginPath(); ctx.moveTo(bzPavX - 2, bzPavY + bracketLen); ctx.lineTo(bzPavX - 2, bzPavY - 2); ctx.lineTo(bzPavX + bracketLen, bzPavY - 2); ctx.stroke();
+    // Top-Right
+    ctx.beginPath(); ctx.moveTo(bzPavX + bzPavW + 2 - bracketLen, bzPavY - 2); ctx.lineTo(bzPavX + bzPavW + 2, bzPavY - 2); ctx.lineTo(bzPavX + bzPavW + 2, bzPavY + bracketLen); ctx.stroke();
+    // Bottom-Left
+    ctx.beginPath(); ctx.moveTo(bzPavX - 2, bzPavY + bzPavH - bracketLen); ctx.lineTo(bzPavX - 2, bzPavY + bzPavH + 2); ctx.lineTo(bzPavX + bracketLen, bzPavY + bzPavH + 2); ctx.stroke();
+    // Bottom-Right
+    ctx.beginPath(); ctx.moveTo(bzPavX + bzPavW + 2 - bracketLen, bzPavY + bzPavH + 2); ctx.lineTo(bzPavX + bzPavW + 2, bzPavY + bzPavH + 2); ctx.lineTo(bzPavX + bzPavW + 2, bzPavY + bzPavH - bracketLen); ctx.stroke();
 
-  // Laptop on Table
-  ctx.fillStyle = '#F1F5F9';
-  ctx.fillRect(450, 425, 18, 12);
-  ctx.fillStyle = '#38BDF8';
-  ctx.fillRect(452, 426, 14, 9); // Glowing screen
+    // Floating Badge Tag above Builder Zone
+    const badgeW = isMobile ? 140 : 165;
+    ctx.fillStyle = 'rgba(2, 132, 199, 0.95)';
+    ctx.beginPath();
+    ctx.roundRect(bzSpot.x + bzSpot.width / 2 - badgeW / 2, bzPavY - 9, badgeW, 18, 9);
+    ctx.fill();
+    ctx.strokeStyle = '#38BDF8';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = isMobile ? 'bold 8.5px JetBrains Mono, monospace' : 'bold 9.5px JetBrains Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('✨ COMMUNITY DEMO HUB', bzSpot.x + bzSpot.width / 2, bzPavY);
+  }
 
-  // Steaming Coffee Cups on Table
-  ctx.fillStyle = '#FFFFFF';
-  ctx.beginPath(); ctx.arc(485, 432, 4, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#78350F';
-  ctx.beginPath(); ctx.arc(485, 432, 2.5, 0, Math.PI * 2); ctx.fill();
-  // Animated Steam Wisps
-  const steamY = (time * 15) % 12;
-  ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.moveTo(485, 427 - steamY);
-  ctx.quadraticCurveTo(488, 423 - steamY, 485, 419 - steamY);
-  ctx.stroke();
+  // 5. COZY ZONE 2: Warm Velvet Lounge & Cafe
+  if (!isMobile) {
+    const loungeX = 235, loungeY = Math.floor(canvas.height / 2 + 35);
+    const loungeW = 200, loungeH = 105;
+    ctx.fillStyle = '#1A294A';
+    ctx.beginPath();
+    ctx.roundRect(loungeX, loungeY, loungeW, loungeH, 16);
+    ctx.fill();
+    ctx.strokeStyle = '#F59E0B';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([8, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
 
-  // Cozy Beanbag Chairs
-  ctx.fillStyle = '#A78BFA';
-  ctx.beginPath(); ctx.ellipse(370, 455, 14, 11, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#F472B6';
-  ctx.beginPath(); ctx.ellipse(590, 455, 14, 11, 0, 0, Math.PI * 2); ctx.fill();
+    // Left Sofa (Navy)
+    ctx.fillStyle = '#243456';
+    ctx.beginPath(); ctx.roundRect(loungeX + 15, loungeY + 20, 28, 65, 6); ctx.fill();
+    ctx.strokeStyle = '#38BDF8'; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.fillStyle = '#162238'; ctx.fillRect(loungeX + 18, loungeY + 25, 22, 55);
 
-  // 5. Lush Indoor Planters & Monsteras
-  const plantPositions = [[275, 365], [680, 365], [75, 485], [885, 485], [515, 30]];
+    // Right Sofa (Emerald Cozy Armchair)
+    ctx.fillStyle = '#243456';
+    ctx.beginPath(); ctx.roundRect(loungeX + loungeW - 43, loungeY + 20, 28, 65, 6); ctx.fill();
+    ctx.strokeStyle = '#34D399'; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.fillStyle = '#064E3B'; ctx.fillRect(loungeX + loungeW - 40, loungeY + 25, 22, 55);
+
+    // Center Coffee Table (Wood & Glass)
+    ctx.fillStyle = '#92400E';
+    ctx.beginPath(); ctx.roundRect(loungeX + 55, loungeY + 32, 90, 36, 6); ctx.fill();
+    ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.fillStyle = '#B45309'; ctx.fillRect(loungeX + 60, loungeY + 36, 80, 28);
+
+    // Laptop on Table
+    ctx.fillStyle = '#F1F5F9'; ctx.fillRect(loungeX + 70, loungeY + 42, 16, 10);
+    ctx.fillStyle = '#38BDF8'; ctx.fillRect(loungeX + 72, loungeY + 43, 12, 8);
+
+    // Steaming Coffee Cups on Table
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath(); ctx.arc(loungeX + 115, loungeY + 48, 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#78350F';
+    ctx.beginPath(); ctx.arc(loungeX + 115, loungeY + 48, 2, 0, Math.PI * 2); ctx.fill();
+    const steamY = (time * 15) % 10;
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(loungeX + 115, loungeY + 44 - steamY);
+    ctx.quadraticCurveTo(loungeX + 118, loungeY + 40 - steamY, loungeX + 115, loungeY + 36 - steamY);
+    ctx.stroke();
+
+    // Cozy Beanbag Chair
+    ctx.fillStyle = '#A78BFA';
+    ctx.beginPath(); ctx.ellipse(loungeX + 100, loungeY + 85, 12, 9, 0, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // 6. Lush Indoor Planters & Monsteras
+  const plantPositions = isMobile
+    ? [[16, 54], [canvas.width - 16, 54]]
+    : [[225, canvas.height / 2 + 45], [445, canvas.height / 2 + 45], [40, 480], [canvas.width - 40, 480], [stageX - 18, 45], [stageX + stageW + 18, 45]];
   plantPositions.forEach(([px, py]) => {
-    // Ceramic Pot
     ctx.fillStyle = '#D97706';
-    ctx.beginPath(); ctx.roundRect(px - 7, py, 14, 14, [2, 2, 6, 6]); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(px - 6, py, 12, 12, [2, 2, 5, 5]); ctx.fill();
     ctx.fillStyle = '#B45309';
-    ctx.fillRect(px - 8, py, 16, 3);
-    // Monstera Green Leaves
+    ctx.fillRect(px - 7, py, 14, 2.5);
     ctx.fillStyle = '#34D399';
-    ctx.beginPath(); ctx.ellipse(px - 6, py - 6, 8, 5, -0.4, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(px + 6, py - 6, 8, 5, 0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(px - 5, py - 5, 6, 4, -0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(px + 5, py - 5, 6, 4, 0.4, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#10B981';
-    ctx.beginPath(); ctx.ellipse(px, py - 10, 6, 9, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(px, py - 8, 5, 7, 0, 0, Math.PI * 2); ctx.fill();
   });
 
-  // 6. Hanging Festive / Fairy String Lights (Top Ceiling Canopy)
-  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  // 7. Hanging Festive / Fairy String Lights (Top Ceiling Canopy)
+  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(0, 18);
-  ctx.quadraticCurveTo(240, 35, 480, 18);
-  ctx.quadraticCurveTo(720, 35, 960, 18);
+  ctx.moveTo(0, 14);
+  ctx.quadraticCurveTo(canvas.width * 0.25, 26, canvas.width * 0.5, 14);
+  ctx.quadraticCurveTo(canvas.width * 0.75, 26, canvas.width, 14);
   ctx.stroke();
 
   // Light Bulbs along string
-  for (let lx = 30; lx < 940; lx += 45) {
-    const ly = 18 + Math.sin((lx / 960) * Math.PI * 2) * 10;
-    const bulbColor = (lx % 90 === 0) ? '#FBBF24' : (lx % 60 === 0) ? '#38BDF8' : '#F472B6';
+  for (let lx = 25; lx < canvas.width - 15; lx += 40) {
+    const ly = 14 + Math.sin((lx / canvas.width) * Math.PI * 2) * 6;
+    const bulbColor = (lx % 80 === 0) ? '#FBBF24' : (lx % 40 === 0) ? '#38BDF8' : '#F472B6';
     ctx.fillStyle = bulbColor;
-    ctx.beginPath(); ctx.arc(lx, ly, 3, 0, Math.PI * 2); ctx.fill();
-    // Warm Ambient Light Bloom
+    ctx.beginPath(); ctx.arc(lx, ly, 2.5, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = bulbColor + '33';
-    ctx.beginPath(); ctx.arc(lx, ly, 8 + Math.sin(time * 3 + lx) * 2, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(lx, ly, 6 + Math.sin(time * 3 + lx) * 1.5, 0, Math.PI * 2); ctx.fill();
   }
 
-  // 7. Floating Ambient Sparkle Dust Particles
-  for (let i = 0; i < 20; i++) {
+  // 8. Floating Ambient Sparkle Dust Particles
+  for (let i = 0; i < 15; i++) {
     const partX = (i * 55 + Math.sin(time + i) * 40 + canvas.width) % canvas.width;
     const partY = (i * 32 + Math.cos(time + i * 2) * 30 + canvas.height) % canvas.height;
-    ctx.fillStyle = 'rgba(251, 191, 36, 0.4)';
-    ctx.beginPath(); ctx.arc(partX, partY, 1.3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(251, 191, 36, 0.35)';
+    ctx.beginPath(); ctx.arc(partX, partY, 1.2, 0, Math.PI * 2); ctx.fill();
   }
 
-  // 8. Google Color Circuit Paths on Floor
-  ctx.lineWidth = 3.5;
-  ctx.strokeStyle = '#3B82F655';
-  ctx.beginPath(); ctx.moveTo(100, 100); ctx.lineTo(480, 100); ctx.lineTo(480, 360); ctx.stroke();
-  ctx.strokeStyle = '#EF444455';
-  ctx.beginPath(); ctx.moveTo(780, 100); ctx.lineTo(480, 100); ctx.stroke();
-  ctx.strokeStyle = '#10B98155';
-  ctx.beginPath(); ctx.moveTo(170, 290); ctx.lineTo(420, 290); ctx.stroke();
-
-  // 9. Hotspot Holographic Platforms & Billboards
+  // 9. Hotspot Holographic Platforms & Billboards with Generous Auto-Padding
   HOTSPOTS.forEach(spot => {
     const cx = spot.x + spot.width / 2;
     const cy = spot.y + spot.height / 2;
+    const isFocused = (player.nearHotspot === spot);
+
+    // Font metrics for generous, beautiful inner padding
+    const titleFont = isMobile ? 'bold 10px JetBrains Mono, monospace' : 'bold 11px JetBrains Mono, monospace';
+    const subFont = isMobile ? 'bold 7.5px JetBrains Mono, monospace' : 'bold 8.5px JetBrains Mono, monospace';
+
+    ctx.font = titleFont;
+    const titleW = ctx.measureText(spot.label).width;
+    ctx.font = subFont;
+    const subW = spot.sub ? ctx.measureText(spot.sub).width : 0;
+
+    // Auto-padding: ensure the box width is at least max text width + 14px on mobile / 18px on desktop
+    const padH = isMobile ? 14 : 18;
+    const minW = Math.max(titleW, subW) + padH;
+    const boxW = Math.max(spot.width, minW);
+    const boxH = spot.height;
+    const boxX = cx - boxW / 2;
+    const boxY = spot.y;
 
     // Glowing pulsating ring under hotspot
-    const pulse = Math.sin(time + spot.x) * 3;
-    ctx.fillStyle = spot.ringColor + '33';
+    const pulse = Math.sin(time * 1.5 + spot.x) * 2.5;
+    ctx.fillStyle = spot.ringColor + (isFocused ? '55' : '28');
     ctx.beginPath();
-    ctx.ellipse(cx, cy + spot.height / 2, spot.width / 2 + 10 + pulse, 14 + pulse / 2, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, boxY + boxH / 2, boxW / 2 + 6 + pulse, 10 + pulse / 2, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Billboard / Booth Box
-    ctx.fillStyle = '#111C33';
+    // Billboard / Booth Box with glass background
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
     ctx.beginPath();
-    ctx.roundRect(spot.x, spot.y, spot.width, spot.height, 8);
+    ctx.roundRect(boxX, boxY, boxW, boxH, 8);
     ctx.fill();
 
-    ctx.strokeStyle = spot.color;
-    ctx.lineWidth = (player.nearHotspot === spot) ? 3 : 1.5;
+    ctx.strokeStyle = isFocused ? '#FFFFFF' : spot.color;
+    ctx.lineWidth = isFocused ? 2.5 : 1.5;
     ctx.stroke();
 
     // Top Accent strip
     ctx.fillStyle = spot.color;
     ctx.beginPath();
-    ctx.roundRect(spot.x, spot.y, spot.width, 6, [8, 8, 0, 0]);
+    ctx.roundRect(boxX, boxY, boxW, 4, [8, 8, 0, 0]);
     ctx.fill();
 
-    // Label Text in Monospace
-    ctx.fillStyle = '#FFF';
-    ctx.font = 'bold 9.5px JetBrains Mono, monospace';
+    // Label Title with soft drop shadow
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = titleFont;
     ctx.textAlign = 'center';
-    ctx.fillText(spot.label, cx, spot.y + spot.height / 2 + (spot.sub ? -2 : 3));
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0,0,0,0.85)';
+    ctx.shadowBlur = 4;
+    ctx.fillText(spot.label, cx, boxY + (spot.sub ? (boxH * 0.38) : (boxH * 0.52)));
+    ctx.shadowBlur = 0;
 
+    // Subtitle
     if (spot.sub) {
-      ctx.fillStyle = '#94A3B8';
-      ctx.font = '7.5px JetBrains Mono, monospace';
-      ctx.fillText(spot.sub, cx, spot.y + spot.height / 2 + 10);
+      ctx.fillStyle = '#93C5FD';
+      ctx.font = subFont;
+      ctx.fillText(spot.sub, cx, boxY + boxH * 0.72);
     }
   });
 
@@ -1080,6 +1316,7 @@ function renderWorld() {
 }
 
 function renderRadar() {
+  if (canvas.width < 768) return; // Hide radar on mobile screens to prevent overlay clutter
   const radarW = 120, radarH = 70;
   const rx = canvas.width - radarW - 14, ry = canvas.height - radarH - 14;
 
@@ -2600,19 +2837,138 @@ function resetAdminSessionForm() {
   document.getElementById('admin-session-form-title').innerText = 'Add / Edit Agenda Session';
 }
 
-// --- GEMINI AI SPONSOR DETAILS PARSER & BOOTH MANAGEMENT ---
+// --- CUSTOMIZABLE BOOTH DESIGNER STUDIO & GEMINI PARSER ---
 let cachedAdminSponsors = [];
-let currentEditingSponsorId = 'sponsor-google-cloud';
+let currentEditingSponsorId = 'booth-swag-shop';
+
+function applyBoothDesignPreset(preset) {
+  const presets = {
+    swag_shop: {
+      id: 'booth-swag-shop',
+      name: 'GDG Swag & Merch Shop',
+      tier: 'Official Merchandise',
+      sub: 'LINE Shopping @837etxse',
+      url: 'https://shop.line.me/@837etxse',
+      color: '#F59E0B',
+      desc: 'Official GDG Cloud Bangkok Hoodies, developer tees, stickers & pins on LINE Shopping.'
+    },
+    title_sponsor: {
+      id: 'sponsor-google-cloud',
+      name: 'Google Cloud',
+      tier: 'Title Sponsor',
+      sub: 'Vertex AI & Cloud Run Expo',
+      url: 'https://cloud.google.com',
+      color: '#EA4335',
+      desc: 'Empowering developers to build intelligent AI Agent applications on GCP.'
+    },
+    ai_hub: {
+      id: 'booth-ai-hub',
+      name: 'Gemini 2.0 AI Sandbox',
+      tier: 'AI Sandbox',
+      sub: 'Live Agent Playgrounds',
+      url: 'https://cloud.google.com/vertex-ai',
+      color: '#00E5FF',
+      desc: 'Interactive live testing ground for Vertex AI agents, function calling & multimodal pipelines.'
+    },
+    arcade: {
+      id: 'booth-arcade',
+      name: 'GDG Cyber Arcade',
+      tier: 'Community Partner',
+      sub: 'Retro Pixel Minigames',
+      url: 'https://gdg.community.dev/gdg-cloud-bangkok/',
+      color: '#EC4899',
+      desc: 'Compete in community 8-bit games, win DevFest raffle tickets and badges.'
+    }
+  };
+
+  const p = presets[preset] || presets.swag_shop;
+  currentEditingSponsorId = p.id;
+  document.getElementById('sponsor-edit-id').value = p.id;
+  document.getElementById('sponsor-edit-name').value = p.name;
+  document.getElementById('sponsor-edit-tier').value = p.tier;
+  document.getElementById('sponsor-edit-sub').value = p.sub;
+  document.getElementById('sponsor-edit-url').value = p.url;
+  document.getElementById('sponsor-edit-color').value = p.color;
+  document.getElementById('sponsor-edit-desc').value = p.desc;
+
+  updateBoothPreviewCanvas();
+  showToast(`Applied "${p.name}" preset! 🎨`, '🎨');
+}
+
+function updateBoothPreviewCanvas() {
+  const pCanvas = document.getElementById('booth-design-canvas');
+  if (!pCanvas) return;
+  const pCtx = pCanvas.getContext('2d');
+  const w = pCanvas.width, h = pCanvas.height;
+
+  pCtx.clearRect(0, 0, w, h);
+
+  const name = document.getElementById('sponsor-edit-name')?.value || 'Custom Booth';
+  const sub = document.getElementById('sponsor-edit-sub')?.value || 'Interactive Expo';
+  const color = document.getElementById('sponsor-edit-color')?.value || '#F59E0B';
+
+  const previewLabel = document.getElementById('booth-preview-label');
+  if (previewLabel) previewLabel.innerText = name;
+  const previewSub = document.getElementById('booth-preview-sub');
+  if (previewSub) previewSub.innerText = sub;
+
+  // Background Grid preview
+  pCtx.fillStyle = '#0F172A';
+  pCtx.fillRect(0, 0, w, h);
+
+  // Holographic Radial Glow
+  const glow = pCtx.createRadialGradient(w / 2, h / 2, 5, w / 2, h / 2, 70);
+  glow.addColorStop(0, color + '44');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  pCtx.fillStyle = glow;
+  pCtx.beginPath();
+  pCtx.arc(w / 2, h / 2, 70, 0, Math.PI * 2);
+  pCtx.fill();
+
+  // Pulsing ring under booth
+  pCtx.fillStyle = color + '33';
+  pCtx.beginPath();
+  pCtx.ellipse(w / 2, h / 2 + 18, 70, 16, 0, 0, Math.PI * 2);
+  pCtx.fill();
+
+  // Booth Platform
+  const boxW = 160, boxH = 46;
+  const bx = (w - boxW) / 2, by = (h - boxH) / 2;
+  pCtx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+  pCtx.beginPath();
+  pCtx.roundRect(bx, by, boxW, boxH, 8);
+  pCtx.fill();
+
+  pCtx.strokeStyle = color;
+  pCtx.lineWidth = 2;
+  pCtx.stroke();
+
+  // Accent Header Strip
+  pCtx.fillStyle = color;
+  pCtx.beginPath();
+  pCtx.roundRect(bx, by, boxW, 6, [8, 8, 0, 0]);
+  pCtx.fill();
+
+  // Text
+  pCtx.fillStyle = '#FFFFFF';
+  pCtx.font = 'bold 11px JetBrains Mono, monospace';
+  pCtx.textAlign = 'center';
+  pCtx.fillText(name.length > 20 ? name.slice(0, 19) + '…' : name, w / 2, by + 22);
+
+  pCtx.fillStyle = '#93C5FD';
+  pCtx.font = 'bold 8.5px JetBrains Mono, monospace';
+  pCtx.fillText(sub.length > 24 ? sub.slice(0, 23) + '…' : sub, w / 2, by + 36);
+}
 
 async function autoFillSponsorWithGemini() {
   const promptInput = document.getElementById('ai-sponsor-prompt');
   const prompt = promptInput ? promptInput.value.trim() : '';
   if (!prompt) {
-    showToast('Please paste a company pitch or sponsor description for Gemini AI!', '⚠️');
+    showToast('Please paste a company pitch or booth description for Gemini AI!', '⚠️');
     return;
   }
 
-  showToast('✨ Gemini AI analyzing sponsor prospectus & company details...', '🤖');
+  showToast('✨ Gemini AI designing custom booth & extracting details...', '🤖');
   try {
     const data = await fetchAPI('/sponsors/parse-gemini', {
       method: 'POST',
@@ -2623,15 +2979,21 @@ async function autoFillSponsorWithGemini() {
       const sp = data.parsed_sponsor;
       document.getElementById('sponsor-edit-name').value = sp.name || '';
       document.getElementById('sponsor-edit-tier').value = sp.tier || 'Gold Sponsor';
-      document.getElementById('sponsor-edit-url').value = sp.iframe_url || 'https://cloud.google.com';
+      document.getElementById('sponsor-edit-url').value = sp.iframe_url || 'https://shop.line.me/@837etxse';
       document.getElementById('sponsor-edit-desc').value = sp.description || '';
+      if (sp.theme_color) {
+        document.getElementById('sponsor-edit-color').value = sp.theme_color;
+      }
+      document.getElementById('sponsor-edit-sub').value = sp.tagline || 'Interactive Expo';
+
+      updateBoothPreviewCanvas();
 
       // Glowing highlight animation
       ['sponsor-edit-name', 'sponsor-edit-tier', 'sponsor-edit-url', 'sponsor-edit-desc'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-          el.style.borderColor = '#F87171';
-          el.style.boxShadow = '0 0 10px rgba(248, 113, 113, 0.4)';
+          el.style.borderColor = '#F59E0B';
+          el.style.boxShadow = '0 0 10px rgba(245, 158, 11, 0.4)';
           setTimeout(() => {
             el.style.borderColor = 'var(--card-border)';
             el.style.boxShadow = 'none';
@@ -2639,12 +3001,12 @@ async function autoFillSponsorWithGemini() {
         }
       });
 
-      showToast(`✨ Sponsor details for "${sp.name}" parsed by Gemini! Review and Save.`, '🎉');
+      showToast(`✨ Custom booth design for "${sp.name}" generated by Gemini!`, '🎉');
     } else {
       showToast(data.detail || 'Failed to parse sponsor details.', '⚠️');
     }
   } catch (err) {
-    showToast('Error communicating with Gemini Sponsor parser.', '⚠️');
+    showToast('Error communicating with Gemini Booth designer.', '⚠️');
   }
 }
 
@@ -2656,23 +3018,21 @@ async function loadAdminSponsors() {
     if (!list) return;
 
     list.innerHTML = cachedAdminSponsors.map(s => `
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#090E1A; border:1px solid var(--card-border); border-radius:8px; gap:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#090E1A; border:1.5px solid ${s.theme_color || 'var(--card-border)'}; border-radius:8px; gap:12px;">
         <div style="flex:1;">
           <div style="display:flex; align-items:center; gap:8px;">
-            <span class="badge" style="background:#EA4335; font-size:0.7rem;">${s.tier}</span>
+            <span class="badge" style="background:${s.theme_color || '#F59E0B'}; color:#FFF; font-size:0.7rem;">${s.tier || 'Booth'}</span>
             <strong style="color:#FFF; font-size:0.9rem;">${s.name}</strong>
           </div>
           <div style="color:#94A3B8; font-size:0.78rem; margin-top:3px; word-break:break-all;">
             🌐 ${s.iframe_url}
           </div>
         </div>
-        <button class="hud-btn" style="padding:4px 10px; font-size:0.78rem;" onclick="editAdminSponsor('${s.id}')">✏️ Edit Booth</button>
+        <button class="hud-btn" style="padding:4px 10px; font-size:0.78rem;" onclick="editAdminSponsor('${s.id}')">✏️ Customize</button>
       </div>
     `).join('');
 
-    if (cachedAdminSponsors.length > 0) {
-      editAdminSponsor(cachedAdminSponsors[0].id);
-    }
+    setTimeout(updateBoothPreviewCanvas, 50);
   } catch (err) {
     console.error('Error loading admin sponsors:', err);
   }
@@ -2682,33 +3042,62 @@ function editAdminSponsor(sponsorId) {
   const sp = cachedAdminSponsors.find(s => s.id === sponsorId);
   if (!sp) return;
   currentEditingSponsorId = sp.id;
+  document.getElementById('sponsor-edit-id').value = sp.id;
   document.getElementById('sponsor-edit-name').value = sp.name || '';
-  document.getElementById('sponsor-edit-tier').value = sp.tier || 'Title Sponsor';
-  document.getElementById('sponsor-edit-url').value = sp.iframe_url || 'https://cloud.google.com';
+  document.getElementById('sponsor-edit-tier').value = sp.tier || 'Official Merchandise';
+  document.getElementById('sponsor-edit-url').value = sp.iframe_url || 'https://shop.line.me/@837etxse';
+  document.getElementById('sponsor-edit-color').value = sp.theme_color || '#F59E0B';
+  document.getElementById('sponsor-edit-sub').value = sp.tagline || (sp.id === 'booth-swag-shop' ? 'LINE Shopping @837etxse' : 'Interactive Expo');
   document.getElementById('sponsor-edit-desc').value = sp.description || '';
-  document.getElementById('admin-sponsor-form-title').innerText = `✏️ Edit Sponsor Booth: ${sp.name}`;
+  updateBoothPreviewCanvas();
+  showToast(`Loaded "${sp.name}" into Booth Designer`, '✏️');
 }
 
 async function saveAdminSponsorBooth() {
+  const editId = document.getElementById('sponsor-edit-id').value || currentEditingSponsorId;
   const name = document.getElementById('sponsor-edit-name').value.trim();
   const tier = document.getElementById('sponsor-edit-tier').value;
   const iframe_url = document.getElementById('sponsor-edit-url').value.trim();
+  const theme_color = document.getElementById('sponsor-edit-color').value;
+  const sub = document.getElementById('sponsor-edit-sub').value.trim();
   const description = document.getElementById('sponsor-edit-desc').value.trim();
 
   if (!name || !iframe_url) {
-    showToast('Please provide sponsor name and iframe URL.', '⚠️');
+    showToast('Please provide booth name and store/website URL.', '⚠️');
     return;
   }
 
   try {
-    await fetchAPI(`/sponsors/${currentEditingSponsorId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ name, tier, iframe_url, description })
+    const payload = {
+      id: editId,
+      name,
+      tier,
+      iframe_url,
+      description,
+      theme_color,
+      ring_color: theme_color,
+      tagline: sub
+    };
+
+    await fetchAPI('/sponsors', {
+      method: 'POST',
+      body: JSON.stringify(payload)
     });
-    showToast(`Sponsor booth for "${name}" updated successfully! 🏢`, '🏢');
+
+    // Dynamically update corresponding live hotspot on canvas!
+    const spot = HOTSPOTS.find(s => s.id === editId || s.id === 'booth-swag-shop' || s.id === 'sponsor-google');
+    if (spot) {
+      spot.label = (editId === 'booth-swag-shop' ? '🛍️ ' : '🏢 ') + name.toUpperCase();
+      spot.sub = sub;
+      spot.url = iframe_url;
+      spot.color = theme_color;
+      spot.ringColor = theme_color;
+    }
+
+    showToast(`🚀 Booth "${name}" deployed to live virtual venue!`, '🎉');
     loadAdminSponsors();
   } catch (err) {
-    showToast('Failed to update sponsor booth.', '⚠️');
+    showToast('Failed to save & deploy booth.', '⚠️');
   }
 }
 

@@ -852,9 +852,58 @@ Automated test suites covering all microservice endpoints (**75 passed tests** v
 - `backend/tests/test_workshops.py`: Tests workshop seat capacity reservations and cancellation.
 - `backend/tests/test_backoffice_apis.py`: Tests role changes, AI agenda prompt generation, active user tracking, and RBAC enforcement.
 
+---
 
+## 14. Balanced Venue Floorplan, Prominent Builder Zone & Customizable Booth Studio
 
+### 14.1 Symmetrical & Collision-Free 2D Floorplan Architecture
+To ensure high visual legibility and eliminate overlap across resolutions, the campus floorplan is partitioned into dedicated zones:
+- **Top Center Keynote Stage**: Grand wooden keynote stage (`w/2 - 135` to `w/2 + 135`, `y: 16-104`) with stage podium and Google 4-color footlights.
+- **Top Left Wing (Community Hub 1)**: `🌐 CHAPTER` (`gdg.community.dev`), `📘 FB PAGE`, `👥 FB GROUP`.
+- **Top Right Wing (Community Hub 2)**: `💬 DISCORD`, `📷 INSTAGRAM`, `▶️ YOUTUBE`.
+- **Centerpiece Pavilion (Builder Zone Hub)**: Centered at (`w/2 - 125, h/2 - 34`) with cyan cybernetic floor mat, animated corner laser brackets, and ambient holographic spotlight.
+- **Left Flank**: `💻 WORKSHOP LABS` codelabs and AI hacking arena.
+- **Right Flank**: `🏢 GOOGLE CLOUD BOOTH` & `🛍️ GDG SWAG SHOP` (LINE Shopping: `https://shop.line.me/@837etxse`).
+- **Bottom Floor**: `🎫 TICKET VERIFY` & `📝 EVENT FEEDBACK` kiosks.
+- **South-West Lounge**: Repositioned Lofi Coffee Lounge with velvet armchairs, wooden coffee table, laptop, and steaming cups (zero collisions).
 
+```mermaid
+flowchart TD
+    subgraph VenueFloor ["Virtual Venue 2D Responsive Grid (Symmetrical Distribution)"]
+        subgraph TopRow ["Top North Sector"]
+            TL_Arcade["Top-Left Community Wing<br/>• 🌐 GDG Chapter<br/>• 📘 Facebook Page<br/>• 👥 Facebook Group"]
+            StagePlatform["🏛️ Grand Keynote Stage & Screen<br/>(Centered: w/2 - 105, y: 32)<br/>• 🎤 MAIN STAGE AGENDA<br/>• Live Gemini Transcripts"]
+            TR_Arcade["Top-Right Community Wing<br/>• 💬 Discord Server<br/>• 📷 Instagram<br/>• ▶️ YouTube Channel"]
+        end
 
+        subgraph MidRow ["Center Exhibition & Codelab Arena"]
+            WS_Zone["💻 WORKSHOP LABS<br/>(Left Flank: x: 45, y: h/2 - 32)<br/>Hands-on Labs"]
+            BZ_Hub["🛠️ BUILDER ZONE PAVILION<br/>(Centerpiece: w/2 - 125, y: h/2 - 34)<br/>• Neon Cyber Grid & Laser Corners<br/>• Community Web Apps & AI Demos<br/>• Built-in Live Iframe Runner"]
+            RightBooths["Right Flank Pavilions<br/>• 🏢 Google Cloud Vertex AI Booth<br/>• 🛍️ GDG Swag & Merch Shop<br/>(LINE Shopping: @837etxse)"]
+        end
 
+        subgraph BottomRow ["South Entrance & Networking Floor"]
+            LofiCafe["☕ Lofi Coffee & Beanbag Lounge<br/>(South-West: x: 235, y: h/2 + 35)<br/>Relaxed Networking Area"]
+            TicketStation["🎫 TICKET VERIFY<br/>(x: w/2 - 205, y: h - 85)"]
+            FeedbackStation["📝 EVENT FEEDBACK<br/>(x: w/2 + 20, y: h - 85)"]
+        end
+    end
 
+    subgraph BoothCustomizer ["Customizable Booth Design Studio & LINE Shopping Module"]
+        Presets["🎨 Quick Presets<br/>(Swag Shop, Title Sponsor, AI Sandbox, Arcade)"]
+        CanvasPreview["Live 2D Sprite Preview Canvas<br/>(Realtime Color, Frame & Label Sync)"]
+        DeployEngine["🚀 Dynamic Hotspot & DB Sync<br/>(/api/v1/sponsors & /api/v1/sponsors/generate-booth)"]
+        LineShopping["🛍️ LINE Shopping Channel<br/>https://shop.line.me/@837etxse"]
+    end
+
+    Presets --> CanvasPreview
+    CanvasPreview --> DeployEngine
+    DeployEngine --> RightBooths
+    RightBooths --> LineShopping
+```
+
+### 14.2 High-Legibility Typography & Glassmorphic UI Standards
+- **Hotspot Bounding Boxes**: `bold 11px / 12px JetBrains Mono, monospace` (titles) and `bold 7.5px / 9.5px JetBrains Mono, monospace` (subtitles) with dynamic content-aware auto-padding.
+- **Participant Overhead Name Tags**: `bold 11px JetBrains Mono, monospace` with dark translucent glass pill backgrounds (`rgba(11, 17, 33, 0.85)`).
+- **Speech Bubbles**: `bold 11px JetBrains Mono, monospace` rendered with 28px ergonomic pill heights and generous padding.
+- **Glassmorphic Proximity Hints**: Compact rounded pill badge (`0.72rem`, `border-radius: 20px`, `padding: 3px 10px`) with **12px backdrop blur** (`backdrop-filter: blur(12px) saturate(180%)`), subtle cyan border (`rgba(56, 189, 248, 0.4)`), and an embedded glowing keycap `<span class="hint-key">E</span>` that never blocks surrounding booths or characters.

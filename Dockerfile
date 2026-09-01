@@ -4,7 +4,8 @@ FROM python:3.13-slim
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PORT=8080
+    PORT=8080 \
+    GOOGLE_CLIENT_ID=""
 
 # Install system dependencies and uv package manager
 WORKDIR /app

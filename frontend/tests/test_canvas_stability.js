@@ -156,11 +156,11 @@ for (const res of resolutions) {
   sandbox.document.getElementById('game-container').clientHeight = res.h;
   vm.runInContext('resizeCanvas()', context);
   
-  if (gameCanvas.width < 960 || gameCanvas.height < 540) {
-    throw new Error(`Canvas size too small on ${res.name}: ${gameCanvas.width}x${gameCanvas.height}`);
+  if (gameCanvas.width !== res.w || gameCanvas.height !== res.h) {
+    throw new Error(`Canvas size mismatch on ${res.name}: expected ${res.w}x${res.h}, got ${gameCanvas.width}x${gameCanvas.height}`);
   }
 }
-console.log('✅ Multi-Resolution resize tests passed (min-bounds enforced).');
+console.log('✅ Multi-Resolution resize tests passed (fluid mobile & desktop viewport scaling).');
 
 // 3. Test 120 Continuous Frames Simulation with simulated key events
 const sendKey = (code, isDown) => {

@@ -75,6 +75,11 @@ gcloud builds submit --tag "${IMAGE_NAME}" .
 
 # 4. Deploy to Google Cloud Run with scale-to-zero and max-instances=1
 echo "🚀 Deploying service to Cloud Run..."
+ENV_VARS="GCP_PROJECT=${PROJECT_ID},PROJECT_NAME=DevFestVerse"
+if [ -n "${GOOGLE_CLIENT_ID:-}" ]; then
+    ENV_VARS="${ENV_VARS},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}"
+fi
+
 gcloud run deploy "${SERVICE_NAME}" \
     --image "${IMAGE_NAME}" \
     --platform managed \
@@ -86,7 +91,7 @@ gcloud run deploy "${SERVICE_NAME}" \
     --concurrency 80 \
     --timeout 300 \
     --allow-unauthenticated \
-    --set-env-vars "GCP_PROJECT=${PROJECT_ID},PROJECT_NAME=DevFestVerse"
+    --set-env-vars "${ENV_VARS}"
 
 # 5. Output Service URL
 SERVICE_URL=$(gcloud run services describe "${SERVICE_NAME}" --platform managed --region "${REGION}" --format 'value(status.url)')
