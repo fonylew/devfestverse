@@ -25,20 +25,36 @@ def get_ticket_system_info():
         "verification_active": True
     }
 
+from backend.app.core.firestore import firestore_manager
+
 @router.post("/verify")
 def verify_official_ticket(req: VerifyTicketRequest, user: dict = Depends(get_current_user)):
-    ticket = OFFICIAL_TICKETS.get(req.ticket_ref.upper().strip())
+    ticket_clean = req.ticket_ref.upper().strip()
+    ticket = OFFICIAL_TICKETS.get(ticket_clean)
     if not ticket:
         raise HTTPException(
             status_code=400,
             detail=f"Ticket reference '{req.ticket_ref}' not found in official DevFest roster. Please register at {settings.DEFAULT_TICKET_REGISTRATION_URL}"
         )
     
+    user_id = user["id"]
+    event_id = user.get("active_event_id", "devfest-bangkok-2026")
+    current_role = user.get("role", "PARTICIPANT")
+    
+    # Persist ticket verification directly into Firestore
+    saved_user = firestore_manager.set_user_event_role(
+        user_id=user_id,
+        event_id=event_id,
+        role=current_role,
+        ticket_ref=ticket_clean,
+        verified=True
+    )
+    
     user["verified_ticket"] = True
-    user["ticket_ref"] = req.ticket_ref.upper().strip()
+    user["ticket_ref"] = ticket_clean
     return {
         "message": "Official DevFest Ticket verified successfully!",
         "verified_badge": "Verified Ticket Badge",
         "unlocked_features": ["Lucky Draw Raffle Entry", "Workshop Priority Reservation"],
-        "user": user
+        "user": saved_user or user
     }

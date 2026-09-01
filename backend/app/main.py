@@ -18,7 +18,9 @@ from backend.app.api import (
     bgm,
     events,
     backoffice,
-    firestore_admin
+    firestore_admin,
+    builders,
+    realtime_presence
 )
 
 app = FastAPI(
@@ -55,6 +57,8 @@ app.include_router(bgm.router, prefix=api_v1_prefix)
 app.include_router(events.router, prefix=api_v1_prefix)
 app.include_router(backoffice.router, prefix=api_v1_prefix)
 app.include_router(firestore_admin.router, prefix=api_v1_prefix)
+app.include_router(builders.router, prefix=api_v1_prefix)
+app.include_router(realtime_presence.router, prefix=api_v1_prefix)
 
 import os
 from fastapi.staticfiles import StaticFiles
@@ -103,6 +107,24 @@ def serve_favicon_png():
         return FileResponse(fav)
     return {"detail": "favicon not found"}
 
+@app.get("/privacy")
+@app.get("/privacy-policy")
+@app.get("/privacy.html")
+def serve_privacy():
+    priv_file = os.path.join(frontend_path, "privacy.html")
+    if os.path.exists(priv_file):
+        return FileResponse(priv_file)
+    return {"detail": "privacy policy page not found"}
+
+@app.get("/terms")
+@app.get("/terms-of-service")
+@app.get("/terms.html")
+def serve_terms():
+    terms_file = os.path.join(frontend_path, "terms.html")
+    if os.path.exists(terms_file):
+        return FileResponse(terms_file)
+    return {"detail": "terms of service page not found"}
+
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "service": "devfestverse", "project": "gdg-cloud-bangkok-2026"}
+    return {"status": "healthy", "service": "devfestverse", "project": settings.GCP_PROJECT or "local-dev"}

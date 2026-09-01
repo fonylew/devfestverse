@@ -1,14 +1,47 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # DevFestVerse - Google Cloud Run Deployment Script
-# Target GCP Project: gdg-cloud-bangkok-2026
 # Scaling Policy: Min instances = 0 (scale to zero), Max instances = 1
 # ==============================================================================
 
 set -euo pipefail
 
+# 1. Resolve GCP Project ID
+PROJECT_ID="${GCP_PROJECT:-${CLOUDSDK_CORE_PROJECT:-${PROJECT_ID:-}}}"
+
+if [ -z "${PROJECT_ID}" ]; then
+    # Attempt to retrieve current project from gcloud configuration
+    CURRENT_GCLOUD_PROJECT=$(gcloud config get-value project 2>/dev/null || true)
+    if [ "${CURRENT_GCLOUD_PROJECT}" = "(unset)" ]; then
+        CURRENT_GCLOUD_PROJECT=""
+    fi
+
+    if [ -t 0 ]; then
+        # Interactive shell prompt
+        if [ -n "${CURRENT_GCLOUD_PROJECT}" ]; then
+            read -rp "Enter your Google Cloud Project ID [default: ${CURRENT_GCLOUD_PROJECT}]: " USER_INPUT
+            PROJECT_ID="${USER_INPUT:-${CURRENT_GCLOUD_PROJECT}}"
+        else
+            read -rp "Enter your Google Cloud Project ID: " USER_INPUT
+            PROJECT_ID="${USER_INPUT}"
+        fi
+    else
+        # Non-interactive fallback
+        PROJECT_ID="${CURRENT_GCLOUD_PROJECT}"
+    fi
+fi
+
+if [ -z "${PROJECT_ID}" ] || [ "${PROJECT_ID}" = "(unset)" ]; then
+    echo "❌ Error: Google Cloud Project ID is required."
+    echo "Please provide it via the GCP_PROJECT environment variable or set your active gcloud project."
+    echo ""
+    echo "Examples:"
+    echo "  GCP_PROJECT=your-gcp-project-id ./deploy.sh"
+    echo "  gcloud config set project your-gcp-project-id && ./deploy.sh"
+    exit 1
+fi
+
 # Configuration Variables
-PROJECT_ID="${GCP_PROJECT:-gdg-cloud-bangkok-2026}"
 SERVICE_NAME="${CLOUD_RUN_SERVICE:-devfestverse}"
 REGION="${GCP_REGION:-asia-southeast3}"
 IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}:latest"

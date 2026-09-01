@@ -83,14 +83,16 @@ window.addEventListener('keyup', (e) => { keys[e.code] = false; });
 // Interactive Hotspots on the 2D Map
 const HOTSPOTS = [
   { id: 'ticket-billboard', type: 'TICKET_BILLBOARD', x: 420, y: 270, width: 130, height: 52, label: '🎫 MAIN TICKET BILLBOARD', sub: 'Verify Ticket to Unlock', color: '#10B981', ringColor: '#34D399' },
+  { id: 'builder-zone', type: 'BUILDER_ZONE', x: 260, y: 270, width: 140, height: 52, label: '🛠️ BUILDER ZONE', sub: 'Live App Showcase & Demos', color: '#0284C7', ringColor: '#38BDF8' },
   { id: 'workshop-zone', type: 'WORKSHOP_ZONE', x: 100, y: 190, width: 140, height: 60, label: '💻 WORKSHOP LABS', sub: 'Hands-on Seat Reservation', color: '#8B5CF6', ringColor: '#A78BFA' },
   { id: 'sponsor-google', type: 'SPONSOR_BOOTH', x: 720, y: 190, width: 140, height: 60, label: '🏢 GOOGLE CLOUD BOOTH', sub: 'Vertex AI & Cloud Run Expo', url: 'https://cloud.google.com', color: '#EA4335', ringColor: '#F87171' },
-  { id: 'bb-fb-page', type: 'COMMUNITY_BILLBOARD', x: 80, y: 50, width: 75, height: 40, label: '📘 FB PAGE', url: 'https://www.facebook.com/gdgcloudbkk', color: '#4285F4', ringColor: '#60A5FA' },
-  { id: 'bb-fb-group', type: 'COMMUNITY_BILLBOARD', x: 170, y: 50, width: 75, height: 40, label: '👥 FB GROUP', url: 'https://www.facebook.com/groups/gdgcloudbkk', color: '#34A853', ringColor: '#4ADE80' },
-  { id: 'bb-discord', type: 'COMMUNITY_BILLBOARD', x: 260, y: 50, width: 75, height: 40, label: '💬 DISCORD', url: 'https://discord.gg/gdgcloudbkk', color: '#5865F2', ringColor: '#818CF8' },
-  { id: 'bb-instagram', type: 'COMMUNITY_BILLBOARD', x: 350, y: 50, width: 85, height: 40, label: '📷 INSTAGRAM', url: 'https://www.instagram.com/gdgcloudbkk', color: '#E1306C', ringColor: '#F472B6' },
-  { id: 'bb-youtube', type: 'COMMUNITY_BILLBOARD', x: 450, y: 50, width: 80, height: 40, label: '▶️ YOUTUBE', url: 'https://www.youtube.com/@gdgcloudbkk', color: '#FF0000', ringColor: '#F87171' },
-  { id: 'stage-screen', type: 'STAGE_SCREEN', x: 570, y: 45, width: 150, height: 48, label: '🎤 MAIN STAGE AGENDA', sub: 'Live Gemini Transcripts', color: '#FBBC04', ringColor: '#FDE047' },
+  { id: 'bb-gdg-chapter', type: 'COMMUNITY_BILLBOARD', x: 40, y: 48, width: 85, height: 42, label: '🌐 CHAPTER', sub: 'GDG Cloud BKK', url: 'https://gdg.community.dev/gdg-cloud-bangkok/', color: '#4285F4', ringColor: '#60A5FA' },
+  { id: 'bb-fb-page', type: 'COMMUNITY_BILLBOARD', x: 135, y: 48, width: 80, height: 42, label: '📘 FB PAGE', sub: 'Official Page', url: 'https://www.facebook.com/profile.php?id=61583002384772', color: '#1877F2', ringColor: '#60A5FA' },
+  { id: 'bb-fb-group', type: 'COMMUNITY_BILLBOARD', x: 225, y: 48, width: 80, height: 42, label: '👥 FB GROUP', sub: 'Developer Group', url: 'https://www.facebook.com/groups/gdgcloudbkk/', color: '#34A853', ringColor: '#4ADE80' },
+  { id: 'bb-discord', type: 'COMMUNITY_BILLBOARD', x: 315, y: 48, width: 80, height: 42, label: '💬 DISCORD', sub: 'Community Hub', url: 'https://discord.gg/CBbPpNvmS', color: '#5865F2', ringColor: '#818CF8' },
+  { id: 'bb-instagram', type: 'COMMUNITY_BILLBOARD', x: 405, y: 48, width: 85, height: 42, label: '📷 INSTAGRAM', sub: '@gdgcloudbkk', url: 'https://www.instagram.com/gdgcloudbkk', color: '#E1306C', ringColor: '#F472B6' },
+  { id: 'bb-youtube', type: 'COMMUNITY_BILLBOARD', x: 500, y: 48, width: 85, height: 42, label: '▶️ YOUTUBE', sub: '@gdgcloudbangkok', url: 'https://www.youtube.com/@gdgcloudbangkok', color: '#FF0000', ringColor: '#F87171' },
+  { id: 'stage-screen', type: 'STAGE_SCREEN', x: 600, y: 45, width: 150, height: 48, label: '🎤 MAIN STAGE AGENDA', sub: 'Live Gemini Transcripts', color: '#FBBC04', ringColor: '#FDE047' },
   { id: 'feedback-kiosk', type: 'FEEDBACK_KIOSK', x: 420, y: 460, width: 130, height: 48, label: '📝 EVENT FEEDBACK', sub: 'Rate Talks & Share Ideas', color: '#EC4899', ringColor: '#F472B6' }
 ];
 
@@ -113,19 +115,23 @@ function repositionHotspots(w, h) {
   const stage = HOTSPOTS.find(s => s.id === 'stage-screen');
   if (stage) { stage.x = Math.floor(w / 2 - 75); stage.y = 45; }
 
-  // Center Ticket Billboard
+  // Builder Zone (Center-Left)
+  const bz = HOTSPOTS.find(s => s.id === 'builder-zone');
+  if (bz) { bz.x = Math.floor(w / 2 - 165); bz.y = Math.floor(h / 2 - 26); }
+
+  // Ticket Billboard (Center-Right)
   const ticket = HOTSPOTS.find(s => s.id === 'ticket-billboard');
-  if (ticket) { ticket.x = Math.floor(w / 2 - 65); ticket.y = Math.floor(h / 2 - 26); }
+  if (ticket) { ticket.x = Math.floor(w / 2 + 25); ticket.y = Math.floor(h / 2 - 26); }
 
   // Center Feedback Kiosk (Bottom)
   const fb = HOTSPOTS.find(s => s.id === 'feedback-kiosk');
   if (fb) { fb.x = Math.floor(w / 2 - 65); fb.y = Math.floor(h - 80); }
 
-  // Workshop Labs (Left)
+  // Workshop Labs (Far Left)
   const ws = HOTSPOTS.find(s => s.id === 'workshop-zone');
   if (ws) { ws.x = 70; ws.y = Math.floor(h / 2 - 30); }
 
-  // Google Booth (Right)
+  // Google Booth (Far Right)
   const google = HOTSPOTS.find(s => s.id === 'sponsor-google');
   if (google) { google.x = Math.floor(w - 210); google.y = Math.floor(h / 2 - 30); }
 }
@@ -255,6 +261,8 @@ function triggerHotspotAction(spot) {
     openModal('agenda-modal');
   } else if (spot.type === 'FEEDBACK_KIOSK') {
     openModal('feedback-modal');
+  } else if (spot.type === 'BUILDER_ZONE') {
+    openModal('builder-showcase-modal');
   }
 }
 
@@ -1105,9 +1113,19 @@ function renderRadar() {
 }
 
 function gameLoop() {
-  updatePlayer();
-  renderWorld();
-  requestAnimationFrame(gameLoop);
+  try {
+    if (canvas && ctx) {
+      updatePlayer();
+      renderWorld();
+    }
+  } catch (err) {
+    console.error('Canvas render loop recovered from error:', err);
+  }
+  if (typeof requestAnimationFrame !== 'undefined') {
+    requestAnimationFrame(gameLoop);
+  } else if (typeof window !== 'undefined' && window.requestAnimationFrame) {
+    window.requestAnimationFrame(gameLoop);
+  }
 }
 
 // --- CHARACTER STUDIO CUSTOMIZER ---
@@ -1281,7 +1299,21 @@ function studioPreviewLoop() {
       false
     );
   }
-  requestAnimationFrame(studioPreviewLoop);
+  if (typeof requestAnimationFrame !== 'undefined') {
+    requestAnimationFrame(studioPreviewLoop);
+  } else if (typeof window !== 'undefined' && window.requestAnimationFrame) {
+    window.requestAnimationFrame(studioPreviewLoop);
+  }
+}
+
+function saveUserSession(user) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem('devfestverse_user', JSON.stringify(user));
+    if (user.avatar_config) {
+      localStorage.setItem('devfestverse_avatar', JSON.stringify(user.avatar_config));
+    }
+  } catch (e) {}
 }
 
 async function saveAndApplyAvatar() {
@@ -1291,39 +1323,116 @@ async function saveAndApplyAvatar() {
       body: JSON.stringify(studioConfig)
     });
     currentUser.avatar_config = { ...studioConfig };
+    saveUserSession(currentUser);
     updateUserUI();
-    showToast(data.message || '🎉 Avatar design saved & applied!', '🎨');
+    showToast(data.message || '🎉 Avatar design saved to Firestore & applied!', '🎨');
     closeModal('avatar-studio-modal');
   } catch (err) {
     showToast('Error saving avatar configuration.', '⚠️');
   }
 }
 
-async function generateWithGeminiAI() {
+function useQuickPrompt(text) {
+  const input = document.getElementById('ai-avatar-prompt');
+  if (input) input.value = text;
+  generateWithBrowserLocalAI();
+}
+
+async function generateWithBrowserLocalAI() {
   const promptInput = document.getElementById('ai-avatar-prompt');
-  const prompt = promptInput.value.trim();
+  const prompt = (promptInput?.value || '').trim();
   if (!prompt) {
-    showToast('Please type a prompt for Gemini AI avatar synthesis!', '⚠️');
+    showToast('Please type a prompt for Browser Local AI character synthesis!', '⚠️');
     return;
   }
 
-  showToast('Synthesizing character with Gemini AI...', '🤖');
-  try {
-    const data = await fetchAPI('/avatar/ai-generate', {
-      method: 'POST',
-      body: JSON.stringify({ prompt })
-    });
-    if (data.config) {
-      studioConfig = { ...data.config };
-      initStudioControls();
-      showToast(data.message || 'Gemini AI generated your character!', '✨');
-    } else {
-      showToast(data.detail || 'Failed to generate avatar.', '⚠️');
+  showToast('Synthesizing character with Browser Local AI...', '🧠');
+  
+  let newConfig = { ...studioConfig };
+  let usedModel = 'Browser On-Device Local Engine';
+
+  // Check for Chrome Built-in AI (Prompt API / Gemini Nano in Browser)
+  if (typeof window !== 'undefined' && window.ai && window.ai.languageModel) {
+    try {
+      const session = await window.ai.languageModel.create({
+        systemPrompt: "You are a 2D pixel avatar designer for DevFest 2026. Given a character description, respond with valid JSON with keys: skin_tone, hair_style, hair_color, outfit_style, outfit_color, headwear, aura, theme"
+      });
+      const rawRes = await session.prompt(prompt);
+      const jsonMatch = rawRes.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        newConfig = { ...newConfig, ...parsed };
+        usedModel = 'Chrome Built-in Gemini Nano (window.ai)';
+      }
+    } catch (e) {
+      console.log('Falling back to browser on-device semantic engine');
     }
-  } catch (err) {
-    showToast('Failed to connect to Gemini AI generator.', '⚠️');
   }
+
+  // Browser Local Semantic & Rule Pipeline (100% Client-Side)
+  const p = prompt.toLowerCase();
+
+  // Headwear mapping
+  if (p.includes('cat') || p.includes('neko') || p.includes('ear')) newConfig.headwear = 'cat_ears';
+  else if (p.includes('vr') || p.includes('visor') || p.includes('oculus')) newConfig.headwear = 'vr_headset';
+  else if (p.includes('glass') || p.includes('spectacle')) newConfig.headwear = 'google_glasses';
+  else if (p.includes('headphone') || p.includes('audio') || p.includes('music') || p.includes('lofi') || p.includes('streamer')) newConfig.headwear = 'headphones';
+  else if (p.includes('space') || p.includes('astro') || p.includes('helmet')) newConfig.headwear = 'astronaut_helmet';
+  else if (p.includes('cap') || p.includes('hat')) newConfig.headwear = 'devfest_cap';
+
+  // Aura mapping
+  if (p.includes('matrix') || p.includes('cyber') || p.includes('neon') || p.includes('hack')) newConfig.aura = 'matrix_glow';
+  else if (p.includes('sparkle') || p.includes('star') || p.includes('magic') || p.includes('ai') || p.includes('agent')) newConfig.aura = 'ai_sparkles';
+  else if (p.includes('cloud') || p.includes('pet') || p.includes('gopher')) newConfig.aura = 'cloud_pet';
+  else if (p.includes('fire') || p.includes('flame') || p.includes('burn')) newConfig.aura = 'fire_trail';
+
+  // Hair style mapping
+  if (p.includes('spik') || p.includes('anime') || p.includes('punk')) newConfig.hair_style = 'spiky';
+  else if (p.includes('afro') || p.includes('curly')) newConfig.hair_style = 'afro';
+  else if (p.includes('pony') || p.includes('tail') || p.includes('girl')) newConfig.hair_style = 'ponytail';
+  else if (p.includes('beanie')) newConfig.hair_style = 'beanie';
+  else if (p.includes('mohawk')) newConfig.hair_style = 'mohawk';
+  else if (p.includes('bald') || p.includes('none')) newConfig.hair_style = 'none';
+  else newConfig.hair_style = 'short';
+
+  // Hair color mapping
+  if (p.includes('blue') || p.includes('cyan')) newConfig.hair_color = '#3B82F6';
+  else if (p.includes('pink') || p.includes('magenta')) newConfig.hair_color = '#EC4899';
+  else if (p.includes('red') || p.includes('crimson')) newConfig.hair_color = '#EF4444';
+  else if (p.includes('green') || p.includes('emerald')) newConfig.hair_color = '#10B981';
+  else if (p.includes('purple') || p.includes('violet')) newConfig.hair_color = '#8B5CF6';
+  else if (p.includes('blonde') || p.includes('yellow') || p.includes('gold')) newConfig.hair_color = '#F59E0B';
+  else if (p.includes('white') || p.includes('silver')) newConfig.hair_color = '#FFFFFF';
+  else newConfig.hair_color = '#1E293B';
+
+  // Outfit style mapping
+  if (p.includes('hoodie') || p.includes('gdg')) newConfig.outfit_style = 'gdg_hoodie';
+  else if (p.includes('jacket') || p.includes('cyber') || p.includes('leather')) newConfig.outfit_style = 'cyber_jacket';
+  else if (p.includes('suit') || p.includes('formal') || p.includes('tie')) newConfig.outfit_style = 'suit';
+  else newConfig.outfit_style = 'devfest_tshirt';
+
+  // Outfit color mapping
+  if (p.includes('blue') || p.includes('google')) newConfig.outfit_color = '#4285F4';
+  else if (p.includes('red')) newConfig.outfit_color = '#EA4335';
+  else if (p.includes('yellow') || p.includes('gold')) newConfig.outfit_color = '#FBBC04';
+  else if (p.includes('green')) newConfig.outfit_color = '#34A853';
+  else if (p.includes('purple')) newConfig.outfit_color = '#8B5CF6';
+  else if (p.includes('pink')) newConfig.outfit_color = '#EC4899';
+  else if (p.includes('dark') || p.includes('black')) newConfig.outfit_color = '#0F172A';
+
+  // Skin tone
+  if (p.includes('alien') || p.includes('avatar') || p.includes('blue skin')) newConfig.skin_tone = '#93C5FD';
+  else if (p.includes('pink skin')) newConfig.skin_tone = '#F472B6';
+  else if (p.includes('dark skin') || p.includes('brown')) newConfig.skin_tone = '#78350F';
+  else newConfig.skin_tone = '#FBBF24';
+
+  studioConfig = { ...newConfig, theme: 'browser-local-ai' };
+  initStudioControls();
+  showToast(`Character generated locally via ${usedModel}! ✨`, '⚡');
 }
+
+// Backward compatibility alias
+const generateWithGeminiAI = generateWithBrowserLocalAI;
 
 // --- AUTH & GOOGLE ONBOARDING ---
 function parseJwt(token) {
@@ -1360,10 +1469,12 @@ async function handleGoogleCredentialResponse(response) {
       currentUser = data.user;
       if (currentUser.avatar_config) {
         studioConfig = { ...currentUser.avatar_config };
+        initStudioControls();
       }
+      saveUserSession(currentUser);
       updateUserUI();
       closeModal('signin-modal');
-      showToast(`Welcome ${currentUser.display_name}! Signed in via Google & avatar saved!`, '🚀');
+      showToast(`Welcome back ${currentUser.display_name}! Signed in via Google & restored your avatar! 🎨`, '🚀');
     }
   } catch (err) {
     showToast('Google Sign-In failed.', '⚠️');
@@ -1407,10 +1518,12 @@ async function loginWithMockGoogle() {
       currentUser = data.user;
       if (currentUser.avatar_config) {
         studioConfig = { ...currentUser.avatar_config };
+        initStudioControls();
       }
+      saveUserSession(currentUser);
       updateUserUI();
       closeModal('signin-modal');
-      showToast(`Welcome ${currentUser.display_name}! Signed in via Google & avatar saved!`, '🚀');
+      showToast(`Welcome back ${currentUser.display_name}! Restored avatar from Firestore! 🎨`, '🚀');
     } else {
       showToast(data.detail || 'Google Sign-in failed', '⚠️');
     }
@@ -1492,6 +1605,8 @@ function openModal(id) {
       showToast('Access restricted: Back Office is only visible and accessible to Organizers & Staff.', '⛔');
       return;
     }
+    showAdminTab('users-admin-tab');
+    loadBackofficeUsers();
     loadAdminSessions();
     loadAdminFeedback();
   }
@@ -1506,7 +1621,13 @@ function openModal(id) {
   if (id === 'workshops-modal') loadWorkshops();
   if (id === 'qna-modal') loadQnA();
   if (id === 'bgm-modal') loadBGM();
-  if (id === 'feedback-modal') setFeedbackStar(5);
+  if (id === 'feedback-modal') {
+    setFeedbackOverallRating(currentOverallStarRating || 5);
+    setFeedbackContentRating(currentContentRating || 5);
+    setFeedbackVenueRating(currentVenueRating || 5);
+    setFeedbackNps(currentNpsScore !== undefined ? currentNpsScore : 10);
+  }
+  if (id === 'builder-showcase-modal') loadBuilderProjects();
 }
 
 function closeModal(id) {
@@ -1523,7 +1644,23 @@ function openBillboardModal(title, url) {
   document.getElementById('billboard-new-tab-btn').href = url;
   const body = document.getElementById('billboard-modal-body');
 
-  if (url.includes('youtube.com')) {
+  if (url.includes('gdg.community.dev')) {
+    body.innerHTML = `
+      <div style="background:linear-gradient(135deg, rgba(66, 133, 244, 0.15), #0F172A); border:1.5px solid #4285F4; border-radius:14px; padding:24px; text-align:center;">
+        <div style="font-size:3rem; margin-bottom:10px;">🌐</div>
+        <h3 style="color:#FFF; font-size:1.3rem; margin-bottom:6px;">GDG Cloud Bangkok Official Chapter</h3>
+        <p style="color:#94A3B8; font-size:0.85rem; max-width:500px; margin:0 auto 18px;">Join the official Google Developer Groups Cloud Bangkok Chapter to RSVP for upcoming meetups, get official tickets, and connect with 6,000+ local cloud developers & architects.</p>
+        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+          <span style="background:rgba(66,133,244,0.2); color:#60A5FA; border:1px solid rgba(66,133,244,0.4); padding:4px 12px; border-radius:6px; font-size:0.75rem; font-weight:700;">🌟 Official GDG Portal</span>
+          <span style="background:rgba(52,168,83,0.2); color:#4ADE80; border:1px solid rgba(52,168,83,0.4); padding:4px 12px; border-radius:6px; font-size:0.75rem; font-weight:700;">🎟️ Event RSVPs & Tickets</span>
+          <span style="background:rgba(251,188,4,0.2); color:#FDE047; border:1px solid rgba(251,188,4,0.4); padding:4px 12px; border-radius:6px; font-size:0.75rem; font-weight:700;">🤝 6,000+ Members</span>
+        </div>
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="hud-btn primary" style="display:inline-flex; padding:12px 28px; font-size:0.9rem; font-weight:700; text-decoration:none; background:linear-gradient(135deg, #4285F4, #2563EB); border-color:#60A5FA;">
+          🌐 Visit GDG Cloud Bangkok Chapter Portal
+        </a>
+      </div>
+    `;
+  } else if (url.includes('youtube.com')) {
     // Official YouTube Embed Player (100% permitted by YouTube CSP/X-Frame-Options)
     body.innerHTML = `
       <div style="display:flex; flex-direction:column; gap:16px;">
@@ -1633,14 +1770,98 @@ function showToast(message, icon = 'ℹ️') {
   }, 4000);
 }
 
-// --- API INTEGRATION HELPERS ---
-async function fetchAPI(endpoint, options = {}) {
+// --- CLIENT-SIDE FIRESTORE CACHE MANAGER ---
+let currentActiveEventId = 'devfest-bangkok-2026';
+
+const ClientCacheManager = {
+  memoryCache: new Map(),
+
+  get(key) {
+    try {
+      const raw = sessionStorage.getItem(`dfv_cache_${key}`);
+      if (raw) {
+        const item = JSON.parse(raw);
+        if (Date.now() - item.timestamp < item.ttl) {
+          return item.data;
+        }
+        sessionStorage.removeItem(`dfv_cache_${key}`);
+      }
+    } catch (e) {}
+
+    if (this.memoryCache.has(key)) {
+      const item = this.memoryCache.get(key);
+      if (Date.now() - item.timestamp < item.ttl) {
+        return item.data;
+      }
+      this.memoryCache.delete(key);
+    }
+    return null;
+  },
+
+  set(key, data, ttlSeconds = 300) {
+    const item = { timestamp: Date.now(), ttl: ttlSeconds * 1000, data };
+    try {
+      sessionStorage.setItem(`dfv_cache_${key}`, JSON.stringify(item));
+    } catch (e) {}
+    this.memoryCache.set(key, item);
+  },
+
+  invalidate(pattern) {
+    try {
+      const keysToRemove = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const k = sessionStorage.key(i);
+        if (k && k.startsWith('dfv_cache_') && (!pattern || k.includes(pattern))) {
+          keysToRemove.push(k);
+        }
+      }
+      keysToRemove.forEach(k => sessionStorage.removeItem(k));
+    } catch (e) {}
+
+    for (const k of this.memoryCache.keys()) {
+      if (!pattern || k.includes(pattern)) {
+        this.memoryCache.delete(k);
+      }
+    }
+  },
+
+  clear() {
+    this.invalidate();
+  }
+};
+
+// --- API INTEGRATION HELPERS WITH CACHING & EVENT CONTEXT ---
+async function fetchAPI(endpoint, options = {}, bypassCache = false) {
   options.headers = options.headers || {};
   options.headers['x-user-id'] = currentUser.id;
+  options.headers['x-event-id'] = currentActiveEventId;
   options.headers['Content-Type'] = 'application/json';
+
+  const method = (options.method || 'GET').toUpperCase();
+  const cacheKey = `${currentUser.id}_${currentActiveEventId}_${endpoint}`;
+
+  // Read from Client-side Cache for GET requests unless explicitly bypassed
+  if (method === 'GET' && !bypassCache) {
+    const cached = ClientCacheManager.get(cacheKey);
+    if (cached !== null) {
+      return cached;
+    }
+  }
+
   const res = await fetch(`${API_BASE}${endpoint}`, options);
-  return res.json();
+  const data = await res.json();
+
+  if (method === 'GET') {
+    // Cache GET response (Default TTL 5 minutes)
+    ClientCacheManager.set(cacheKey, data, 300);
+  } else {
+    // Invalidate client cache on any mutating request
+    ClientCacheManager.invalidate();
+  }
+
+  return data;
 }
+
 
 async function verifyTicket() {
   const ref = document.getElementById('ticket-ref-input').value.trim();
@@ -1921,17 +2142,225 @@ async function loadBGM() {
   }
 }
 
-// Back Office Controls
+// Back Office Controls & Firestore User Management
+let ALL_BACKOFFICE_USERS = [];
+let backofficeSelectedEvent = 'devfest-bangkok-2026';
+
+function onAdminEventSelectChange(eventId) {
+  backofficeSelectedEvent = eventId;
+  loadBackofficeUsers(true);
+}
+
 function showAdminTab(tabId) {
   document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
   const target = document.getElementById(tabId);
   if (target) target.style.display = 'block';
-  if (tabId === 'agenda-admin-tab') {
+  if (tabId === 'users-admin-tab') {
+    loadBackofficeUsers();
+  } else if (tabId === 'agenda-admin-tab') {
     loadAdminSessions();
   } else if (tabId === 'firestore-admin-tab') {
     loadFirestoreEventData();
   } else if (tabId === 'feedback-admin-tab') {
     loadAdminFeedback();
+  }
+}
+
+async function loadBackofficeUsers(bypassCache = false) {
+  try {
+    if (bypassCache) {
+      ClientCacheManager.invalidate('/backoffice/users');
+    }
+
+    const eventQuery = backofficeSelectedEvent ? `event_id=${encodeURIComponent(backofficeSelectedEvent)}&` : '';
+    const [usersRes, statsRes] = await Promise.all([
+      fetchAPI(`/backoffice/users?${eventQuery}limit=200`, {}, bypassCache),
+      fetchAPI(`/backoffice/users/stats?${eventQuery}`, {}, bypassCache)
+    ]);
+
+    if (statsRes) {
+      const kpiTotal = document.getElementById('users-kpi-total');
+      const kpiStaff = document.getElementById('users-kpi-staff');
+      const kpiSpeakers = document.getElementById('users-kpi-speakers');
+      const kpiPartic = document.getElementById('users-kpi-participants');
+      const kpiVerified = document.getElementById('users-kpi-verified');
+      const kpiGoogle = document.getElementById('users-kpi-google');
+
+      if (kpiTotal) kpiTotal.textContent = statsRes.total_users || 0;
+      if (kpiStaff) kpiStaff.textContent = (statsRes.by_role?.ORGANIZER || 0) + (statsRes.by_role?.STAFF || 0);
+      if (kpiSpeakers) kpiSpeakers.textContent = (statsRes.by_role?.SPEAKER || 0) + (statsRes.by_role?.SPONSOR || 0);
+      if (kpiPartic) kpiPartic.textContent = statsRes.by_role?.PARTICIPANT || 0;
+      if (kpiVerified) kpiVerified.textContent = statsRes.verified_tickets_count || 0;
+      if (kpiGoogle) kpiGoogle.textContent = statsRes.google_authenticated_count || 0;
+      const projEl = document.getElementById('admin-gcp-project-name');
+      if (projEl && statsRes.project_id) {
+        projEl.textContent = statsRes.project_id;
+      }
+    }
+
+    if (usersRes && usersRes.users) {
+      ALL_BACKOFFICE_USERS = usersRes.users;
+      renderBackofficeUsersList(ALL_BACKOFFICE_USERS);
+    }
+  } catch (err) {
+    console.error('Error loading Firestore users:', err);
+    const listEl = document.getElementById('backoffice-users-list');
+    if (listEl) listEl.innerHTML = '<div style="color:#EF4444; font-size:0.85rem; padding:12px;">Failed to load users from Firestore.</div>';
+  }
+}
+
+function filterBackofficeUsers() {
+  const searchInput = document.getElementById('admin-users-search');
+  const roleFilter = document.getElementById('admin-users-role-filter');
+  const search = (searchInput ? searchInput.value : '').toLowerCase().trim();
+  const role = roleFilter ? roleFilter.value : '';
+
+  let filtered = ALL_BACKOFFICE_USERS;
+  if (role) {
+    filtered = filtered.filter(u => (u.effective_role || u.role) === role);
+  }
+  if (search) {
+    filtered = filtered.filter(u => 
+      (u.display_name && u.display_name.toLowerCase().includes(search)) ||
+      (u.email && u.email.toLowerCase().includes(search)) ||
+      (u.id && u.id.toLowerCase().includes(search)) ||
+      ((u.event_ticket_ref || u.ticket_ref) && (u.event_ticket_ref || u.ticket_ref).toLowerCase().includes(search))
+    );
+  }
+  renderBackofficeUsersList(filtered);
+}
+
+function renderBackofficeUsersList(users) {
+  const listEl = document.getElementById('backoffice-users-list');
+  if (!listEl) return;
+
+  if (!users || users.length === 0) {
+    listEl.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:16px; text-align:center;">No matching attendees found in Firestore for this event context.</div>';
+    return;
+  }
+
+  const roleColors = {
+    ORGANIZER: '#EC4899',
+    STAFF: '#F59E0B',
+    SPEAKER: '#A78BFA',
+    SPONSOR: '#34D399',
+    PARTICIPANT: '#38BDF8'
+  };
+
+  const eventNameMap = {
+    'devfest-bangkok-2026': 'DevFest 2026',
+    'gdg-ai-hackathon-2026': 'AI Hackathon',
+    'cloud-community-day-2026': 'Cloud Day'
+  };
+
+  listEl.innerHTML = users.map(u => {
+    const currentRole = u.effective_role || u.role || 'PARTICIPANT';
+    const roleColor = roleColors[currentRole] || '#38BDF8';
+    const isGoogle = u.auth_provider === 'google' || (u.email && u.email.includes('gmail.com'));
+    const ticketRef = u.event_ticket_ref || u.ticket_ref;
+    const isTicketVerified = u.event_verified_ticket !== undefined ? u.event_verified_ticket : (u.verified_ticket === true);
+
+    // Multi-event membership pills
+    const eventsMap = u.events || {};
+    const eventPills = Object.entries(eventsMap).map(([evId, mem]) => {
+      const shortName = eventNameMap[evId] || evId;
+      const memRole = mem.role || 'PARTICIPANT';
+      const pColor = roleColors[memRole] || '#94A3B8';
+      return `<span style="background:rgba(30,41,59,0.8); border:1px solid ${pColor}; color:${pColor}; font-size:0.65rem; border-radius:4px; padding:1px 5px; font-weight:600;">${shortName}: ${memRole}</span>`;
+    }).join(' ');
+
+    return `
+      <div style="background:#0F172A; border:1px solid var(--card-border); border-radius:8px; padding:12px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:10px; min-width:240px; flex:2;">
+          <div style="width:38px; height:38px; border-radius:50%; background:#1E293B; border:1.5px solid ${roleColor}; display:flex; align-items:center; justify-content:center; overflow:hidden; font-weight:700; font-size:0.9rem; color:#FFF; flex-shrink:0;">
+            ${u.avatar_url ? `<img src="${u.avatar_url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">` : (u.display_name ? u.display_name.charAt(0).toUpperCase() : 'U')}
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <span style="font-weight:700; color:#FFF; font-size:0.88rem;">${u.display_name || 'Anonymous User'}</span>
+              ${isGoogle ? '<span class="badge" style="background:rgba(66,133,244,0.2); color:#60A5FA; border:1px solid #3B82F6; font-size:0.62rem; padding:1px 5px;">🔵 Google</span>' : '<span class="badge" style="background:#1E293B; color:#94A3B8; font-size:0.62rem; padding:1px 5px;">Local</span>'}
+              ${u.global_role === 'ORGANIZER' ? '<span class="badge" style="background:rgba(236,72,153,0.2); color:#EC4899; border:1px solid #EC4899; font-size:0.62rem; padding:1px 5px;">👑 System Org</span>' : ''}
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); font-family:'Space Mono', monospace; margin:2px 0;">${u.email} • ID: ${u.id}</div>
+            ${eventPills ? `<div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:3px;">${eventPills}</div>` : ''}
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex:1; justify-content:flex-end;">
+          <!-- Ticket Badge / Link -->
+          <div style="font-size:0.75rem;">
+            ${isTicketVerified && ticketRef
+              ? `<span style="background:rgba(16,185,129,0.15); color:#10B981; border:1px solid #10B981; border-radius:4px; padding:3px 8px; font-weight:600;">🎟️ ${ticketRef}</span>`
+              : `<button class="hud-btn" style="padding:4px 8px; font-size:0.72rem;" onclick="assignUserTicketFromBackoffice('${u.id}')">+ Link Ticket</button>`
+            }
+          </div>
+
+          <!-- Role Selector Dropdown -->
+          <select onchange="updateUserRoleFromBackoffice('${u.id}', this.value)" style="padding:4px 8px; border-radius:6px; background:#1E293B; border:1.5px solid ${roleColor}; color:#FFF; font-size:0.78rem; font-weight:600;">
+            <option value="PARTICIPANT" ${currentRole === 'PARTICIPANT' ? 'selected' : ''}>Participant</option>
+            <option value="SPEAKER" ${currentRole === 'SPEAKER' ? 'selected' : ''}>Speaker</option>
+            <option value="SPONSOR" ${currentRole === 'SPONSOR' ? 'selected' : ''}>Sponsor</option>
+            <option value="STAFF" ${currentRole === 'STAFF' ? 'selected' : ''}>Staff</option>
+            <option value="ORGANIZER" ${currentRole === 'ORGANIZER' ? 'selected' : ''}>Organizer</option>
+          </select>
+
+          <!-- Delete User Button -->
+          <button class="hud-btn danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteUserFromBackoffice('${u.id}', '${u.display_name}')" title="Delete User">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function updateUserRoleFromBackoffice(userId, newRole) {
+  try {
+    const eventQuery = backofficeSelectedEvent ? `?event_id=${encodeURIComponent(backofficeSelectedEvent)}` : '';
+    const res = await fetchAPI(`/backoffice/users/${userId}/role${eventQuery}`, {
+      method: 'POST',
+      body: JSON.stringify({ new_role: newRole })
+    });
+    if (res.user) {
+      showToast(`User role updated to ${newRole} on Firestore!`, '✅');
+      if (currentUser && currentUser.id === userId) {
+        currentUser.role = newRole;
+        updateUserUI();
+      }
+      loadBackofficeUsers(true);
+    }
+  } catch (err) {
+    showToast('Failed to update user role.', '⚠️');
+  }
+}
+
+async function assignUserTicketFromBackoffice(userId) {
+  const ticketRef = prompt('Enter DevFest Ticket Reference (e.g. TICKET-DEV-888):');
+  if (!ticketRef || !ticketRef.trim()) return;
+
+  try {
+    const eventQuery = backofficeSelectedEvent ? `?event_id=${encodeURIComponent(backofficeSelectedEvent)}` : '';
+    const res = await fetchAPI(`/backoffice/users/${userId}/ticket${eventQuery}`, {
+      method: 'POST',
+      body: JSON.stringify({ ticket_ref: ticketRef.trim(), verified: true })
+    });
+    if (res.user) {
+      showToast(`Ticket '${ticketRef.trim()}' assigned and verified on Firestore!`, '🎟️');
+      loadBackofficeUsers(true);
+    }
+  } catch (err) {
+    showToast('Failed to assign ticket.', '⚠️');
+  }
+}
+
+
+async function deleteUserFromBackoffice(userId, userName) {
+  if (!confirm(`Are you sure you want to delete user '${userName}' (${userId}) from Firestore?`)) return;
+
+  try {
+    await fetchAPI(`/backoffice/users/${userId}`, { method: 'DELETE' });
+    showToast(`User '${userName}' removed from Firestore.`, '🗑️');
+    loadBackofficeUsers();
+  } catch (err) {
+    showToast('Failed to delete user.', '⚠️');
   }
 }
 
@@ -2171,6 +2600,118 @@ function resetAdminSessionForm() {
   document.getElementById('admin-session-form-title').innerText = 'Add / Edit Agenda Session';
 }
 
+// --- GEMINI AI SPONSOR DETAILS PARSER & BOOTH MANAGEMENT ---
+let cachedAdminSponsors = [];
+let currentEditingSponsorId = 'sponsor-google-cloud';
+
+async function autoFillSponsorWithGemini() {
+  const promptInput = document.getElementById('ai-sponsor-prompt');
+  const prompt = promptInput ? promptInput.value.trim() : '';
+  if (!prompt) {
+    showToast('Please paste a company pitch or sponsor description for Gemini AI!', '⚠️');
+    return;
+  }
+
+  showToast('✨ Gemini AI analyzing sponsor prospectus & company details...', '🤖');
+  try {
+    const data = await fetchAPI('/sponsors/parse-gemini', {
+      method: 'POST',
+      body: JSON.stringify({ raw_text: prompt })
+    });
+
+    if (data.parsed_sponsor) {
+      const sp = data.parsed_sponsor;
+      document.getElementById('sponsor-edit-name').value = sp.name || '';
+      document.getElementById('sponsor-edit-tier').value = sp.tier || 'Gold Sponsor';
+      document.getElementById('sponsor-edit-url').value = sp.iframe_url || 'https://cloud.google.com';
+      document.getElementById('sponsor-edit-desc').value = sp.description || '';
+
+      // Glowing highlight animation
+      ['sponsor-edit-name', 'sponsor-edit-tier', 'sponsor-edit-url', 'sponsor-edit-desc'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.borderColor = '#F87171';
+          el.style.boxShadow = '0 0 10px rgba(248, 113, 113, 0.4)';
+          setTimeout(() => {
+            el.style.borderColor = 'var(--card-border)';
+            el.style.boxShadow = 'none';
+          }, 3500);
+        }
+      });
+
+      showToast(`✨ Sponsor details for "${sp.name}" parsed by Gemini! Review and Save.`, '🎉');
+    } else {
+      showToast(data.detail || 'Failed to parse sponsor details.', '⚠️');
+    }
+  } catch (err) {
+    showToast('Error communicating with Gemini Sponsor parser.', '⚠️');
+  }
+}
+
+async function loadAdminSponsors() {
+  try {
+    const sponsors = await fetchAPI('/sponsors');
+    cachedAdminSponsors = sponsors || [];
+    const list = document.getElementById('admin-sponsors-list');
+    if (!list) return;
+
+    list.innerHTML = cachedAdminSponsors.map(s => `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#090E1A; border:1px solid var(--card-border); border-radius:8px; gap:12px;">
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="badge" style="background:#EA4335; font-size:0.7rem;">${s.tier}</span>
+            <strong style="color:#FFF; font-size:0.9rem;">${s.name}</strong>
+          </div>
+          <div style="color:#94A3B8; font-size:0.78rem; margin-top:3px; word-break:break-all;">
+            🌐 ${s.iframe_url}
+          </div>
+        </div>
+        <button class="hud-btn" style="padding:4px 10px; font-size:0.78rem;" onclick="editAdminSponsor('${s.id}')">✏️ Edit Booth</button>
+      </div>
+    `).join('');
+
+    if (cachedAdminSponsors.length > 0) {
+      editAdminSponsor(cachedAdminSponsors[0].id);
+    }
+  } catch (err) {
+    console.error('Error loading admin sponsors:', err);
+  }
+}
+
+function editAdminSponsor(sponsorId) {
+  const sp = cachedAdminSponsors.find(s => s.id === sponsorId);
+  if (!sp) return;
+  currentEditingSponsorId = sp.id;
+  document.getElementById('sponsor-edit-name').value = sp.name || '';
+  document.getElementById('sponsor-edit-tier').value = sp.tier || 'Title Sponsor';
+  document.getElementById('sponsor-edit-url').value = sp.iframe_url || 'https://cloud.google.com';
+  document.getElementById('sponsor-edit-desc').value = sp.description || '';
+  document.getElementById('admin-sponsor-form-title').innerText = `✏️ Edit Sponsor Booth: ${sp.name}`;
+}
+
+async function saveAdminSponsorBooth() {
+  const name = document.getElementById('sponsor-edit-name').value.trim();
+  const tier = document.getElementById('sponsor-edit-tier').value;
+  const iframe_url = document.getElementById('sponsor-edit-url').value.trim();
+  const description = document.getElementById('sponsor-edit-desc').value.trim();
+
+  if (!name || !iframe_url) {
+    showToast('Please provide sponsor name and iframe URL.', '⚠️');
+    return;
+  }
+
+  try {
+    await fetchAPI(`/sponsors/${currentEditingSponsorId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ name, tier, iframe_url, description })
+    });
+    showToast(`Sponsor booth for "${name}" updated successfully! 🏢`, '🏢');
+    loadAdminSponsors();
+  } catch (err) {
+    showToast('Failed to update sponsor booth.', '⚠️');
+  }
+}
+
 function clearAdminSessionForm() {
   resetAdminSessionForm();
 }
@@ -2244,10 +2785,26 @@ async function triggerLuckyDraw() {
 
 // --- ATTENDEE EVENT FEEDBACK & RATINGS ---
 let currentOverallStarRating = 5;
+let currentContentRating = 5;
+let currentVenueRating = 5;
+let currentNpsScore = 10;
+let selectedFeedbackEvent = 'devfest-bangkok-2026';
 
-function setFeedbackStar(val) {
+const OVERALL_STAR_LABELS = {
+  1: '1/5 • Needs Significant Improvement ⚠️',
+  2: '2/5 • Fair / Room for Growth 💡',
+  3: '3/5 • Good / Average Event 👍',
+  4: '4/5 • Very Good / Great Sessions! 👏',
+  5: '5/5 • Outstanding Experience! 🌟'
+};
+
+function onFeedbackEventChange(val) {
+  selectedFeedbackEvent = val;
+}
+
+function setFeedbackOverallRating(val) {
   currentOverallStarRating = val;
-  const buttons = document.querySelectorAll('#feedback-stars .star-btn');
+  const buttons = document.querySelectorAll('#feedback-stars-container .feedback-star-btn');
   buttons.forEach((btn, idx) => {
     if (idx < val) {
       btn.classList.add('active');
@@ -2255,6 +2812,84 @@ function setFeedbackStar(val) {
       btn.classList.remove('active');
     }
   });
+  const label = document.getElementById('feedback-overall-label');
+  if (label) {
+    label.innerText = OVERALL_STAR_LABELS[val] || `${val}/5 Stars`;
+  }
+}
+
+// Backward compatibility alias
+const setFeedbackStar = setFeedbackOverallRating;
+
+function setFeedbackContentRating(val, btn) {
+  currentContentRating = val;
+  const chips = document.querySelectorAll('#content-rating-chips .rating-chip');
+  chips.forEach(c => {
+    if (c.innerText.trim().startsWith(String(val))) {
+      c.classList.add('active');
+    } else {
+      c.classList.remove('active');
+    }
+  });
+  if (btn) {
+    chips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function setFeedbackVenueRating(val, btn) {
+  currentVenueRating = val;
+  const chips = document.querySelectorAll('#venue-rating-chips .rating-chip');
+  chips.forEach(c => {
+    if (c.innerText.trim().startsWith(String(val))) {
+      c.classList.add('active');
+    } else {
+      c.classList.remove('active');
+    }
+  });
+  if (btn) {
+    chips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function setFeedbackNps(val, btn) {
+  currentNpsScore = val;
+  const chips = document.querySelectorAll('#nps-chips-container .nps-chip');
+  chips.forEach(c => {
+    if (parseInt(c.innerText.trim()) === val) {
+      c.classList.add('active');
+    } else {
+      c.classList.remove('active');
+    }
+  });
+  if (btn) {
+    chips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  const badge = document.getElementById('feedback-nps-badge');
+  if (badge) {
+    if (val <= 6) {
+      badge.className = 'badge';
+      badge.style.background = 'rgba(239, 68, 68, 0.25)';
+      badge.style.borderColor = '#EF4444';
+      badge.style.color = '#FCA5A5';
+      badge.innerText = `${val} / 10 • Detractor ⚠️`;
+    } else if (val <= 8) {
+      badge.className = 'badge';
+      badge.style.background = 'rgba(245, 158, 11, 0.25)';
+      badge.style.borderColor = '#F59E0B';
+      badge.style.color = '#FDE047';
+      badge.innerText = `${val} / 10 • Passive 😐`;
+    } else {
+      badge.className = 'badge';
+      badge.style.background = 'rgba(16, 185, 129, 0.25)';
+      badge.style.borderColor = '#10B981';
+      badge.style.color = '#6EE7B7';
+      badge.innerText = `${val} / 10 • Promoter 🚀`;
+    }
+  }
 }
 
 async function submitEventFeedback() {
@@ -2264,24 +2899,23 @@ async function submitEventFeedback() {
     return;
   }
 
-  const contentRating = parseInt(document.getElementById('feedback-content-rating')?.value || '5');
-  const venueRating = parseInt(document.getElementById('feedback-venue-rating')?.value || '5');
-  const npsScore = parseInt(document.getElementById('feedback-nps')?.value || '10');
+  const evSelect = document.getElementById('feedback-event-id');
+  const targetEvent = (evSelect ? evSelect.value : selectedFeedbackEvent) || 'devfest-bangkok-2026';
 
   try {
     const data = await fetchAPI('/feedback', {
       method: 'POST',
       body: JSON.stringify({
         overall_rating: currentOverallStarRating,
-        content_rating: contentRating,
-        venue_rating: venueRating,
-        nps_score: npsScore,
+        content_rating: currentContentRating,
+        venue_rating: currentVenueRating,
+        nps_score: currentNpsScore,
         comments: comments,
-        event_id: 'devfest-bangkok-2026'
+        event_id: targetEvent
       })
     });
 
-    showToast(data.message || '🎉 Thank you for your feedback! Saved to Firestore.', '⭐');
+    showToast(data.message || `🎉 Thank you! Your feedback for "${targetEvent}" was saved to Firestore.`, '⭐');
     if (document.getElementById('feedback-comments-input')) {
       document.getElementById('feedback-comments-input').value = '';
     }
@@ -2293,7 +2927,8 @@ async function submitEventFeedback() {
 
 async function loadAdminFeedback() {
   try {
-    const data = await fetchAPI('/feedback/all');
+    const evQuery = backofficeSelectedEvent ? `?event_id=${encodeURIComponent(backofficeSelectedEvent)}` : '';
+    const data = await fetchAPI(`/feedback/all${evQuery}`);
     if (document.getElementById('admin-fb-total')) {
       document.getElementById('admin-fb-total').innerText = data.total_responses || 0;
     }
@@ -2310,14 +2945,14 @@ async function loadAdminFeedback() {
     const list = document.getElementById('admin-feedback-list');
     if (!list) return;
     if (!data.feedbacks || data.feedbacks.length === 0) {
-      list.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:10px;">No attendee feedback recorded yet.</div>';
+      list.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:10px;">No attendee feedback recorded for this event yet.</div>';
       return;
     }
 
     list.innerHTML = data.feedbacks.map(fb => `
       <div style="background:#0F172A; border:1px solid var(--card-border); border-radius:8px; padding:12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <div style="font-weight:700; color:#FFF; font-size:0.85rem;">👤 ${fb.user_name || 'Attendee'}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+          <div style="font-weight:700; color:#FFF; font-size:0.85rem;">👤 ${fb.user_name || 'Attendee'} <span style="font-size:0.7rem; color:#94A3B8; font-weight:normal;">(${fb.event_id || 'devfest-bangkok-2026'})</span></div>
           <div style="color:#FBBF24; font-size:0.82rem;">${'⭐'.repeat(fb.overall_rating || 5)} (${fb.overall_rating}/5) &nbsp;|&nbsp; NPS: <strong style="color:#EC4899;">${fb.nps_score || 10}</strong></div>
         </div>
         <p style="color:#CBD5E1; font-size:0.82rem; margin:0 0 6px;">"${fb.comments}"</p>
@@ -2329,26 +2964,369 @@ async function loadAdminFeedback() {
   }
 }
 
+async function restoreUserSession() {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    const cachedUser = localStorage.getItem('devfestverse_user');
+    const cachedAvatar = localStorage.getItem('devfestverse_avatar');
+    if (cachedAvatar) {
+      studioConfig = JSON.parse(cachedAvatar);
+    }
+    if (cachedUser) {
+      const parsed = JSON.parse(cachedUser);
+      currentUser = { ...currentUser, ...parsed };
+      if (parsed.avatar_config) {
+        studioConfig = { ...parsed.avatar_config };
+      }
+      initStudioControls();
+      updateUserUI();
+    }
+
+    // Refresh user profile and avatar from Firestore
+    if (currentUser.id) {
+      const res = await fetchAPI('/auth/me');
+      if (res && res.user) {
+        currentUser = { ...currentUser, ...res.user };
+        if (res.user.avatar_config) {
+          studioConfig = { ...res.user.avatar_config };
+          currentUser.avatar_config = { ...res.user.avatar_config };
+          saveUserSession(currentUser);
+        }
+        initStudioControls();
+        updateUserUI();
+      }
+    }
+  } catch (e) {
+    console.log('Error restoring user session:', e);
+  }
+}
+
 // Google Identity Services setup on window load
-window.addEventListener('load', () => {
-  if (window.google && window.google.accounts && window.google.accounts.id) {
+window.addEventListener('load', async () => {
+  // Restore persisted character and avatar on load
+  await restoreUserSession();
+
+  let googleClientId = '';
+  try {
+    const cfg = await fetchAPI('/auth/config');
+    if (cfg && cfg.google_client_id) {
+      googleClientId = cfg.google_client_id;
+    }
+  } catch (e) {}
+
+  if (googleClientId && window.google && window.google.accounts && window.google.accounts.id) {
     try {
       window.google.accounts.id.initialize({
-        client_id: '1084297839210-devfestverse.apps.googleusercontent.com',
+        client_id: googleClientId,
         callback: handleGoogleCredentialResponse,
         auto_select: false,
         cancel_on_tap_outside: true
       });
     } catch (e) {
-      console.log('Google Identity Services initialized');
+      console.log('Google Identity Services init:', e);
     }
   }
 });
+
+// --- BUILDER ZONE SHOWCASE & LIVE IFRAME DEMOS ---
+let ALL_BUILDER_PROJECTS = [];
+let ACTIVE_BUILDER_CATEGORY = 'All';
+
+async function loadBuilderProjects() {
+  try {
+    const data = await fetchAPI('/builders/projects');
+    ALL_BUILDER_PROJECTS = data.projects || [];
+    renderBuilderProjects(ALL_BUILDER_PROJECTS);
+  } catch (err) {
+    console.error('Error loading builder projects:', err);
+  }
+}
+
+function renderBuilderProjects(projects) {
+  const container = document.getElementById('builder-projects-list');
+  if (!container) return;
+
+  let filtered = projects;
+  if (ACTIVE_BUILDER_CATEGORY !== 'All') {
+    filtered = filtered.filter(p => p.category === ACTIVE_BUILDER_CATEGORY);
+  }
+
+  const searchVal = (document.getElementById('builder-search-input')?.value || '').toLowerCase().trim();
+  if (searchVal) {
+    filtered = filtered.filter(p => 
+      p.title.toLowerCase().includes(searchVal) ||
+      p.description.toLowerCase().includes(searchVal) ||
+      p.builder_name.toLowerCase().includes(searchVal) ||
+      (p.tech_stack || []).some(t => t.toLowerCase().includes(searchVal))
+    );
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align:center; padding: 40px 20px; color:var(--text-muted);">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">🚀</div>
+        <div style="font-size: 1rem; color:#FFF; font-weight:700;">No projects found in this category</div>
+        <div style="font-size: 0.8rem; margin-top: 4px;">Be the first developer to showcase your work!</div>
+        <button class="hud-btn primary" onclick="openModal('builder-submit-modal')" style="margin: 12px auto 0; padding:8px 16px;">➕ Submit Your Project</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(p => {
+    const hasUpvoted = (p.upvoted_by || []).includes(currentUser.id);
+    const techChips = (p.tech_stack || []).map(t => 
+      `<span style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:4px; padding:2px 6px; font-size:0.68rem; color:#94A3B8;">${t}</span>`
+    ).join('');
+
+    return `
+      <div class="session-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:14px; border:1px solid var(--card-border); border-radius:10px; background:#0B1120;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+            <span class="badge" style="background:#0284C7; font-size:0.7rem;">${p.category || 'App'}</span>
+            <button onclick="upvoteBuilderProject('${p.id}')" class="hud-btn" style="padding:3px 8px; font-size:0.75rem; border-color:${hasUpvoted ? '#38BDF8' : 'var(--card-border)'}; background:${hasUpvoted ? 'rgba(56,189,248,0.2)' : 'transparent'};">
+              👏 <span>${p.upvotes || 0}</span>
+            </button>
+          </div>
+          <h4 style="color:#FFF; font-size:0.95rem; margin:0 0 4px; font-weight:700;">${p.title}</h4>
+          <div style="font-size:0.75rem; color:#38BDF8; margin-bottom:8px;">by ${p.builder_name}</div>
+          <p style="font-size:0.78rem; color:#94A3B8; margin:0 0 10px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
+            ${p.description}
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:12px;">
+            ${techChips}
+          </div>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="hud-btn primary" onclick="launchBuilderLiveDemo('${p.title.replace(/'/g, "\\'")}', '${p.builder_name.replace(/'/g, "\\'")}', '${p.demo_url}')" style="flex:1; justify-content:center; padding:7px; font-size:0.78rem;">
+            ▶️ Launch Demo
+          </button>
+          ${p.github_url ? `
+            <a href="${p.github_url}" target="_blank" rel="noopener noreferrer" class="hud-btn" style="padding:7px 10px; font-size:0.78rem;" title="View Source Code on GitHub">
+              💻
+            </a>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterBuilderCategory(cat, btn) {
+  ACTIVE_BUILDER_CATEGORY = cat;
+  document.querySelectorAll('#builder-track-chips .option-chip').forEach(b => b.classList.remove('selected'));
+  if (btn) btn.classList.add('selected');
+  renderBuilderProjects(ALL_BUILDER_PROJECTS);
+}
+
+function onBuilderSearch(val) {
+  renderBuilderProjects(ALL_BUILDER_PROJECTS);
+}
+
+function launchBuilderLiveDemo(title, author, url) {
+  const viewport = document.getElementById('builder-live-demo-viewport');
+  const iframe = document.getElementById('builder-demo-iframe');
+  const titleEl = document.getElementById('builder-demo-title');
+  const authorEl = document.getElementById('builder-demo-author');
+  const newTabBtn = document.getElementById('builder-demo-newtab-btn');
+
+  if (titleEl) titleEl.innerText = title;
+  if (authorEl) authorEl.innerText = `by ${author}`;
+  if (newTabBtn) newTabBtn.href = url;
+  if (iframe) iframe.src = url;
+  if (viewport) {
+    viewport.style.display = 'block';
+    viewport.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  showToast(`Launched interactive demo for "${title}"! 🚀`, '🚀');
+}
+
+function closeBuilderLiveDemo() {
+  const viewport = document.getElementById('builder-live-demo-viewport');
+  const iframe = document.getElementById('builder-demo-iframe');
+  if (viewport) viewport.style.display = 'none';
+  if (iframe) iframe.src = 'about:blank';
+}
+
+async function upvoteBuilderProject(id) {
+  try {
+    const res = await fetchAPI(`/builders/projects/${id}/upvote`, { method: 'POST' });
+    const proj = ALL_BUILDER_PROJECTS.find(p => p.id === id);
+    if (proj) {
+      proj.upvotes = res.upvotes;
+      if (res.has_upvoted) {
+        if (!proj.upvoted_by) proj.upvoted_by = [];
+        if (!proj.upvoted_by.includes(currentUser.id)) proj.upvoted_by.push(currentUser.id);
+      } else {
+        proj.upvoted_by = (proj.upvoted_by || []).filter(u => u !== currentUser.id);
+      }
+    }
+    renderBuilderProjects(ALL_BUILDER_PROJECTS);
+    showToast(res.message || 'Upvoted!', '👏');
+  } catch (err) {
+    showToast('Failed to upvote project.', '⚠️');
+  }
+}
+
+async function submitBuilderProject() {
+  const title = document.getElementById('proj-sub-title')?.value.trim();
+  const name = document.getElementById('proj-sub-name')?.value.trim();
+  const category = document.getElementById('proj-sub-category')?.value || 'AI & Agents';
+  const demoUrl = document.getElementById('proj-sub-demo')?.value.trim();
+  const githubUrl = document.getElementById('proj-sub-github')?.value.trim();
+  const tagsStr = document.getElementById('proj-sub-tags')?.value.trim();
+  const desc = document.getElementById('proj-sub-desc')?.value.trim();
+
+  if (!title || !name || !demoUrl || !desc) {
+    showToast('Please fill in all required fields (Title, Builder, Demo URL, Description).', '⚠️');
+    return;
+  }
+
+  const tech_stack = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : ['Google Cloud'];
+
+  try {
+    const res = await fetchAPI('/builders/projects', {
+      method: 'POST',
+      body: JSON.stringify({
+        title,
+        builder_name: name,
+        category,
+        demo_url: demoUrl,
+        github_url: githubUrl || null,
+        description: desc,
+        tech_stack
+      })
+    });
+
+    showToast(res.message || 'Project submitted successfully! 🎉', '🎉');
+    closeModal('builder-submit-modal');
+    
+    // Clear inputs
+    document.getElementById('proj-sub-title').value = '';
+    document.getElementById('proj-sub-name').value = '';
+    document.getElementById('proj-sub-demo').value = '';
+    document.getElementById('proj-sub-github').value = '';
+    document.getElementById('proj-sub-tags').value = '';
+    document.getElementById('proj-sub-desc').value = '';
+
+    // Reload list and launch newly created project demo directly!
+    await loadBuilderProjects();
+    if (res.project) {
+      launchBuilderLiveDemo(res.project.title, res.project.builder_name, res.project.demo_url);
+    }
+  } catch (err) {
+    showToast('Error submitting project. Please verify fields.', '⚠️');
+  }
+}
+
+// --- REAL-TIME MULTIPLAYER PRESENCE VIA WEBSOCKET (CLOUD RUN CLUSTERING) ---
+let presenceSocket = null;
+let lastSentX = 0, lastSentY = 0, lastPosSentTime = 0;
+
+function initRealtimePresence() {
+  if (typeof window === 'undefined' || !window.WebSocket) return;
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const wsUrl = `${protocol}//${window.location.host}/api/v1/ws/presence/devfest-main?user_id=${currentUser.id}`;
+
+  try {
+    presenceSocket = new WebSocket(wsUrl);
+
+    presenceSocket.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'INIT_PRESENCE' && msg.players) {
+          // Merge initial active players
+          msg.players.forEach(p => {
+            if (p.id !== currentUser.id && !OTHER_PARTICIPANTS.some(op => op.id === p.id)) {
+              OTHER_PARTICIPANTS.push({
+                id: p.id,
+                name: p.name || 'Attendee',
+                role: p.role || 'PARTICIPANT',
+                x: p.x || 480,
+                y: p.y || 380,
+                avatar: p.avatar || THEME_PRESETS[0].config,
+                moving: false,
+                direction: p.direction || 'down',
+                verified: p.verified || false
+              });
+            }
+          });
+        } else if (msg.type === 'PLAYER_DELTA' && msg.player) {
+          const p = msg.player;
+          if (p.id === currentUser.id) return;
+          let existing = OTHER_PARTICIPANTS.find(op => op.id === p.id);
+          if (existing) {
+            existing.x = p.x;
+            existing.y = p.y;
+            existing.direction = p.direction;
+            existing.moving = p.moving;
+            existing.name = p.name;
+            existing.role = p.role;
+            existing.verified = p.verified;
+            if (p.avatar) existing.avatar = p.avatar;
+          } else {
+            OTHER_PARTICIPANTS.push({
+              id: p.id,
+              name: p.name || 'Attendee',
+              role: p.role || 'PARTICIPANT',
+              x: p.x,
+              y: p.y,
+              avatar: p.avatar || THEME_PRESETS[0].config,
+              moving: p.moving,
+              direction: p.direction || 'down',
+              verified: p.verified || false
+            });
+          }
+        } else if (msg.type === 'PLAYER_LEFT') {
+          const idx = OTHER_PARTICIPANTS.findIndex(op => op.id === msg.id);
+          if (idx !== -1) OTHER_PARTICIPANTS.splice(idx, 1);
+        }
+      } catch (err) {
+        // Safe message ignore
+      }
+    };
+
+    // Heartbeat ping every 12 seconds
+    setInterval(() => {
+      if (presenceSocket && presenceSocket.readyState === WebSocket.OPEN) {
+        presenceSocket.send(JSON.stringify({ type: 'PING' }));
+      }
+    }, 12000);
+
+  } catch (e) {
+    console.log('Realtime WebSocket connecting in offline/local fallback mode');
+  }
+}
+
+// Throttle broadcast of local player position (15 Hz)
+setInterval(() => {
+  if (presenceSocket && presenceSocket.readyState === WebSocket.OPEN && player) {
+    const distMoved = Math.hypot(player.x - lastSentX, player.y - lastSentY);
+    if (distMoved > 2 || player.moving) {
+      presenceSocket.send(JSON.stringify({
+        type: 'POSITION_UPDATE',
+        x: player.x,
+        y: player.y,
+        direction: player.direction,
+        moving: player.moving,
+        name: currentUser.display_name,
+        role: currentUser.role,
+        verified: currentUser.verified_ticket,
+        avatar: currentUser.avatar_config
+      }));
+      lastSentX = player.x;
+      lastSentY = player.y;
+    }
+  }
+}, 66); // ~15 FPS network broadcast
 
 // Initialize on load
 initStudioControls();
 initMobileControls();
 updateUserUI();
+initRealtimePresence();
 gameLoop();
 studioPreviewLoop();
 

@@ -33,7 +33,7 @@ steps:
       - '1'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'GCP_PROJECT=gdg-cloud-bangkok-2026'
+      - 'GCP_PROJECT=$PROJECT_ID'
 
 images:
   - 'gcr.io/$PROJECT_ID/devfestverse:$COMMIT_SHA'

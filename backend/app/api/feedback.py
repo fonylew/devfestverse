@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query, Header
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from backend.app.core.rbac import get_current_user, require_roles, UserRole
 from backend.app.core.firestore import firestore_manager
 
@@ -18,6 +18,7 @@ FEEDBACK_ITEMS = [
         "venue_rating": 4,
         "nps_score": 10,
         "comments": "The 2D virtual venue and live Gemini transcripts were mind-blowing!",
+        "event_id": "devfest-bangkok-2026",
         "created_at": "2026-08-29T14:30:00Z"
     },
     {
@@ -29,6 +30,7 @@ FEEDBACK_ITEMS = [
         "venue_rating": 5,
         "nps_score": 9,
         "comments": "Loved the avatar studio and interactive sponsor booths. Great community vibes!",
+        "event_id": "devfest-bangkok-2026",
         "created_at": "2026-08-29T15:15:00Z"
     }
 ]
@@ -55,6 +57,7 @@ def submit_feedback(req: FeedbackSubmission, user: dict = Depends(get_current_us
     if not FEEDBACK_SETTINGS["enabled"]:
         raise HTTPException(status_code=400, detail="Feedback collection is currently closed.")
     
+    target_event_id = req.event_id or "devfest-bangkok-2026"
     fb = {
         "id": f"fb-{len(FEEDBACK_ITEMS)+1}",
         "user_id": user.get("id", "anonymous"),
@@ -64,33 +67,45 @@ def submit_feedback(req: FeedbackSubmission, user: dict = Depends(get_current_us
         "venue_rating": req.venue_rating or req.overall_rating,
         "nps_score": req.nps_score if req.nps_score is not None else 10,
         "comments": req.comments,
-        "event_id": req.event_id,
-        "created_at": datetime.utcnow().isoformat() + "Z"
+        "event_id": target_event_id,
+        "created_at": datetime.now(timezone.utc).isoformat()
     }
     FEEDBACK_ITEMS.append(fb)
 
-    # Save to Firestore if available
+    # Save to Firestore per-event collection (events/{event_id}/feedbacks)
     if firestore_manager.is_configured():
-        firestore_manager.save_feedback(req.event_id or "devfest-bangkok-2026", fb)
+        firestore_manager.save_feedback(target_event_id, fb)
 
     return {"message": "Thank you! Your feedback has been recorded.", "feedback": fb}
 
 @router.get("/all", dependencies=[Depends(require_roles([UserRole.ORGANIZER, UserRole.STAFF]))])
-def list_all_feedback():
-    total = len(FEEDBACK_ITEMS)
-    avg_overall = sum(f.get("overall_rating", 5) for f in FEEDBACK_ITEMS) / total if total else 5.0
-    avg_content = sum(f.get("content_rating", 5) for f in FEEDBACK_ITEMS) / total if total else 5.0
-    avg_venue = sum(f.get("venue_rating", 5) for f in FEEDBACK_ITEMS) / total if total else 5.0
+def list_all_feedback(
+    event_id: Optional[str] = Query(None, description="Filter feedback by Event ID"),
+    x_event_id: Optional[str] = Header(None, alias="x-event-id")
+):
+    target_event_id = event_id or x_event_id or "devfest-bangkok-2026"
     
-    promoters = sum(1 for f in FEEDBACK_ITEMS if f.get("nps_score", 10) >= 9)
-    detractors = sum(1 for f in FEEDBACK_ITEMS if f.get("nps_score", 10) <= 6)
+    # Read from Firestore per-event if configured
+    fs_items = firestore_manager.list_feedback(target_event_id)
+    feedbacks = fs_items if fs_items else [f for f in FEEDBACK_ITEMS if f.get("event_id", "devfest-bangkok-2026") == target_event_id]
+    if not feedbacks and not event_id:
+        feedbacks = FEEDBACK_ITEMS
+
+    total = len(feedbacks)
+    avg_overall = sum(f.get("overall_rating", 5) for f in feedbacks) / total if total else 5.0
+    avg_content = sum(f.get("content_rating", 5) for f in feedbacks) / total if total else 5.0
+    avg_venue = sum(f.get("venue_rating", 5) for f in feedbacks) / total if total else 5.0
+    
+    promoters = sum(1 for f in feedbacks if f.get("nps_score", 10) >= 9)
+    detractors = sum(1 for f in feedbacks if f.get("nps_score", 10) <= 6)
     nps = int(((promoters - detractors) / total) * 100) if total else 100
 
     return {
+        "event_id": target_event_id,
         "total_responses": total,
         "average_overall": round(avg_overall, 2),
         "average_content": round(avg_content, 2),
         "average_venue": round(avg_venue, 2),
         "nps_score": nps,
-        "feedbacks": list(reversed(FEEDBACK_ITEMS))
+        "feedbacks": feedbacks
     }

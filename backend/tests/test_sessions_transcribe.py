@@ -100,3 +100,18 @@ def test_gemini_transcribe_chunk_stream_and_query():
     assert spk_resp.status_code == 200
     assert spk_resp.json()["transcript_count"] >= 1
 
+def test_parse_session_details_with_gemini():
+    res = client.post("/api/v1/sessions/parse-gemini", json={
+        "raw_text": "Dr. Sarah Lin talking about Serverless Kubernetes and Cloud Run Autoscaling at 1:30 PM to 2:30 PM in Room B1 for Track 2: Cloud & DevOps"
+    }, headers={"x-user-id": "user-org-1"})
+    assert res.status_code == 200
+    data = res.json()
+    assert "parsed_session" in data
+    sess = data["parsed_session"]
+    assert "Sarah Lin" in sess["speaker_name"]
+    assert sess["track"] == "Track 2: Cloud & DevOps"
+    assert "Room B1" in sess["room"]
+    assert "1:30 PM" in sess["start_time"]
+    assert "key_takeaways" in sess
+
+

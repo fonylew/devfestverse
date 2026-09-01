@@ -1,0 +1,61 @@
+# Environment and Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*credential*.json
+*service_account*.json
+*service-account*.json
+client_secret*.json
+
+# Python byte code & cache
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.[Cc][Pp][Yy][Tt][Hh][Oo][Nn]-*
+*.pyc
+*.pyo
+*.pyd
+*$py.class
+*.so
+
+# Python virtual environments & packages
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing & Coverage
+.pytest_cache/
+**/.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Type checking & Linters
+.mypy_cache/
+.ruff_cache/
+
+# OS & Editor files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node / Frontend build
+node_modules/
+dist/
+build/

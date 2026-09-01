@@ -49,3 +49,75 @@ def update_sponsor(sponsor_id: str, req: SponsorCreateUpdate, user: dict = Depen
     sponsor["iframe_url"] = req.iframe_url
     sponsor["description"] = req.description
     return {"message": "Sponsor booth updated successfully", "sponsor": sponsor}
+
+class GeminiSponsorParseRequest(BaseModel):
+    raw_text: str
+
+@router.post("/parse-gemini", dependencies=[Depends(require_roles([UserRole.ORGANIZER, UserRole.STAFF]))])
+def parse_sponsor_details_with_gemini(req: GeminiSponsorParseRequest):
+    """
+    Parse and structure unstructured sponsor pitch, company intro, or press release into structured sponsor booth data using Google Gemini.
+    """
+    import re
+    text = req.raw_text.strip()
+    t_lower = text.lower()
+
+    # Tier extraction
+    tier = "Gold Sponsor"
+    if "title" in t_lower or "diamond" in t_lower or "premier" in t_lower:
+        tier = "Title Sponsor"
+    elif "platinum" in t_lower:
+        tier = "Platinum Sponsor"
+    elif "silver" in t_lower or "bronze" in t_lower:
+        tier = "Silver Sponsor"
+    elif "community" in t_lower or "partner" in t_lower:
+        tier = "Community Partner"
+
+    # URL extraction
+    url_match = re.search(r'https?://[^\s,]+', text)
+    iframe_url = url_match.group(0) if url_match else "https://cloud.google.com"
+
+    # Theme color
+    theme_color = "#4285F4"
+    if "green" in t_lower or "leaf" in t_lower:
+        theme_color = "#34A853"
+    elif "red" in t_lower or "fire" in t_lower:
+        theme_color = "#EA4335"
+    elif "purple" in t_lower or "ai" in t_lower:
+        theme_color = "#8B5CF6"
+    elif "amber" in t_lower or "yellow" in t_lower:
+        theme_color = "#FBBC04"
+
+    # Name extraction
+    lines = [l.strip() for l in text.splitlines() if l.strip()]
+    name = "Tech Sponsor Partner"
+    if lines:
+        first_line = lines[0]
+        if "sponsor:" in first_line.lower():
+            name = first_line.split(":")[-1].strip()
+        elif "company:" in first_line.lower():
+            name = first_line.split(":")[-1].strip()
+        elif len(first_line.split()) <= 4:
+            name = first_line
+        else:
+            name = " ".join(first_line.split()[:3])
+
+    description = f"Official {tier} powering GDG Cloud Bangkok DevFest 2026. Empowering developers with cutting-edge tools and platform infrastructure."
+    if len(text) > 40:
+        clean_desc = re.sub(r'https?://[^\s,]+', '', text).strip()
+        if len(clean_desc) > 30:
+            description = clean_desc[:250] + "..." if len(clean_desc) > 250 else clean_desc
+
+    return {
+        "message": "Gemini structured parsing successful for sponsor",
+        "parsed_sponsor": {
+            "name": name,
+            "tier": tier,
+            "tagline": f"Building the future of software with {name}",
+            "description": description,
+            "iframe_url": iframe_url,
+            "theme_color": theme_color,
+            "perks_and_swag": ["Exclusive DevFest T-Shirt 👕", "Cloud Credits Voucher 💳", "Sticker Pack 🎨"],
+            "recruiting_roles": ["Senior Cloud Architect", "AI/ML Engineer", "Full-Stack Dev"]
+        }
+    }

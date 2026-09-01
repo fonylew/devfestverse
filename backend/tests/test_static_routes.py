@@ -27,4 +27,25 @@ def test_health_check_endpoint():
     resp = client.get("/health")
     assert resp.status_code == 200
     assert resp.json()["status"] == "healthy"
-    assert resp.json()["project"] == "gdg-cloud-bangkok-2026"
+    from backend.app.core.config import settings
+    assert resp.json()["project"] == (settings.GCP_PROJECT or "local-dev")
+
+def test_privacy_policy_page_serves():
+    resp = client.get("/privacy")
+    assert resp.status_code == 200
+    assert "Privacy Policy" in resp.text
+    assert "https://policies.google.com/privacy" in resp.text
+
+    resp_alias = client.get("/privacy-policy")
+    assert resp_alias.status_code == 200
+    assert "Privacy Policy" in resp_alias.text
+
+def test_terms_of_service_page_serves():
+    resp = client.get("/terms")
+    assert resp.status_code == 200
+    assert "Terms of Service" in resp.text
+    assert "https://policies.google.com/terms" in resp.text
+
+    resp_alias = client.get("/terms-of-service")
+    assert resp_alias.status_code == 200
+    assert "Terms of Service" in resp_alias.text

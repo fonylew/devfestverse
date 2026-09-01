@@ -1,13 +1,27 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from backend.app.core.rbac import require_roles, UserRole, DB_USERS, get_current_user
+from backend.app.core.firestore import firestore_manager
 
 router = APIRouter(prefix="/backoffice", tags=["Comprehensive Back Office APIs"])
 
 class ChangeUserRoleRequest(BaseModel):
-    user_id: str
+    user_id: Optional[str] = None
     new_role: UserRole
+
+class AssignTicketRequest(BaseModel):
+    ticket_ref: str
+    verified: bool = True
+
+class UserCreateOrUpdateRequest(BaseModel):
+    id: Optional[str] = None
+    email: str
+    display_name: str
+    role: UserRole = UserRole.PARTICIPANT
+    ticket_ref: Optional[str] = None
+    verified_ticket: bool = False
+    auth_provider: Optional[str] = "local"
 
 class LessonLearnedCreate(BaseModel):
     title: str
@@ -18,25 +32,131 @@ LESSONS_LEARNED_DB = [
     {"id": "lesson-1", "title": "WebSocket Realtime Presence Scalability", "summary": "MemoryStore Redis cluster handled 500+ concurrent 2D player movements smoothly.", "tags": ["redis", "websockets", "cloud-run"]}
 ]
 
+# --- FIRESTORE USER MANAGEMENT APIS ---
+
+@router.get("/users", dependencies=[Depends(require_roles([UserRole.ORGANIZER, UserRole.STAFF]))])
+def list_backoffice_users(
+    event_id: Optional[str] = Query(None, description="Filter by event ID"),
+    role: Optional[UserRole] = Query(None, description="Filter by user role"),
+    search: Optional[str] = Query(None, description="Search by name, email, or ticket ref"),
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0)
+):
+    """List and query all users from Cloud Firestore with multi-event filtering and search."""
+    role_str = role.value if role else None
+    if event_id:
+        return firestore_manager.list_event_users(event_id=event_id, role=role_str, search=search, limit=limit, offset=offset)
+    return firestore_manager.list_users(role=role_str, search=search, limit=limit, offset=offset)
+
+@router.get("/users/stats", dependencies=[Depends(require_roles([UserRole.ORGANIZER, UserRole.STAFF]))])
+def get_backoffice_users_stats(event_id: Optional[str] = Query(None, description="Filter stats by event ID")):
+    """Retrieve aggregated user counts, role distributions, and Google auth stats from Firestore."""
+    return firestore_manager.get_user_stats(event_id=event_id)
+
+@router.get("/users/{user_id}", dependencies=[Depends(require_roles([UserRole.ORGANIZER, UserRole.STAFF]))])
+def get_backoffice_user(user_id: str):
+    """Fetch individual user details from Firestore."""
+    user = firestore_manager.get_user(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User '{user_id}' not found in Firestore.")
+    return user
+
+@router.get("/users/{user_id}/events", dependencies=[Depends(require_roles([UserRole.ORGANIZER, UserRole.STAFF]))])
+def get_backoffice_user_events(user_id: str):
+    """Retrieve all event memberships and assigned roles for a user."""
+    events = firestore_manager.list_user_events(user_id)
+    return {"user_id": user_id, "events": events}
+
+@router.post("/users", dependencies=[Depends(require_roles([UserRole.ORGANIZER]))])
+def create_or_upsert_backoffice_user(req: UserCreateOrUpdateRequest, event_id: Optional[str] = Query("devfest-bangkok-2026")):
+    """Manually register or update a user directly in Firestore with event role."""
+    import uuid
+    user_id = req.id or f"user-{req.role.value.lower()[:6]}-{uuid.uuid4().hex[:6]}"
+    user_data = {
+        "id": user_id,
+        "email": req.email,
+        "display_name": req.display_name,
+        "global_role": req.role.value if req.role == UserRole.ORGANIZER else "PARTICIPANT",
+        "role": req.role.value,
+        "ticket_ref": req.ticket_ref,
+        "verified_ticket": req.verified_ticket,
+        "auth_provider": req.auth_provider or "local"
+    }
+    user = firestore_manager.upsert_user(user_data)
+    if event_id:
+        user = firestore_manager.set_user_event_role(
+            user_id=user_id,
+            event_id=event_id,
+            role=req.role.value,
+            ticket_ref=req.ticket_ref,
+            verified=req.verified_ticket
+        )
+    return {"message": f"User '{user['display_name']}' saved to Firestore.", "user": user}
+
+@router.post("/users/{user_id}/role", dependencies=[Depends(require_roles([UserRole.ORGANIZER]))])
+def update_backoffice_user_role(
+    user_id: str,
+    req: ChangeUserRoleRequest,
+    event_id: Optional[str] = Query("devfest-bangkok-2026")
+):
+    """Update role for a user in a specific event on Firestore (Organizer only)."""
+    user = firestore_manager.set_user_event_role(user_id, event_id, req.new_role.value)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User '{user_id}' not found.")
+    return {
+        "message": f"User '{user['display_name']}' role updated to {req.new_role.value} for event '{event_id}' on Firestore",
+        "event_id": event_id,
+        "user": user
+    }
+
+@router.post("/users/{user_id}/ticket", dependencies=[Depends(require_roles([UserRole.ORGANIZER, UserRole.STAFF]))])
+def assign_backoffice_user_ticket(
+    user_id: str,
+    req: AssignTicketRequest,
+    event_id: Optional[str] = Query("devfest-bangkok-2026")
+):
+    """Assign or verify ticket reference for a user in a specific event on Firestore."""
+    user = firestore_manager.get_user(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User '{user_id}' not found.")
+    current_role = user.get("events", {}).get(event_id, {}).get("role", user.get("role", "PARTICIPANT"))
+    user = firestore_manager.set_user_event_role(user_id, event_id, current_role, ticket_ref=req.ticket_ref, verified=req.verified)
+    return {
+        "message": f"Ticket '{req.ticket_ref}' linked and verified for '{user['display_name']}' in event '{event_id}' on Firestore",
+        "event_id": event_id,
+        "user": user
+    }
+
+
+@router.delete("/users/{user_id}", dependencies=[Depends(require_roles([UserRole.ORGANIZER]))])
+def delete_backoffice_user(user_id: str):
+    """Delete a user document from Firestore (Organizer only)."""
+    success = firestore_manager.delete_user(user_id)
+    if not success:
+        raise HTTPException(status_code=404, detail=f"User '{user_id}' could not be deleted.")
+    return {"message": f"User '{user_id}' deleted successfully from Firestore."}
+
+# Legacy active users & role switcher
 @router.get("/active-users", dependencies=[Depends(require_roles([UserRole.ORGANIZER, UserRole.STAFF]))])
 def list_active_users():
+    users_data = firestore_manager.list_users(limit=500)
     return {
-        "total_active_count": len(DB_USERS),
-        "users": list(DB_USERS.values())
+        "total_active_count": users_data["total"],
+        "users": users_data["users"]
     }
 
 @router.post("/change-role", dependencies=[Depends(require_roles([UserRole.ORGANIZER]))])
 def change_user_role(req: ChangeUserRoleRequest):
-    user = DB_USERS.get(req.user_id)
+    if not req.user_id:
+        raise HTTPException(status_code=400, detail="user_id is required.")
+    user = firestore_manager.update_user_role(req.user_id, req.new_role.value)
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
-    
-    old_role = user["role"]
-    user["role"] = req.new_role
     return {
-        "message": f"User '{user['display_name']}' role changed from {old_role} to {req.new_role.value}",
+        "message": f"User '{user['display_name']}' role changed to {req.new_role.value}",
         "user": user
     }
+
 
 @router.get("/lessons-learned")
 def list_lessons_learned():

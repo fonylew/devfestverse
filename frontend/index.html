@@ -554,52 +554,6 @@
     }
     .mobile-nav-item span.icon { font-size: 1.15rem; }
 
-    /* Responsive Media Queries */
-    @media (max-width: 768px) {
-      body { height: 100dvh; }
-      header .hud-controls { display: none; }
-      #mobile-bottom-nav { display: flex; }
-      .controls-hint { display: none; }
-      #game-container {
-        padding: 0;
-        align-items: center;
-      }
-      canvas#gameCanvas {
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        max-height: calc(100dvh - 120px);
-        object-fit: contain;
-      }
-      .studio-layout {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-      .modal-card {
-        width: 95%;
-        max-height: 90dvh;
-        margin: 8px;
-      }
-      .modal-body {
-        padding: 16px;
-      }
-    /* Star Rating Selector */
-    .star-rating-row { display: flex; gap: 8px; margin-top: 4px; }
-    .star-btn {
-      background: transparent;
-      border: none;
-      font-size: 1.6rem;
-      color: #475569;
-      cursor: pointer;
-      transition: transform 0.1s, color 0.15s;
-      padding: 0;
-    }
-    .star-btn:hover, .star-btn.active {
-      color: #FBBF24;
-      transform: scale(1.15);
-    }
-
     /* 2D Fullscreen Canvas Container */
     #game-container {
       flex: 1;
@@ -620,7 +574,125 @@
       cursor: crosshair;
     }
 
-    /* Responsive Media Queries */
+    /* 🌟 Enhanced Feedback Form Styles (Vivid & High Contrast Selection) */
+    .feedback-star-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin: 10px 0;
+    }
+    .feedback-star-btn {
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      font-size: 2.4rem;
+      color: #334155 !important;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 6px;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.15s;
+      user-select: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .feedback-star-btn:hover {
+      transform: scale(1.3);
+      color: #FDE047 !important;
+      text-shadow: 0 0 16px rgba(253, 224, 71, 0.7);
+    }
+    .feedback-star-btn.active {
+      color: #FBBF24 !important;
+      text-shadow: 0 0 18px rgba(251, 191, 36, 0.9), 0 0 6px rgba(245, 158, 11, 0.8) !important;
+      transform: scale(1.18);
+    }
+    .rating-chip-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .rating-chip {
+      background: #0F172A !important;
+      border: 1.5px solid #334155 !important;
+      color: #94A3B8 !important;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
+    }
+    .rating-chip:hover {
+      border-color: #38BDF8 !important;
+      color: #FFFFFF !important;
+      transform: translateY(-1px);
+    }
+    .rating-chip.active {
+      background: linear-gradient(135deg, #1E40AF, #3B82F6) !important;
+      border-color: #60A5FA !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 0 14px rgba(59, 130, 246, 0.6) !important;
+      font-weight: 700;
+    }
+    .nps-chip-group {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 6px;
+      margin: 8px 0;
+    }
+    .nps-chip {
+      background: #0F172A !important;
+      border: 1.5px solid #334155 !important;
+      color: #94A3B8 !important;
+      padding: 8px 0;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease-in-out;
+      font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
+    }
+    .nps-chip:hover {
+      border-color: #38BDF8 !important;
+      color: #FFFFFF !important;
+      transform: translateY(-2px);
+    }
+    .nps-chip.active.detractor {
+      background: #DC2626 !important;
+      border-color: #EF4444 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 0 14px rgba(220, 38, 38, 0.7) !important;
+      font-weight: 800;
+      transform: scale(1.05);
+    }
+    .nps-chip.active.passive {
+      background: #D97706 !important;
+      border-color: #F59E0B !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 0 14px rgba(217, 119, 6, 0.7) !important;
+      font-weight: 800;
+      transform: scale(1.05);
+    }
+    .nps-chip.active.promoter {
+      background: #059669 !important;
+      border-color: #10B981 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.7) !important;
+      font-weight: 800;
+      transform: scale(1.05);
+    }
+
+    /* Responsive Media Queries (Mobile Viewports) */
     @media (max-width: 768px) {
       body { height: 100dvh; }
       header .hud-controls { display: none; }
@@ -697,6 +769,7 @@
       <button class="hud-btn" onclick="openModal('ticket-modal')">🎫 Ticket Check</button>
       <button class="hud-btn" onclick="openModal('agenda-modal')">📅 Agenda & Transcripts</button>
       <button class="hud-btn" onclick="openModal('workshops-modal')">💻 Workshops</button>
+      <button class="hud-btn primary" onclick="openModal('builder-showcase-modal')" style="background: linear-gradient(135deg, #0284C7, #4F46E5); border-color: #818CF8;">🛠️ Builder Zone</button>
       <button class="hud-btn" onclick="openModal('feedback-modal')">📝 Feedback</button>
       <button class="hud-btn" onclick="openModal('qna-modal')">💬 Q&A</button>
       <button class="hud-btn" onclick="openModal('shop-modal')">🛍️ Store</button>
@@ -833,6 +906,16 @@
             <span class="badge organizer">ORGANIZER</span>
           </button>
         </div>
+
+        <!-- Google Auth Platform Compliance & Branding Links -->
+        <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--card-border); text-align: center; font-size: 0.75rem; color: var(--text-muted); line-height: 1.6;">
+          By continuing, you agree to our 
+          <a href="/terms" target="_blank" style="color: #38BDF8; text-decoration: underline; font-weight: 600;">Terms of Service</a> and 
+          <a href="/privacy" target="_blank" style="color: #38BDF8; text-decoration: underline; font-weight: 600;">Privacy Policy</a>.<br>
+          <span style="font-size: 0.7rem; color: #64748B;">
+            Google Account data is subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style="color: #94A3B8; text-decoration: underline;">Google Privacy Policy</a> & <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" style="color: #94A3B8; text-decoration: underline;">Terms of Service</a>.
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -846,17 +929,27 @@
       </div>
       <div class="modal-body">
         
-        <!-- Gemini AI Prompt Bar -->
-        <div class="card-item" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)); border-color: #8B5CF6;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <label style="font-weight:700; font-size:0.88rem; color:#A78BFA; display:flex; align-items:center; gap:6px;">
-              ✨ Gemini AI Character Synthesizer
+        <!-- Browser Local AI (Gemini Nano / window.ai) Prompt Bar -->
+        <div class="card-item" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); border: 1.5px solid #38BDF8; box-shadow: 0 4px 20px rgba(56, 189, 248, 0.15);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+            <label style="font-weight:700; font-size:0.88rem; color:#38BDF8; display:flex; align-items:center; gap:6px;">
+              🧠 Browser Local AI Character Generator
             </label>
-            <span style="font-size:0.72rem; color:#94A3B8;">Prompt to 2D Pixel Sprite</span>
+            <span id="browser-ai-badge" style="font-size:0.7rem; background:rgba(56,189,248,0.15); color:#38BDF8; padding:3px 8px; border-radius:12px; border:1px solid rgba(56,189,248,0.3); font-weight:700;">
+              ⚡ On-Device Local Model (window.ai / Gemini Nano)
+            </span>
           </div>
           <div style="display:flex; gap:8px;">
-            <input type="text" id="ai-avatar-prompt" placeholder="e.g. Google Cloud Architect with glowing VR visor and cyan pet" style="flex:1; padding:10px 14px; border-radius:8px; border:1px solid #475569; background:#0F172A; color:#FFF; font-size:0.85rem;">
-            <button class="hud-btn studio" onclick="generateWithGeminiAI()">✨ Generate with AI</button>
+            <input type="text" id="ai-avatar-prompt" placeholder="Describe character (e.g. Cyberpunk cat hacker with matrix aura and blue spiky hair)..." style="flex:1; padding:10px 14px; border-radius:8px; border:1px solid #475569; background:#0F172A; color:#FFF; font-size:0.85rem;">
+            <button class="hud-btn primary" onclick="generateWithBrowserLocalAI()" style="background:linear-gradient(135deg, #0284C7, #0369A1); border-color:#38BDF8; font-weight:700;">🧠 Generate with Local AI</button>
+          </div>
+          <!-- Quick Prompt Inspiration Chips -->
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+            <button class="option-chip" style="font-size:0.7rem; padding:2px 8px;" onclick="useQuickPrompt('🤖 Cyberpunk Hacker with neon matrix aura and spiky hair')">🤖 Cyberpunk Hacker</button>
+            <button class="option-chip" style="font-size:0.7rem; padding:2px 8px;" onclick="useQuickPrompt('🐱 Cute Anime Dev with pink cat ears and sparkles')">🐱 Cat Ears Anime Dev</button>
+            <button class="option-chip" style="font-size:0.7rem; padding:2px 8px;" onclick="useQuickPrompt('🕶️ Google Glass Cloud Architect in GDG Hoodie')">🕶️ Google Glass Architect</button>
+            <button class="option-chip" style="font-size:0.7rem; padding:2px 8px;" onclick="useQuickPrompt('🎧 Lofi Beats Streamer with yellow headphones')">🎧 Lofi Streamer</button>
+            <button class="option-chip" style="font-size:0.7rem; padding:2px 8px;" onclick="useQuickPrompt('🚀 Cyber Astronaut with glowing helmet')">🚀 Cyber Astronaut</button>
           </div>
         </div>
 
@@ -1060,15 +1153,97 @@
       </div>
       <div class="modal-body">
         <div style="display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid var(--card-border); padding-bottom:12px; flex-wrap:wrap;">
-          <button class="hud-btn primary" onclick="showAdminTab('roles-tab')">Role Switcher & Invites</button>
+          <button class="hud-btn primary" onclick="showAdminTab('users-admin-tab'); loadBackofficeUsers();">👥 User Management</button>
+          <button class="hud-btn" onclick="showAdminTab('roles-tab')">Role Switcher & Invites</button>
           <button class="hud-btn" onclick="showAdminTab('agenda-admin-tab')">Manage Agenda & Tracks</button>
+          <button class="hud-btn" onclick="showAdminTab('sponsors-admin-tab'); loadAdminSponsors();">🏢 Sponsors & Booths</button>
           <button class="hud-btn" onclick="showAdminTab('firestore-admin-tab')">🔥 Firestore & Attendance</button>
           <button class="hud-btn" onclick="showAdminTab('announcements-tab')">Publish Announcements</button>
+          <button class="hud-btn" onclick="showAdminTab('feedback-admin-tab')">📝 Feedback & NPS</button>
           <button class="hud-btn" onclick="showAdminTab('lucky-draw-tab')">Trigger Lucky Draw</button>
         </div>
 
+        <!-- Tab 0: User Management & Firestore -->
+        <div id="users-admin-tab" class="admin-tab">
+          <div class="card-item">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+              <div>
+                <h4 style="color:#38BDF8; margin:0 0 4px 0; font-size:1.05rem;">👥 Multi-Event User Directory & Cloud Firestore</h4>
+                <div id="admin-users-gcp-project" style="font-size:0.75rem; color:var(--text-muted);">
+                  GCP Project: <span id="admin-gcp-project-name" style="color:#FBBF24; font-family:'Space Mono', monospace;">Connected</span> • 
+                  <span class="badge" style="background:rgba(16,185,129,0.15); color:#10B981; border:1px solid #10B981; font-size:0.65rem;">⚡ Client Cache Active (5m TTL)</span>
+                </div>
+              </div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <button class="hud-btn primary" onclick="loadBackofficeUsers(true)">🔄 Force Refresh Firestore</button>
+              </div>
+            </div>
+
+            <!-- Event Selector & Search Bar -->
+            <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; background:#1E293B; padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+              <div style="flex:1; min-width:200px;">
+                <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">🎯 Selected Event Context:</label>
+                <select id="admin-users-event-select" onchange="onAdminEventSelectChange(this.value)" style="width:100%; padding:6px 10px; border-radius:6px; border:1px solid #475569; background:#0F172A; color:#FBBF24; font-size:0.82rem; font-weight:700;">
+                  <option value="devfest-bangkok-2026">GDG Cloud Bangkok DevFest 2026</option>
+                  <option value="gdg-ai-hackathon-2026">GDG Bangkok AI Agent Hackathon 2026</option>
+                  <option value="cloud-community-day-2026">Google Cloud Community Day Bangkok 2026</option>
+                  <option value="">🌐 All Events Combined</option>
+                </select>
+              </div>
+              <div style="flex:1; min-width:180px;">
+                <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">🔍 Search Attendees:</label>
+                <input type="text" id="admin-users-search" placeholder="Search name, email, ticket..." oninput="filterBackofficeUsers()" style="width:100%; padding:6px 10px; border-radius:6px; border:1px solid #475569; background:#0F172A; color:#FFF; font-size:0.82rem;">
+              </div>
+              <div style="flex:1; min-width:140px;">
+                <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">🏷️ Filter Role:</label>
+                <select id="admin-users-role-filter" onchange="filterBackofficeUsers()" style="width:100%; padding:6px 10px; border-radius:6px; border:1px solid #475569; background:#0F172A; color:#FFF; font-size:0.82rem;">
+                  <option value="">All Roles</option>
+                  <option value="ORGANIZER">Organizer</option>
+                  <option value="STAFF">Staff</option>
+                  <option value="SPEAKER">Speaker</option>
+                  <option value="SPONSOR">Sponsor</option>
+                  <option value="PARTICIPANT">Participant</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- User Analytics KPI Metrics -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap:8px; margin-bottom:18px;">
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.7rem; color:var(--text-muted);">Total Attendees</div>
+                <div id="users-kpi-total" style="font-size:1.3rem; font-weight:800; color:#38BDF8;">-</div>
+              </div>
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.7rem; color:var(--text-muted);">Organizers/Staff</div>
+                <div id="users-kpi-staff" style="font-size:1.3rem; font-weight:800; color:#EC4899;">-</div>
+              </div>
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.7rem; color:var(--text-muted);">Speakers/Sponsors</div>
+                <div id="users-kpi-speakers" style="font-size:1.3rem; font-weight:800; color:#A78BFA;">-</div>
+              </div>
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.7rem; color:var(--text-muted);">Participants</div>
+                <div id="users-kpi-participants" style="font-size:1.3rem; font-weight:800; color:#10B981;">-</div>
+              </div>
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.7rem; color:var(--text-muted);">Verified Tickets</div>
+                <div id="users-kpi-verified" style="font-size:1.3rem; font-weight:800; color:#F59E0B;">-</div>
+              </div>
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.7rem; color:var(--text-muted);">Google Logins</div>
+                <div id="users-kpi-google" style="font-size:1.3rem; font-weight:800; color:#4285F4;">-</div>
+              </div>
+            </div>
+
+            <!-- Dynamic User Directory -->
+            <div id="backoffice-users-list" style="max-height:340px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
+              <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:0.85rem;">Loading users from Firestore...</div>
+            </div>
+          </div>
+        </div>
+
         <!-- Tab 1: Roles & Invites -->
-        <div id="roles-tab" class="admin-tab">
+        <div id="roles-tab" class="admin-tab" style="display:none;">
           <div class="card-item">
             <h4 style="margin-bottom:6px;">Generate Role Invitation Link</h4>
             <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Create unique invite URLs for Speakers, Sponsors, and Staff.</p>
@@ -1262,72 +1437,279 @@
           </div>
         </div>
 
+        <!-- Tab 7: Sponsors & Gemini Sponsor Parser -->
+        <div id="sponsors-admin-tab" class="admin-tab" style="display:none;">
+          <div class="card-item">
+            <!-- Gemini AI Sponsor Parser Box -->
+            <div style="background:linear-gradient(135deg, rgba(234, 67, 53, 0.15), rgba(66, 133, 244, 0.15)); border:1.5px solid #EA4335; border-radius:10px; padding:14px; margin-bottom:18px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <span style="font-size:1.2rem;">✨</span>
+                <span style="font-weight:700; font-size:0.88rem; color:#F87171;">Gemini AI Sponsor Details Parser</span>
+                <span class="badge" style="background:#DC2626; color:#FFF; font-size:0.65rem;">GEMINI 2.0 FLASH</span>
+              </div>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">Paste a company pitch, sponsor agreement text, or website URL and Gemini AI will automatically extract booth details, tier, swag perks, and descriptions.</p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <input type="text" id="ai-sponsor-prompt" placeholder="e.g. Cloudflare is a Title Sponsor at https://cloudflare.com empowering edge worker compute and DDoS security" style="flex:1; min-width:260px; padding:8px 12px; border-radius:8px; border:1px solid #475569; background:#0F172A; color:#FFF; font-size:0.82rem;">
+                <button class="hud-btn primary" onclick="autoFillSponsorWithGemini()" style="white-space:nowrap; background:linear-gradient(135deg, #EA4335, #E11D48); border-color:#F87171;">✨ Parse with Gemini</button>
+              </div>
+            </div>
+
+            <h4 id="admin-sponsor-form-title" style="margin-bottom:10px; color:#F87171;">Edit Sponsor Booth Details</h4>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Sponsor / Company Name:</label>
+                <input type="text" id="sponsor-edit-name" placeholder="e.g. Google Cloud" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Sponsorship Tier:</label>
+                <select id="sponsor-edit-tier" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+                  <option value="Title Sponsor">Title Sponsor (Grand Booth)</option>
+                  <option value="Platinum Sponsor">Platinum Sponsor</option>
+                  <option value="Gold Sponsor">Gold Sponsor</option>
+                  <option value="Silver Sponsor">Silver Sponsor</option>
+                  <option value="Community Partner">Community Partner</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom:10px;">
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Interactive Iframe / Website URL:</label>
+              <input type="url" id="sponsor-edit-url" placeholder="https://cloud.google.com" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Booth Description & Developer Pitch:</label>
+              <textarea id="sponsor-edit-desc" rows="2" placeholder="Empowering developers to build..." style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;"></textarea>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-bottom:18px;">
+              <button class="hud-btn primary" onclick="saveAdminSponsorBooth()" style="background:linear-gradient(135deg, #EA4335, #B91C1C); border-color:#F87171;">Save Sponsor Booth</button>
+            </div>
+
+            <h5 style="margin:12px 0 8px; font-size:0.85rem; color:#94A3B8;">Active Sponsor Booths on 2D Map:</h5>
+            <div id="admin-sponsors-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
   <!-- MODAL: Attendee Event Feedback -->
   <div id="feedback-modal" class="modal-overlay">
-    <div class="modal-card" style="max-width: 520px;">
-      <div class="modal-header">
-        <h3>📝 DevFest Event Feedback</h3>
+    <div class="modal-card" style="max-width: 540px; border: 1.5px solid #38BDF8; box-shadow: 0 8px 32px rgba(56, 189, 248, 0.2);">
+      <div class="modal-header" style="border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.3rem;">📝</span>
+          <div>
+            <h3 style="margin:0; font-size:1.1rem; color:#FFF;">DevFest Event Feedback</h3>
+            <div style="font-size:0.75rem; color:#94A3B8; margin-top:2px;">Help us shape the future of GDG Cloud Bangkok!</div>
+          </div>
+        </div>
         <button class="close-btn" onclick="closeModal('feedback-modal')">&times;</button>
       </div>
-      <div class="modal-body">
-        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:16px;">Help us improve future GDG Cloud Bangkok events by sharing your ratings and thoughts!</p>
-        
-        <div style="margin-bottom:14px;">
-          <label style="font-size:0.8rem; font-weight:700; color:var(--text-main); display:block; margin-bottom:6px;">⭐ Overall Experience:</label>
-          <div class="star-rating-row" id="feedback-stars">
-            <button class="star-btn active" onclick="setFeedbackStar(1)">★</button>
-            <button class="star-btn active" onclick="setFeedbackStar(2)">★</button>
-            <button class="star-btn active" onclick="setFeedbackStar(3)">★</button>
-            <button class="star-btn active" onclick="setFeedbackStar(4)">★</button>
-            <button class="star-btn active" onclick="setFeedbackStar(5)">★</button>
+      
+      <div class="modal-body" style="padding: 16px 20px;">
+        <!-- Event Context Selector Pill -->
+        <div style="display:flex; justify-content:space-between; align-items:center; background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; padding: 8px 12px; border-radius: 8px; margin-bottom: 16px; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:0.8rem;">📍</span>
+            <span style="font-size:0.75rem; color:var(--text-muted);">Event Context:</span>
+          </div>
+          <select id="feedback-event-id" onchange="onFeedbackEventChange(this.value)" style="padding:4px 10px; border-radius:6px; background:#0F172A; border:1px solid #475569; color:#FBBF24; font-size:0.78rem; font-weight:700;">
+            <option value="devfest-bangkok-2026">GDG Cloud Bangkok DevFest 2026</option>
+            <option value="gdg-ai-hackathon-2026">GDG Bangkok AI Agent Hackathon 2026</option>
+            <option value="cloud-community-day-2026">Google Cloud Community Day Bangkok 2026</option>
+          </select>
+        </div>
+
+        <!-- ⭐ Section 1: Overall Experience -->
+        <div style="text-align:center; padding:14px; background:linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.9)); border:1px solid rgba(251,191,36,0.3); border-radius:12px; margin-bottom:16px;">
+          <div style="font-size:0.75rem; font-weight:700; color:#FBBF24; text-transform:uppercase; letter-spacing:0.5px;">⭐ Overall Experience</div>
+          <div class="feedback-star-row" id="feedback-stars-container">
+            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(1)">★</button>
+            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(2)">★</button>
+            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(3)">★</button>
+            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(4)">★</button>
+            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(5)">★</button>
+          </div>
+          <div id="feedback-overall-label" style="font-size:0.85rem; font-weight:700; color:#FDE047; margin-top:2px;">5/5 • Outstanding Experience! 🌟</div>
+        </div>
+
+        <!-- 🎯 Section 2: Keynote & Venue Category Ratings -->
+        <div style="display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:16px;">
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">🎤 Keynote & Technical Content:</label>
+            <div class="rating-chip-group" id="content-rating-chips">
+              <button type="button" class="rating-chip active" onclick="setFeedbackContentRating(5, this)">5 ★ Excellent</button>
+              <button type="button" class="rating-chip" onclick="setFeedbackContentRating(4, this)">4 ★ Good</button>
+              <button type="button" class="rating-chip" onclick="setFeedbackContentRating(3, this)">3 ★ Average</button>
+              <button type="button" class="rating-chip" onclick="setFeedbackContentRating(2, this)">2 ★ Fair</button>
+              <button type="button" class="rating-chip" onclick="setFeedbackContentRating(1, this)">1 ★ Poor</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">🏛️ Venue & Virtual Campus:</label>
+            <div class="rating-chip-group" id="venue-rating-chips">
+              <button type="button" class="rating-chip active" onclick="setFeedbackVenueRating(5, this)">5 ★ Excellent</button>
+              <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(4, this)">4 ★ Good</button>
+              <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(3, this)">3 ★ Average</button>
+              <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(2, this)">2 ★ Fair</button>
+              <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(1, this)">1 ★ Poor</button>
+            </div>
           </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
-          <div>
-            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Keynote & Content:</label>
-            <select id="feedback-content-rating" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.82rem;">
-              <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
-              <option value="4">⭐⭐⭐⭐ Good</option>
-              <option value="3">⭐⭐⭐ Average</option>
-              <option value="2">⭐⭐ Fair</option>
-              <option value="1">⭐ Needs Improvement</option>
-            </select>
+        <!-- 🚀 Section 3: Net Promoter Score (NPS 0-10) -->
+        <div style="margin-bottom:16px; background:#0F172A; padding:12px; border-radius:10px; border:1px solid var(--card-border);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">How likely to recommend to colleagues? (0–10):</label>
+            <span id="feedback-nps-badge" class="badge" style="background:rgba(16,185,129,0.15); color:#10B981; border:1px solid #10B981; font-size:0.7rem; font-weight:700;">10 / 10 • Promoter 🚀</span>
           </div>
-          <div>
-            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Venue & Virtual Campus:</label>
-            <select id="feedback-venue-rating" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.82rem;">
-              <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
-              <option value="4">⭐⭐⭐⭐ Good</option>
-              <option value="3">⭐⭐⭐ Average</option>
-              <option value="2">⭐⭐ Fair</option>
-              <option value="1">⭐ Needs Improvement</option>
-            </select>
+          <div class="nps-chip-group" id="nps-chips-container">
+            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(0, this)">0</button>
+            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(1, this)">1</button>
+            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(2, this)">2</button>
+            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(3, this)">3</button>
+            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(4, this)">4</button>
+            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(5, this)">5</button>
+            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(6, this)">6</button>
+            <button type="button" class="nps-chip passive" onclick="setFeedbackNps(7, this)">7</button>
+            <button type="button" class="nps-chip passive" onclick="setFeedbackNps(8, this)">8</button>
+            <button type="button" class="nps-chip promoter" onclick="setFeedbackNps(9, this)">9</button>
+            <button type="button" class="nps-chip promoter active" onclick="setFeedbackNps(10, this)">10</button>
           </div>
-        </div>
-
-        <div style="margin-bottom:14px;">
-          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">How likely are you to recommend DevFest Bangkok to friends? (0-10):</label>
-          <input type="range" id="feedback-nps" min="0" max="10" value="10" oninput="document.getElementById('nps-val-label').innerText = this.value" style="width:100%;">
-          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#94A3B8;">
-            <span>0 (Unlikely)</span>
-            <span id="nps-val-label" style="color:#38BDF8; font-weight:bold;">10</span>
+          <div style="display:flex; justify-content:space-between; font-size:0.68rem; color:#64748B;">
+            <span>0 (Not Likely)</span>
             <span>10 (Extremely Likely)</span>
           </div>
         </div>
 
-        <div style="margin-bottom:16px;">
-          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Your Comments & Suggestions:</label>
-          <textarea id="feedback-comments-input" rows="3" placeholder="What was your favorite session? Any suggestions for next year?" style="width:100%; padding:10px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem; resize:vertical;"></textarea>
+        <!-- 💬 Section 4: Comments -->
+        <div style="margin-bottom:18px;">
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">💬 Your Thoughts & Suggestions:</label>
+          <textarea id="feedback-comments-input" rows="3" placeholder="What did you love? Any topics or speakers you'd love to see next year?" style="width:100%; padding:10px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem; resize:vertical;"></textarea>
         </div>
 
-        <button class="hud-btn primary" onclick="submitEventFeedback()" style="width:100%; padding:12px; justify-content:center; font-size:0.9rem;">
-          🚀 Submit Feedback
+        <button class="hud-btn primary" onclick="submitEventFeedback()" style="width:100%; padding:12px; justify-content:center; font-size:0.95rem; font-weight:700; background:linear-gradient(135deg, #2563EB, #7C3AED); border-color:#818CF8; box-shadow:0 4px 15px rgba(37,99,235,0.4);">
+          🚀 Submit Feedback & Save to Firestore
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Builder Showcase & Live Iframe App Runner -->
+  <div id="builder-showcase-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 920px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:1.4rem;">🛠️</span>
+          <div>
+            <h3 style="margin:0; font-size:1.15rem;">DevFest Community Builder Showcase</h3>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Explore live web apps, AI tools & games built by DevFest developers</div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="hud-btn primary" onclick="openModal('builder-submit-modal')" style="background:linear-gradient(135deg, #10B981, #059669); border-color:#34D399;">➕ Submit Your Project</button>
+          <button class="close-btn" onclick="closeModal('builder-showcase-modal')">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding:16px 20px;">
+        
+        <!-- Live Interactive Iframe Viewport (Appears when user clicks "Launch Demo") -->
+        <div id="builder-live-demo-viewport" style="display:none; margin-bottom:20px; background:#0B0F19; border:1.5px solid #38BDF8; border-radius:12px; overflow:hidden; box-shadow:0 12px 30px rgba(0,0,0,0.6);">
+          <div style="background:#131C31; padding:8px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--card-border); flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="badge" style="background:#0284C7; font-size:0.7rem;">LIVE APP RUNNER</span>
+              <strong id="builder-demo-title" style="color:#FFF; font-size:0.88rem;">Project Title</strong>
+              <span id="builder-demo-author" style="font-size:0.75rem; color:var(--text-muted);">by Developer</span>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <a id="builder-demo-newtab-btn" href="#" target="_blank" rel="noopener noreferrer" class="hud-btn" style="padding:4px 10px; font-size:0.75rem;">🔗 Open Full Page</a>
+              <button class="hud-btn" style="padding:4px 10px; font-size:0.75rem; border-color:#EF4444; color:#F87171;" onclick="closeBuilderLiveDemo()">✖ Close Demo</button>
+            </div>
+          </div>
+          <div style="position:relative; width:100%; height:440px; background:#000;">
+            <iframe id="builder-demo-iframe" src="about:blank" style="width:100%; height:100%; border:none;" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" allow="camera; microphone; geolocation; accelerometer; gyroscope"></iframe>
+          </div>
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+          <div id="builder-track-chips" style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="option-chip selected" onclick="filterBuilderCategory('All', this)">All Projects</button>
+            <button class="option-chip" onclick="filterBuilderCategory('AI & Agents', this)">🤖 AI & Agents</button>
+            <button class="option-chip" onclick="filterBuilderCategory('Cloud & DevOps', this)">⚡ Cloud & DevOps</button>
+            <button class="option-chip" onclick="filterBuilderCategory('Web & Mobile', this)">📱 Web & Flutter</button>
+          </div>
+          <input type="text" id="builder-search-input" placeholder="🔍 Search projects or tech stack..." oninput="onBuilderSearch(this.value)" style="padding:6px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.82rem; width:220px;">
+        </div>
+
+        <!-- Projects Cards Grid -->
+        <div id="builder-projects-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:14px; max-height:480px; overflow-y:auto; padding-right:4px;">
+          <!-- Dynamically populated via JavaScript -->
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Submit Builder Project Form -->
+  <div id="builder-submit-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 560px;">
+      <div class="modal-header">
+        <h3>🚀 Submit Your Project to Builder Zone</h3>
+        <button class="close-btn" onclick="closeModal('builder-submit-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--text-muted); font-size:0.82rem; margin-bottom:14px;">Showcase your application, agent, or game to all DevFest attendees with a built-in interactive live demo!</p>
+        
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Project Name *:</label>
+            <input type="text" id="proj-sub-title" placeholder="e.g. Gemini Multimodal Agent Swarm" style="width:100%; padding:9px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Builder / Team Name *:</label>
+              <input type="text" id="proj-sub-name" placeholder="e.g. Neo & Sara" style="width:100%; padding:9px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+            </div>
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Category / Track *:</label>
+              <select id="proj-sub-category" style="width:100%; padding:9px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+                <option value="AI & Agents">🤖 AI & Agents</option>
+                <option value="Cloud & DevOps">⚡ Cloud & DevOps</option>
+                <option value="Web & Mobile">📱 Web & Mobile (Flutter/WASM)</option>
+                <option value="Open Source">💡 Open Source</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Interactive Live Demo URL (Must be https://) *:</label>
+            <input type="url" id="proj-sub-demo" placeholder="https://my-app.run.app or https://my-demo.web.app" style="width:100%; padding:9px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+          </div>
+
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">GitHub Repository / Docs URL (Optional):</label>
+            <input type="url" id="proj-sub-github" placeholder="https://github.com/my-username/my-project" style="width:100%; padding:9px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+          </div>
+
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Tech Stack Tags (Comma-separated):</label>
+            <input type="text" id="proj-sub-tags" placeholder="e.g. Google Cloud Run, Vertex AI, Flutter, Python" style="width:100%; padding:9px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem;">
+          </div>
+
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Short Description *:</label>
+            <textarea id="proj-sub-desc" rows="3" placeholder="Briefly describe what your app does and how you built it..." style="width:100%; padding:9px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem; resize:vertical;"></textarea>
+          </div>
+
+          <button class="hud-btn primary" onclick="submitBuilderProject()" style="padding:12px; justify-content:center; font-size:0.9rem; margin-top:6px;">
+            🚀 Submit Project to Showcase
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1341,6 +1723,14 @@
       </div>
       <div class="modal-body">
         <div style="display:flex; flex-direction:column; gap:10px;">
+          <button class="quick-account-btn" onclick="closeModal('mobile-menu-modal'); openModal('builder-showcase-modal');">
+            <span style="font-size:1.4rem;">🛠️</span>
+            <div style="flex:1;">
+              <div style="font-weight:700;">Builder Zone Showcase</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Explore live apps & submit projects</div>
+            </div>
+            <span>➡️</span>
+          </button>
           <button class="quick-account-btn" onclick="closeModal('mobile-menu-modal'); openModal('ticket-modal');">
             <span style="font-size:1.4rem;">🎫</span>
             <div style="flex:1;">
@@ -1394,6 +1784,12 @@
             </div>
             <span>➡️</span>
           </button>
+
+          <!-- Legal & Policies Links -->
+          <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--card-border); text-align:center; font-size:0.72rem; color:var(--text-muted);">
+            <a href="/privacy" target="_blank" style="color:#38BDF8; margin:0 8px; text-decoration:underline;">Privacy Policy</a> • 
+            <a href="/terms" target="_blank" style="color:#38BDF8; margin:0 8px; text-decoration:underline;">Terms of Service</a>
+          </div>
         </div>
       </div>
     </div>

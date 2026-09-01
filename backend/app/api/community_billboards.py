@@ -7,23 +7,33 @@ router = APIRouter(prefix="/community-billboards", tags=["Community Billboards"]
 
 COMMUNITY_BILLBOARDS_DB = [
     {
+        "id": "bb-chapter",
+        "category": "GDG Chapter Portal",
+        "title": "GDG Cloud Bangkok Chapter",
+        "description": "Official community portal, RSVP, event tickets & chapter updates.",
+        "url": "https://gdg.community.dev/gdg-cloud-bangkok/",
+        "position_x": 60,
+        "position_y": 50,
+        "badge_color": "#4285F4"
+    },
+    {
         "id": "bb-fb-page",
         "category": "Facebook Page",
-        "title": "GDG Cloud Bangkok Page",
+        "title": "GDG Cloud Bangkok Official Page",
         "description": "Official announcements, event updates & cloud tech news.",
-        "url": "https://www.facebook.com/gdgcloudbkk",
-        "position_x": 120,
-        "position_y": 80,
-        "badge_color": "#4285F4"
+        "url": "https://www.facebook.com/profile.php?id=61583002384772",
+        "position_x": 160,
+        "position_y": 50,
+        "badge_color": "#1877F2"
     },
     {
         "id": "bb-fb-group",
         "category": "Facebook Group",
         "title": "GDG Cloud BKK Developer Group",
         "description": "Community discussion, Q&A, and technical networking.",
-        "url": "https://www.facebook.com/groups/gdgcloudbkk",
-        "position_x": 200,
-        "position_y": 80,
+        "url": "https://www.facebook.com/groups/gdgcloudbkk/",
+        "position_x": 260,
+        "position_y": 50,
         "badge_color": "#34A853"
     },
     {
@@ -31,9 +41,9 @@ COMMUNITY_BILLBOARDS_DB = [
         "category": "Discord Server",
         "title": "GDG Cloud Bangkok Discord",
         "description": "Live chat, agent hacking channels, and real-time community chat.",
-        "url": "https://discord.gg/gdgcloudbkk",
-        "position_x": 280,
-        "position_y": 80,
+        "url": "https://discord.gg/CBbPpNvmS",
+        "position_x": 360,
+        "position_y": 50,
         "badge_color": "#5865F2"
     },
     {
@@ -42,8 +52,8 @@ COMMUNITY_BILLBOARDS_DB = [
         "title": "@gdgcloudbkk Instagram",
         "description": "Behind the scenes photos, stories, and DevFest highlights.",
         "url": "https://www.instagram.com/gdgcloudbkk",
-        "position_x": 360,
-        "position_y": 80,
+        "position_x": 460,
+        "position_y": 50,
         "badge_color": "#E1306C"
     },
     {
@@ -51,9 +61,9 @@ COMMUNITY_BILLBOARDS_DB = [
         "category": "YouTube Channel",
         "title": "GDG Cloud Bangkok YouTube",
         "description": "Recorded tech talks, livestream archives & DevFest sessions.",
-        "url": "https://www.youtube.com/@gdgcloudbkk",
-        "position_x": 440,
-        "position_y": 80,
+        "url": "https://www.youtube.com/@gdgcloudbangkok",
+        "position_x": 560,
+        "position_y": 50,
         "badge_color": "#FF0000"
     }
 ]
