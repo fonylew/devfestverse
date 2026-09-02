@@ -70,11 +70,20 @@
 - **AI Agenda Auto-Fill & Generator (Back Office)**:
   - Organizers and staff can describe talks or paste abstracts in natural language.
   - Gemini AI extracts and auto-fills title, speaker, track, room, start/end times, and description with glowing animations.
-- **Redesigned Modern Feedback Form & Per-Event Firestore Persistence**:
-  - **Premium Cyberpunk GDG Aesthetic**: Replaced clunky native buttons/dropdowns with large glowing gold stars (`⭐`), dynamic rating feedback labels (e.g. *5/5 • Outstanding Experience! 🌟*), segmented category rating chips (`5★ Excellent` to `1★ Poor`), and a color-coded 0–10 NPS segmented pill picker with live Detractor / Passive / Promoter status badge.
-  - **Per-Event Feedback Scoping (`events/{event_id}/feedbacks`)**: Automatically scopes feedback submissions to the selected event context (e.g. `devfest-bangkok-2026`, `gdg-ai-hackathon-2026`) and persists into Google Cloud Firestore.
-  - **Per-Event Stage Q&A Engine (`events/{event_id}/qna`)**: Stage questions and attendee upvotes are saved and tracked per event in Cloud Firestore with real-time upvote toggling.
-  - **Back Office Analytics**: Dedicated **📝 Feedback Analytics** tab in Back Office displaying average ratings, NPS, and real-time review feeds filtered by event context.
+- **Dual-Section Feedback Platform (Event & Platform) with Back Office Event Filtering**:
+  - **Section 1: 🎪 Feedback for Event (DevFest Bangkok 2026)**: Overall experience gold stars (1–5★), keynote & technical content chips, speaker & organization chips, 0–10 Net Promoter Score (NPS), and event highlights/talk recommendations.
+  - **Section 2: 💻 Feedback for this Platform (DevFestVerse)**: Dedicated evaluation of the virtual 2D metaverse experience, pixel avatar studio, campus navigation, builder zone, and community suggestions.
+  - **Zero Participant Confusion**: Removed event dropdown from the attendee feedback modal. Participants automatically submit feedback for their active event context without seeing or misselecting other events.
+  - **Back Office Event Selector (Tab 5)**: Organizers and staff can filter feedback analytics per event (`devfest-bangkok-2026`, `gdg-ai-hackathon-2026`, `cloud-community-day-2026`) with real-time KPI metrics for both event and platform ratings (`Avg Event Rating`, `Avg Platform UX`, `Keynote & Content`, `Event NPS`).
+  - **Cloud Firestore Per-Event Isolation**: All dual-section responses are persisted directly into `events/{event_id}/feedbacks` in Google Cloud Firestore.
+- **👑 GDG Lead Organizer NPC Interaction & Co-Host Welcome**:
+  - Interactive organizer NPC patrolling the central venue hallway with speech bubble: *"👋 Welcome! Press [E] to talk to me!"*
+  - Approaching GDG Lead triggers a sleek glassmorphic proximity hint: `[E] Press E to talk to me` (and mobile `TALK` button).
+  - Pressing `E` or clicking on GDG Lead opens the official **GDG Lead Welcome Modal**:
+    - Highlights the co-host partnership between **GDG Bangkok** and **GDG Cloud Bangkok**.
+    - Explains the interactive mission: engaging the community and centralizing agendas, live streams, and community links in one platform.
+    - Encourages participants to explore the **Builder Zone** and showcase developer projects.
+    - Quick actions to immediately navigate to the Builder Zone or open the Feedback Kiosk.
 - **Main Event Ticket Verification Billboard**: Central 2D spawn billboard where participants verify their official DevFest tickets to earn an in-game "Verified Ticket Badge" and unlock Lucky Draw entry.
 - **GDG Cloud Bangkok Community Billboards & Media Hub**:
   - Authorized YouTube embed player (`youtube-nocookie.com/embed/...`) with full video playback.

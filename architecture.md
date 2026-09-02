@@ -907,3 +907,83 @@ flowchart TD
 - **Participant Overhead Name Tags**: `bold 11px JetBrains Mono, monospace` with dark translucent glass pill backgrounds (`rgba(11, 17, 33, 0.85)`).
 - **Speech Bubbles**: `bold 11px JetBrains Mono, monospace` rendered with 28px ergonomic pill heights and generous padding.
 - **Glassmorphic Proximity Hints**: Compact rounded pill badge (`0.72rem`, `border-radius: 20px`, `padding: 3px 10px`) with **12px backdrop blur** (`backdrop-filter: blur(12px) saturate(180%)`), subtle cyan border (`rgba(56, 189, 248, 0.4)`), and an embedded glowing keycap `<span class="hint-key">E</span>` that never blocks surrounding booths or characters.
+
+---
+
+## 15. Dual-Section Feedback & Back Office Event Analytics
+
+```mermaid
+graph TD
+    subgraph ParticipantExperience ["Participant Experience (Zero Confusion)"]
+        Kiosk["📝 Event Feedback Kiosk"]
+        AutoContext["📍 Implicit Active Event Context<br/>(Badge: GDG Cloud Bangkok DevFest 2026)"]
+        
+        subgraph Section1 ["🎪 Section 1: Feedback for Event"]
+            S1_Stars["⭐ Overall Event Experience (1-5 Stars)"]
+            S1_Keynotes["🎤 Keynote & Technical Content (5★ to 1★)"]
+            S1_Speakers["🏛️ Organization & Speakers (5★ to 1★)"]
+            S1_NPS["🚀 Net Promoter Score (0-10)"]
+            S1_Comm["💬 Event Highlights & Topics for Next Year"]
+        end
+
+        subgraph Section2 ["💻 Section 2: Feedback for this Platform"]
+            S2_Platform["🌐 Virtual Metaverse UX (5★ to 1★)"]
+            S2_Avatar["🧑‍🚀 Avatar Studio & Customization (5★ to 1★)"]
+            S2_Nav["🗺️ 2D Campus & Booth Navigation (5★ to 1★)"]
+            S2_Comm["💡 Platform Suggestions & Feature Ideas"]
+        end
+
+        Kiosk --> AutoContext
+        AutoContext --> Section1
+        AutoContext --> Section2
+    end
+
+    subgraph BackendFirestore ["Backend & Cloud Firestore (Per-Event Isolation)"]
+        API["POST /api/v1/feedback"]
+        FSDatabase["Firestore: events/{event_id}/feedbacks"]
+        Section1 --> API
+        Section2 --> API
+        API --> FSDatabase
+    end
+
+    subgraph BackOfficeAnalytics ["Back Office Organizer Suite (Tab 5)"]
+        Selector["📍 Event Context Filter Dropdown<br/>(DevFest 2026 / Hackathon / Community Day)"]
+        AnalyticsAPI["GET /api/v1/feedback/all?event_id=..."]
+        KPICards["📊 KPI Analytics:<br/>Total Responses | Avg Event Rating | Content Rating | Avg Platform UX | Event NPS"]
+        FeedList["💬 Dual-Section Feedback Feed List<br/>(Event Badges + Platform Badges + Dedicated Comments)"]
+
+        Selector --> AnalyticsAPI
+        FSDatabase --> AnalyticsAPI
+        AnalyticsAPI --> KPICards
+        AnalyticsAPI --> FeedList
+    end
+```
+
+---
+
+## 16. GDG Lead Organizer NPC Interaction Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Player as Participant (Avatar)
+    participant LeadNPC as GDG Lead (user-org-1)
+    participant UI as Proximity HUD
+    participant Modal as #gdg-lead-modal
+    participant App as DevFestVerse Hub
+
+    Note over LeadNPC: Patrolling central hallway<br/>Speech: "👋 Welcome! Press [E] to talk to me!"
+    Player->>LeadNPC: Walks within 44px proximity
+    LeadNPC->>UI: Activates proximity pill: "[E] Press E to talk to me"
+    Note over UI: Mobile Action Button pulses: "TALK"
+    Player->>LeadNPC: Presses "E" or clicks/taps Lead sprite
+    LeadNPC->>Modal: openModal("gdg-lead-modal")
+    Note over Modal: Renders Co-host Welcome, Builder Zone highlight,<br/>engagement mission & feedback invitation
+    alt Click "Explore Builder Zone"
+        Player->>Modal: Clicks "🛠️ Explore Builder Zone"
+        Modal->>App: Opens Community Showcase & Iframe runner
+    else Click "Give Feedback"
+        Player->>Modal: Clicks "📝 Give Feedback"
+        Modal->>App: Opens Dual-Section Feedback Dialog
+    end
+```

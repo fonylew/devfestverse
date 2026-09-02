@@ -36,11 +36,20 @@ FEEDBACK_ITEMS = [
 ]
 
 class FeedbackSubmission(BaseModel):
+    # Section 1: Feedback for Event
     overall_rating: int = Field(5, ge=1, le=5)
     content_rating: Optional[int] = Field(5, ge=1, le=5)
     venue_rating: Optional[int] = Field(5, ge=1, le=5)
     nps_score: Optional[int] = Field(10, ge=0, le=10)
-    comments: str
+    comments: Optional[str] = ""
+    event_comments: Optional[str] = ""
+
+    # Section 2: Feedback for Platform (DevFestVerse)
+    platform_rating: Optional[int] = Field(5, ge=1, le=5)
+    platform_avatar_rating: Optional[int] = Field(5, ge=1, le=5)
+    platform_navigation_rating: Optional[int] = Field(5, ge=1, le=5)
+    platform_comments: Optional[str] = ""
+
     event_id: Optional[str] = "devfest-bangkok-2026"
 
 @router.get("/settings")
@@ -58,15 +67,29 @@ def submit_feedback(req: FeedbackSubmission, user: dict = Depends(get_current_us
         raise HTTPException(status_code=400, detail="Feedback collection is currently closed.")
     
     target_event_id = req.event_id or "devfest-bangkok-2026"
+    event_comm = (req.event_comments or req.comments or "").strip()
+    plat_comm = (req.platform_comments or "").strip()
+    combined_comments = event_comm
+    if plat_comm:
+        combined_comments = f"Event: {event_comm} | Platform: {plat_comm}" if event_comm else plat_comm
+
     fb = {
         "id": f"fb-{len(FEEDBACK_ITEMS)+1}",
         "user_id": user.get("id", "anonymous"),
         "user_name": user.get("display_name", "Attendee"),
+        # Section 1: Event
         "overall_rating": req.overall_rating,
         "content_rating": req.content_rating or req.overall_rating,
         "venue_rating": req.venue_rating or req.overall_rating,
         "nps_score": req.nps_score if req.nps_score is not None else 10,
-        "comments": req.comments,
+        "event_comments": event_comm,
+        # Section 2: Platform
+        "platform_rating": req.platform_rating or req.overall_rating,
+        "platform_avatar_rating": req.platform_avatar_rating or 5,
+        "platform_navigation_rating": req.platform_navigation_rating or 5,
+        "platform_comments": plat_comm,
+        # General
+        "comments": combined_comments,
         "event_id": target_event_id,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
@@ -76,7 +99,7 @@ def submit_feedback(req: FeedbackSubmission, user: dict = Depends(get_current_us
     if firestore_manager.is_configured():
         firestore_manager.save_feedback(target_event_id, fb)
 
-    return {"message": "Thank you! Your feedback has been recorded.", "feedback": fb}
+    return {"message": "Thank you! Your feedback for the event & platform has been recorded.", "feedback": fb}
 
 @router.get("/all", dependencies=[Depends(require_roles([UserRole.ORGANIZER, UserRole.STAFF]))])
 def list_all_feedback(
@@ -92,10 +115,15 @@ def list_all_feedback(
         feedbacks = FEEDBACK_ITEMS
 
     total = len(feedbacks)
+    # Event averages
     avg_overall = sum(f.get("overall_rating", 5) for f in feedbacks) / total if total else 5.0
     avg_content = sum(f.get("content_rating", 5) for f in feedbacks) / total if total else 5.0
     avg_venue = sum(f.get("venue_rating", 5) for f in feedbacks) / total if total else 5.0
     
+    # Platform averages
+    avg_platform = sum(f.get("platform_rating", 5) for f in feedbacks) / total if total else 5.0
+    avg_platform_nav = sum(f.get("platform_navigation_rating", 5) for f in feedbacks) / total if total else 5.0
+
     promoters = sum(1 for f in feedbacks if f.get("nps_score", 10) >= 9)
     detractors = sum(1 for f in feedbacks if f.get("nps_score", 10) <= 6)
     nps = int(((promoters - detractors) / total) * 100) if total else 100
@@ -106,6 +134,8 @@ def list_all_feedback(
         "average_overall": round(avg_overall, 2),
         "average_content": round(avg_content, 2),
         "average_venue": round(avg_venue, 2),
+        "average_platform": round(avg_platform, 2),
+        "average_platform_nav": round(avg_platform_nav, 2),
         "nps_score": nps,
         "feedbacks": feedbacks
     }

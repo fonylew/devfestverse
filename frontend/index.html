@@ -1479,28 +1479,43 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
               <div>
                 <h4 style="margin:0 0 2px;">Attendee Feedback & NPS Analytics</h4>
-                <div style="font-size:0.78rem; color:var(--text-muted);">Real-time participant ratings and reviews stored in Cloud Firestore.</div>
+                <div style="font-size:0.78rem; color:var(--text-muted);">Real-time participant ratings and reviews stored in Cloud Firestore per event.</div>
               </div>
-              <button class="hud-btn" onclick="loadAdminFeedback()" style="font-size:0.75rem; padding:4px 10px;">🔄 Refresh Feedback</button>
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <!-- Event Selection Filter (Back Office Side) -->
+                <div style="display:flex; align-items:center; gap:6px; background:#0F172A; border:1px solid #334155; padding:4px 10px; border-radius:8px;">
+                  <span style="font-size:0.75rem; color:var(--text-muted);">Event Context:</span>
+                  <select id="admin-feedback-event-select" onchange="onAdminFeedbackEventChange(this.value)" style="background:transparent; border:none; color:#FBBF24; font-size:0.78rem; font-weight:700; outline:none; cursor:pointer;">
+                    <option value="devfest-bangkok-2026">GDG Cloud Bangkok DevFest 2026</option>
+                    <option value="gdg-ai-hackathon-2026">GDG Bangkok AI Agent Hackathon 2026</option>
+                    <option value="cloud-community-day-2026">Google Cloud Community Day Bangkok 2026</option>
+                  </select>
+                </div>
+                <button class="hud-btn" onclick="loadAdminFeedback()" style="font-size:0.75rem; padding:4px 10px;">🔄 Refresh</button>
+              </div>
             </div>
 
-            <!-- Feedback KPI Cards -->
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:16px;">
-              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.7rem; color:var(--text-muted);">Total Responses</div>
-                <div id="admin-fb-total" style="font-size:1.4rem; font-weight:800; color:#38BDF8;">0</div>
+            <!-- Feedback KPI Cards (Dual Event & Platform Analytics) -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:10px; margin-bottom:16px;">
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.68rem; color:var(--text-muted);">Total Responses</div>
+                <div id="admin-fb-total" style="font-size:1.3rem; font-weight:800; color:#38BDF8;">0</div>
               </div>
-              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.7rem; color:var(--text-muted);">Avg Overall Rating</div>
-                <div id="admin-fb-avg-overall" style="font-size:1.4rem; font-weight:800; color:#FBBF24;">5.0 ⭐</div>
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.68rem; color:var(--text-muted);">Avg Event Rating</div>
+                <div id="admin-fb-avg-overall" style="font-size:1.3rem; font-weight:800; color:#FBBF24;">5.0 ⭐</div>
               </div>
-              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.7rem; color:var(--text-muted);">Keynote Content</div>
-                <div id="admin-fb-avg-content" style="font-size:1.4rem; font-weight:800; color:#34D399;">5.0 ⭐</div>
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.68rem; color:var(--text-muted);">Keynote & Content</div>
+                <div id="admin-fb-avg-content" style="font-size:1.3rem; font-weight:800; color:#34D399;">5.0 ⭐</div>
               </div>
-              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:12px; border-radius:8px; text-align:center;">
-                <div style="font-size:0.7rem; color:var(--text-muted);">Net Promoter Score</div>
-                <div id="admin-fb-nps" style="font-size:1.4rem; font-weight:800; color:#EC4899;">+100</div>
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.68rem; color:var(--text-muted);">Avg Platform UX</div>
+                <div id="admin-fb-avg-platform" style="font-size:1.3rem; font-weight:800; color:#00E5FF;">5.0 ⭐</div>
+              </div>
+              <div class="kpi-card" style="background:#0F172A; border:1px solid var(--card-border); padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:0.68rem; color:var(--text-muted);">Event NPS</div>
+                <div id="admin-fb-nps" style="font-size:1.3rem; font-weight:800; color:#EC4899;">+100</div>
               </div>
             </div>
 
@@ -1616,91 +1631,242 @@
         <button class="close-btn" onclick="closeModal('feedback-modal')">&times;</button>
       </div>
       
-      <div class="modal-body" style="padding: 16px 20px;">
-        <!-- Event Context Selector Pill -->
-        <div style="display:flex; justify-content:space-between; align-items:center; background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; padding: 8px 12px; border-radius: 8px; margin-bottom: 16px; flex-wrap:wrap; gap:8px;">
-          <div style="display:flex; align-items:center; gap:6px;">
-            <span style="font-size:0.8rem;">📍</span>
-            <span style="font-size:0.75rem; color:var(--text-muted);">Event Context:</span>
+      <div class="modal-body" style="padding: 16px 20px; max-height: 75vh; overflow-y: auto;">
+        <!-- Active Event Badge (Participant-Facing: No Dropdown) -->
+        <div style="display:flex; justify-content:space-between; align-items:center; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(56, 189, 248, 0.35); padding: 8px 14px; border-radius: 10px; margin-bottom: 16px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.95rem;">📍</span>
+            <span style="font-size:0.75rem; color:#94A3B8;">Event:</span>
+            <strong id="feedback-current-event-name" style="font-size:0.82rem; color:#FBBF24;">GDG Cloud Bangkok DevFest 2026</strong>
           </div>
-          <select id="feedback-event-id" onchange="onFeedbackEventChange(this.value)" style="padding:4px 10px; border-radius:6px; background:#0F172A; border:1px solid #475569; color:#FBBF24; font-size:0.78rem; font-weight:700;">
-            <option value="devfest-bangkok-2026">GDG Cloud Bangkok DevFest 2026</option>
-            <option value="gdg-ai-hackathon-2026">GDG Bangkok AI Agent Hackathon 2026</option>
-            <option value="cloud-community-day-2026">Google Cloud Community Day Bangkok 2026</option>
-          </select>
+          <span class="badge" style="background:#0284C7; font-size:0.65rem;">ATTENDEE FEEDBACK</span>
         </div>
 
-        <!-- ⭐ Section 1: Overall Experience -->
-        <div style="text-align:center; padding:14px; background:linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.9)); border:1px solid rgba(251,191,36,0.3); border-radius:12px; margin-bottom:16px;">
-          <div style="font-size:0.75rem; font-weight:700; color:#FBBF24; text-transform:uppercase; letter-spacing:0.5px;">⭐ Overall Experience</div>
-          <div class="feedback-star-row" id="feedback-stars-container">
-            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(1)">★</button>
-            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(2)">★</button>
-            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(3)">★</button>
-            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(4)">★</button>
-            <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(5)">★</button>
+        <!-- ============================================== -->
+        <!-- 🎪 SECTION 1: FEEDBACK FOR EVENT               -->
+        <!-- ============================================== -->
+        <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(251, 191, 36, 0.4); border-radius: 12px; padding: 14px; margin-bottom: 18px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom: 12px; border-bottom: 1px solid rgba(251, 191, 36, 0.2); padding-bottom: 8px;">
+            <span style="font-size:1.1rem;">🎪</span>
+            <h4 style="margin:0; font-size:0.92rem; color:#FBBF24; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">
+              Section 1: Feedback for Event
+            </h4>
           </div>
-          <div id="feedback-overall-label" style="font-size:0.85rem; font-weight:700; color:#FDE047; margin-top:2px;">5/5 • Outstanding Experience! 🌟</div>
-        </div>
 
-        <!-- 🎯 Section 2: Keynote & Venue Category Ratings -->
-        <div style="display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:16px;">
-          <div>
-            <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">🎤 Keynote & Technical Content:</label>
-            <div class="rating-chip-group" id="content-rating-chips">
-              <button type="button" class="rating-chip active" onclick="setFeedbackContentRating(5, this)">5 ★ Excellent</button>
-              <button type="button" class="rating-chip" onclick="setFeedbackContentRating(4, this)">4 ★ Good</button>
-              <button type="button" class="rating-chip" onclick="setFeedbackContentRating(3, this)">3 ★ Average</button>
-              <button type="button" class="rating-chip" onclick="setFeedbackContentRating(2, this)">2 ★ Fair</button>
-              <button type="button" class="rating-chip" onclick="setFeedbackContentRating(1, this)">1 ★ Poor</button>
+          <!-- Event Overall Rating -->
+          <div style="text-align:center; padding:10px; background:rgba(30,41,59,0.5); border-radius:8px; margin-bottom:12px;">
+            <div style="font-size:0.72rem; font-weight:700; color:#FBBF24; text-transform:uppercase;">⭐ Overall Event Experience</div>
+            <div class="feedback-star-row" id="feedback-stars-container">
+              <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(1)">★</button>
+              <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(2)">★</button>
+              <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(3)">★</button>
+              <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(4)">★</button>
+              <button type="button" class="feedback-star-btn active" onclick="setFeedbackOverallRating(5)">★</button>
+            </div>
+            <div id="feedback-overall-label" style="font-size:0.82rem; font-weight:700; color:#FDE047;">5/5 • Outstanding Experience! 🌟</div>
+          </div>
+
+          <!-- Keynote Content & Organization -->
+          <div style="display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:12px;">
+            <div>
+              <label style="font-size:0.75rem; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">🎤 Keynote Talks & Technical Sessions:</label>
+              <div class="rating-chip-group" id="content-rating-chips">
+                <button type="button" class="rating-chip active" onclick="setFeedbackContentRating(5, this)">5 ★ Excellent</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackContentRating(4, this)">4 ★ Good</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackContentRating(3, this)">3 ★ Average</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackContentRating(2, this)">2 ★ Fair</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackContentRating(1, this)">1 ★ Poor</button>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.75rem; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">🏛️ Event Organization & Speakers:</label>
+              <div class="rating-chip-group" id="venue-rating-chips">
+                <button type="button" class="rating-chip active" onclick="setFeedbackVenueRating(5, this)">5 ★ Excellent</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(4, this)">4 ★ Good</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(3, this)">3 ★ Average</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(2, this)">2 ★ Fair</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(1, this)">1 ★ Poor</button>
+              </div>
             </div>
           </div>
-          <div>
-            <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">🏛️ Venue & Virtual Campus:</label>
-            <div class="rating-chip-group" id="venue-rating-chips">
-              <button type="button" class="rating-chip active" onclick="setFeedbackVenueRating(5, this)">5 ★ Excellent</button>
-              <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(4, this)">4 ★ Good</button>
-              <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(3, this)">3 ★ Average</button>
-              <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(2, this)">2 ★ Fair</button>
-              <button type="button" class="rating-chip" onclick="setFeedbackVenueRating(1, this)">1 ★ Poor</button>
+
+          <!-- Event Net Promoter Score (NPS 0-10) -->
+          <div style="background:#0F172A; padding:10px; border-radius:8px; border:1px solid #1E293B; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label style="font-size:0.72rem; font-weight:700; color:#CBD5E1;">How likely to recommend DevFest to colleagues? (0–10):</label>
+              <span id="feedback-nps-badge" class="badge" style="background:rgba(16,185,129,0.15); color:#10B981; border:1px solid #10B981; font-size:0.68rem; font-weight:700;">10 / 10 • Promoter 🚀</span>
+            </div>
+            <div class="nps-chip-group" id="nps-chips-container">
+              <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(0, this)">0</button>
+              <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(1, this)">1</button>
+              <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(2, this)">2</button>
+              <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(3, this)">3</button>
+              <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(4, this)">4</button>
+              <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(5, this)">5</button>
+              <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(6, this)">6</button>
+              <button type="button" class="nps-chip passive" onclick="setFeedbackNps(7, this)">7</button>
+              <button type="button" class="nps-chip passive" onclick="setFeedbackNps(8, this)">8</button>
+              <button type="button" class="nps-chip promoter" onclick="setFeedbackNps(9, this)">9</button>
+              <button type="button" class="nps-chip promoter active" onclick="setFeedbackNps(10, this)">10</button>
             </div>
           </div>
-        </div>
 
-        <!-- 🚀 Section 3: Net Promoter Score (NPS 0-10) -->
-        <div style="margin-bottom:16px; background:#0F172A; padding:12px; border-radius:10px; border:1px solid var(--card-border);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">How likely to recommend to colleagues? (0–10):</label>
-            <span id="feedback-nps-badge" class="badge" style="background:rgba(16,185,129,0.15); color:#10B981; border:1px solid #10B981; font-size:0.7rem; font-weight:700;">10 / 10 • Promoter 🚀</span>
-          </div>
-          <div class="nps-chip-group" id="nps-chips-container">
-            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(0, this)">0</button>
-            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(1, this)">1</button>
-            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(2, this)">2</button>
-            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(3, this)">3</button>
-            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(4, this)">4</button>
-            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(5, this)">5</button>
-            <button type="button" class="nps-chip detractor" onclick="setFeedbackNps(6, this)">6</button>
-            <button type="button" class="nps-chip passive" onclick="setFeedbackNps(7, this)">7</button>
-            <button type="button" class="nps-chip passive" onclick="setFeedbackNps(8, this)">8</button>
-            <button type="button" class="nps-chip promoter" onclick="setFeedbackNps(9, this)">9</button>
-            <button type="button" class="nps-chip promoter active" onclick="setFeedbackNps(10, this)">10</button>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:0.68rem; color:#64748B;">
-            <span>0 (Not Likely)</span>
-            <span>10 (Extremely Likely)</span>
+          <!-- Event Comments -->
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">💬 Event Highlights & Speaker Suggestions:</label>
+            <textarea id="feedback-event-comments" rows="2" placeholder="What talks did you enjoy most? Suggestions for future DevFest events?" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid #334155; color:#FFF; font-size:0.82rem; resize:vertical;"></textarea>
           </div>
         </div>
 
-        <!-- 💬 Section 4: Comments -->
-        <div style="margin-bottom:18px;">
-          <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">💬 Your Thoughts & Suggestions:</label>
-          <textarea id="feedback-comments-input" rows="3" placeholder="What did you love? Any topics or speakers you'd love to see next year?" style="width:100%; padding:10px 12px; border-radius:8px; background:#0F172A; border:1px solid var(--card-border); color:#FFF; font-size:0.85rem; resize:vertical;"></textarea>
+        <!-- ============================================== -->
+        <!-- 💻 SECTION 2: FEEDBACK FOR THIS PLATFORM       -->
+        <!-- ============================================== -->
+        <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(56, 189, 248, 0.4); border-radius: 12px; padding: 14px; margin-bottom: 18px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom: 12px; border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 8px;">
+            <span style="font-size:1.1rem;">💻</span>
+            <h4 style="margin:0; font-size:0.92rem; color:#38BDF8; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">
+              Section 2: Feedback for this Platform (DevFestVerse)
+            </h4>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:12px;">
+            <div>
+              <label style="font-size:0.75rem; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">🌐 Virtual Metaverse Platform Experience:</label>
+              <div class="rating-chip-group" id="platform-rating-chips">
+                <button type="button" class="rating-chip active" onclick="setFeedbackPlatformRating(5, this)">5 ★ Excellent</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformRating(4, this)">4 ★ Good</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformRating(3, this)">3 ★ Average</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformRating(2, this)">2 ★ Fair</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformRating(1, this)">1 ★ Poor</button>
+              </div>
+            </div>
+
+            <div>
+              <label style="font-size:0.75rem; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">🧑‍🚀 Pixel Avatar Studio & Customization:</label>
+              <div class="rating-chip-group" id="platform-avatar-chips">
+                <button type="button" class="rating-chip active" onclick="setFeedbackPlatformAvatarRating(5, this)">5 ★ Excellent</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformAvatarRating(4, this)">4 ★ Good</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformAvatarRating(3, this)">3 ★ Average</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformAvatarRating(2, this)">2 ★ Fair</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformAvatarRating(1, this)">1 ★ Poor</button>
+              </div>
+            </div>
+
+            <div>
+              <label style="font-size:0.75rem; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">🗺️ 2D Campus, Builder Zone & Booth Navigation:</label>
+              <div class="rating-chip-group" id="platform-nav-chips">
+                <button type="button" class="rating-chip active" onclick="setFeedbackPlatformNavRating(5, this)">5 ★ Excellent</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformNavRating(4, this)">4 ★ Good</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformNavRating(3, this)">3 ★ Average</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformNavRating(2, this)">2 ★ Fair</button>
+                <button type="button" class="rating-chip" onclick="setFeedbackPlatformNavRating(1, this)">1 ★ Poor</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Platform Comments -->
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:#CBD5E1; display:block; margin-bottom:4px;">💡 Platform Feedback & Feature Suggestions:</label>
+            <textarea id="feedback-platform-comments" rows="2" placeholder="How was the virtual 2D campus, live iframe runner, or interactive swag shop? Ideas to make it better?" style="width:100%; padding:8px 10px; border-radius:6px; background:#0F172A; border:1px solid #334155; color:#FFF; font-size:0.82rem; resize:vertical;"></textarea>
+          </div>
         </div>
 
         <button class="hud-btn primary" onclick="submitEventFeedback()" style="width:100%; padding:12px; justify-content:center; font-size:0.95rem; font-weight:700; background:linear-gradient(135deg, #2563EB, #7C3AED); border-color:#818CF8; box-shadow:0 4px 15px rgba(37,99,235,0.4);">
           🚀 Submit Feedback & Save to Firestore
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GDG Lead Welcome & Community Greeting -->
+  <div id="gdg-lead-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 580px; border: 1.5px solid #F59E0B; box-shadow: 0 12px 40px rgba(245, 158, 11, 0.25);">
+      <div class="modal-header" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(66, 133, 244, 0.15)); border-bottom: 1px solid rgba(245, 158, 11, 0.3);">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:50%; background:#F59E0B; display:flex; align-items:center; justify-content:center; font-size:1.4rem; border:2px solid #FDE047; box-shadow:0 0 12px rgba(245,158,11,0.5);">
+            👑
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h3 style="margin:0; font-size:1.15rem; color:#FFF;">GDG Lead</h3>
+              <span class="badge" style="background:#EF4444; font-size:0.65rem;">ORGANIZER</span>
+            </div>
+            <div style="font-size:0.75rem; color:#FBBF24; margin-top:2px;">Co-hosted by GDG Bangkok & GDG Cloud Bangkok</div>
+          </div>
+        </div>
+        <button class="close-btn" onclick="closeModal('gdg-lead-modal')">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 20px 24px; font-size: 0.88rem; line-height: 1.6; color: #E2E8F0;">
+        <!-- Welcome Hero Banner -->
+        <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; display:flex; gap:12px; align-items:flex-start;">
+          <span style="font-size:1.6rem; line-height:1;">🌟</span>
+          <div>
+            <h4 style="margin:0 0 4px; color:#FFF; font-size:1.05rem; font-weight:800; background: linear-gradient(90deg, #FBBF24, #38BDF8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+              Welcome to DevFest Bangkok 2026!
+            </h4>
+            <p style="margin:0; font-size:0.82rem; color:#94A3B8;">
+              We are delighted to welcome developers, builders, and community pioneers to this special edition.
+            </p>
+          </div>
+        </div>
+
+        <!-- Co-host & Platform Purpose Points -->
+        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom: 18px;">
+          <div style="display:flex; gap:12px; align-items:flex-start; background:#0B1120; border:1px solid var(--card-border); padding:12px 14px; border-radius:10px;">
+            <span style="font-size:1.25rem;">🤝</span>
+            <div>
+              <strong style="color:#60A5FA; font-size:0.88rem;">Co-Hosted Together</strong>
+              <div style="font-size:0.82rem; color:#CBD5E1; margin-top:2px;">
+                This event is co-hosted together between <strong>GDG Bangkok</strong> and <strong>GDG Cloud Bangkok</strong>.
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:flex-start; background:#0B1120; border:1px solid var(--card-border); padding:12px 14px; border-radius:10px;">
+            <span style="font-size:1.25rem;">🌐</span>
+            <div>
+              <strong style="color:#38BDF8; font-size:0.88rem;">Interactive Engagement & Centralized Hub</strong>
+              <div style="font-size:0.82rem; color:#CBD5E1; margin-top:2px;">
+                This is an interactive platform to provide engagement, and centralize the links for participants in one platform.
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:flex-start; background:#0B1120; border:1px solid var(--card-border); padding:12px 14px; border-radius:10px;">
+            <span style="font-size:1.25rem;">🛠️</span>
+            <div>
+              <strong style="color:#00E5FF; font-size:0.88rem;">Builder Zone & Showcase</strong>
+              <div style="font-size:0.82rem; color:#CBD5E1; margin-top:2px;">
+                Please enjoy the <strong>Builder zone</strong> and showcase your build project by adding your creation!
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:flex-start; background:#0B1120; border:1px solid var(--card-border); padding:12px 14px; border-radius:10px;">
+            <span style="font-size:1.25rem;">💖</span>
+            <div>
+              <strong style="color:#F472B6; font-size:0.88rem;">Thank You & Community Feedback</strong>
+              <div style="font-size:0.82rem; color:#CBD5E1; margin-top:2px;">
+                Lastly, thank you very much for visiting our event platform. Hope you enjoy your day. Please feel free to give us the feedback about our event and the platform.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center; margin-bottom:18px; font-size:1.1rem; font-weight:800; color:#FDE047;">
+          🎉 Have a great DevFest!
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <button class="hud-btn" onclick="closeModal('gdg-lead-modal'); openModal('builder-showcase-modal');" style="justify-content:center; padding:10px; font-size:0.84rem; border-color:#00E5FF; color:#38BDF8;">
+            🛠️ Explore Builder Zone
+          </button>
+          <button class="hud-btn primary" onclick="closeModal('gdg-lead-modal'); openModal('feedback-modal');" style="justify-content:center; padding:10px; font-size:0.84rem; background:linear-gradient(135deg, #EC4899, #8B5CF6); border-color:#F472B6;">
+            📝 Give Feedback
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -350,6 +350,21 @@ function updatePlayer() {
     }
   });
 
+  // Check proximity to GDG Lead Organizer NPC
+  const gdgLead = OTHER_PARTICIPANTS.find(p => p.id === 'user-org-1');
+  if (gdgLead) {
+    const distToLead = Math.hypot(player.x - gdgLead.x, player.y - gdgLead.y);
+    if (distToLead < 46 && distToLead < minProximityDist) {
+      minProximityDist = distToLead;
+      closestSpot = {
+        type: 'NPC_GDG_LEAD',
+        id: 'npc-gdg-lead',
+        label: 'Press E to talk to me',
+        npc: gdgLead
+      };
+    }
+  }
+
   player.nearHotspot = closestSpot;
   updateProximityHint(closestSpot);
 }
@@ -366,13 +381,19 @@ function updateProximityHint(spot) {
     hintEl.style.left = `${rect.left + (player.x / canvas.width) * rect.width}px`;
     hintEl.style.top = `${rect.top + (player.y / canvas.height) * rect.height - 38}px`;
 
-    // Extract clean name without double emojis
-    const cleanLabel = spot.label.replace(/^[^\w\s]+/, '').trim() || spot.label;
-    textEl.innerHTML = `<span class="hint-key">E</span> <span>${cleanLabel}</span>`;
-
-    if (mobileActionBtn) {
-      mobileActionBtn.classList.add('active-pulse');
-      mobileActionLabel.innerText = 'OPEN';
+    if (spot.type === 'NPC_GDG_LEAD') {
+      textEl.innerHTML = `<span class="hint-key">E</span> <span>Press E to talk to me</span>`;
+      if (mobileActionBtn) {
+        mobileActionBtn.classList.add('active-pulse');
+        mobileActionLabel.innerText = 'TALK';
+      }
+    } else {
+      const cleanLabel = spot.label.replace(/^[^\w\s]+/, '').trim() || spot.label;
+      textEl.innerHTML = `<span class="hint-key">E</span> <span>${cleanLabel}</span>`;
+      if (mobileActionBtn) {
+        mobileActionBtn.classList.add('active-pulse');
+        mobileActionLabel.innerText = 'OPEN';
+      }
     }
   } else {
     hintEl.style.display = 'none';
@@ -389,12 +410,14 @@ function triggerMobileAction() {
   } else if (player.nearHotspot) {
     triggerHotspotAction(player.nearHotspot);
   } else {
-    showToast('Walk close to any booth or billboard to interact! 🚶', '💬');
+    showToast('Walk close to any booth, billboard or GDG Lead to interact! 🚶', '💬');
   }
 }
 
 function triggerHotspotAction(spot) {
-  if (spot.type === 'TICKET_BILLBOARD') {
+  if (spot.type === 'NPC_GDG_LEAD') {
+    openModal('gdg-lead-modal');
+  } else if (spot.type === 'TICKET_BILLBOARD') {
     openModal('ticket-modal');
   } else if (spot.id === 'booth-swag-shop' || spot.type === 'SWAG_BOOTH') {
     openModal('shop-modal');
@@ -416,6 +439,15 @@ function handleCanvasPointer(clientX, clientY) {
   const rect = canvas.getBoundingClientRect();
   const clickX = (clientX - rect.left) * (canvas.width / rect.width);
   const clickY = (clientY - rect.top) * (canvas.height / rect.height);
+
+  // Check direct click on GDG Lead NPC
+  const gdgLead = OTHER_PARTICIPANTS.find(p => p.id === 'user-org-1');
+  if (gdgLead && Math.hypot(clickX - gdgLead.x, clickY - gdgLead.y) < 36) {
+    openModal('gdg-lead-modal');
+    player.targetX = null;
+    player.targetY = null;
+    return;
+  }
 
   let clickedHotspot = null;
   let minClickDist = Infinity;
@@ -808,7 +840,7 @@ const OTHER_PARTICIPANTS = [
       headwear: 'devfest_cap',
       aura: 'matrix'
     },
-    speech: '👋 Welcome to DevFest Bangkok!',
+    speech: '👋 Welcome! Press [E] to talk to me!',
     speechTimer: 300,
     patrol: { minX: 430, maxX: 530, minY: 200, maxY: 235, targetX: 480, targetY: 215, pause: 90 }
   },
@@ -3187,9 +3219,9 @@ const OVERALL_STAR_LABELS = {
   5: '5/5 • Outstanding Experience! 🌟'
 };
 
-function onFeedbackEventChange(val) {
-  selectedFeedbackEvent = val;
-}
+let currentPlatformRating = 5;
+let currentPlatformAvatarRating = 5;
+let currentPlatformNavRating = 5;
 
 function setFeedbackOverallRating(val) {
   currentOverallStarRating = val;
@@ -3281,15 +3313,71 @@ function setFeedbackNps(val, btn) {
   }
 }
 
+// Section 2: Platform Feedback Setters
+function setFeedbackPlatformRating(val, btn) {
+  currentPlatformRating = val;
+  const chips = document.querySelectorAll('#platform-rating-chips .rating-chip');
+  chips.forEach(c => {
+    if (c.innerText.trim().startsWith(String(val))) {
+      c.classList.add('active');
+    } else {
+      c.classList.remove('active');
+    }
+  });
+  if (btn) {
+    chips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function setFeedbackPlatformAvatarRating(val, btn) {
+  currentPlatformAvatarRating = val;
+  const chips = document.querySelectorAll('#platform-avatar-chips .rating-chip');
+  chips.forEach(c => {
+    if (c.innerText.trim().startsWith(String(val))) {
+      c.classList.add('active');
+    } else {
+      c.classList.remove('active');
+    }
+  });
+  if (btn) {
+    chips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function setFeedbackPlatformNavRating(val, btn) {
+  currentPlatformNavRating = val;
+  const chips = document.querySelectorAll('#platform-nav-chips .rating-chip');
+  chips.forEach(c => {
+    if (c.innerText.trim().startsWith(String(val))) {
+      c.classList.add('active');
+    } else {
+      c.classList.remove('active');
+    }
+  });
+  if (btn) {
+    chips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function onAdminFeedbackEventChange(eventId) {
+  backofficeSelectedEvent = eventId;
+  loadAdminFeedback();
+}
+
 async function submitEventFeedback() {
-  const comments = document.getElementById('feedback-comments-input')?.value.trim() || '';
-  if (!comments) {
-    showToast('Please enter your feedback comments or suggestions!', '⚠️');
+  const eventComments = document.getElementById('feedback-event-comments')?.value.trim() || '';
+  const platformComments = document.getElementById('feedback-platform-comments')?.value.trim() || '';
+
+  if (!eventComments && !platformComments) {
+    showToast('Please enter your feedback comments for the event or platform!', '⚠️');
     return;
   }
 
-  const evSelect = document.getElementById('feedback-event-id');
-  const targetEvent = (evSelect ? evSelect.value : selectedFeedbackEvent) || 'devfest-bangkok-2026';
+  // Active event is determined by the app context, not a participant dropdown
+  const targetEvent = currentActiveEventId || 'devfest-bangkok-2026';
 
   try {
     const data = await fetchAPI('/feedback', {
@@ -3299,14 +3387,22 @@ async function submitEventFeedback() {
         content_rating: currentContentRating,
         venue_rating: currentVenueRating,
         nps_score: currentNpsScore,
-        comments: comments,
+        event_comments: eventComments,
+        platform_rating: currentPlatformRating,
+        platform_avatar_rating: currentPlatformAvatarRating,
+        platform_navigation_rating: currentPlatformNavRating,
+        platform_comments: platformComments,
+        comments: eventComments || platformComments,
         event_id: targetEvent
       })
     });
 
     showToast(data.message || `🎉 Thank you! Your feedback for "${targetEvent}" was saved to Firestore.`, '⭐');
-    if (document.getElementById('feedback-comments-input')) {
-      document.getElementById('feedback-comments-input').value = '';
+    if (document.getElementById('feedback-event-comments')) {
+      document.getElementById('feedback-event-comments').value = '';
+    }
+    if (document.getElementById('feedback-platform-comments')) {
+      document.getElementById('feedback-platform-comments').value = '';
     }
     closeModal('feedback-modal');
   } catch (err) {
@@ -3316,6 +3412,10 @@ async function submitEventFeedback() {
 
 async function loadAdminFeedback() {
   try {
+    const selector = document.getElementById('admin-feedback-event-select');
+    if (selector && selector.value) {
+      backofficeSelectedEvent = selector.value;
+    }
     const evQuery = backofficeSelectedEvent ? `?event_id=${encodeURIComponent(backofficeSelectedEvent)}` : '';
     const data = await fetchAPI(`/feedback/all${evQuery}`);
     if (document.getElementById('admin-fb-total')) {
@@ -3326,6 +3426,9 @@ async function loadAdminFeedback() {
     }
     if (document.getElementById('admin-fb-avg-content')) {
       document.getElementById('admin-fb-avg-content').innerText = (data.average_content || 5.0) + ' ⭐';
+    }
+    if (document.getElementById('admin-fb-avg-platform')) {
+      document.getElementById('admin-fb-avg-platform').innerText = (data.average_platform || 5.0) + ' ⭐';
     }
     if (document.getElementById('admin-fb-nps')) {
       document.getElementById('admin-fb-nps').innerText = (data.nps_score >= 0 ? '+' : '') + (data.nps_score || 0);
@@ -3340,12 +3443,18 @@ async function loadAdminFeedback() {
 
     list.innerHTML = data.feedbacks.map(fb => `
       <div style="background:#0F172A; border:1px solid var(--card-border); border-radius:8px; padding:12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
           <div style="font-weight:700; color:#FFF; font-size:0.85rem;">👤 ${fb.user_name || 'Attendee'} <span style="font-size:0.7rem; color:#94A3B8; font-weight:normal;">(${fb.event_id || 'devfest-bangkok-2026'})</span></div>
-          <div style="color:#FBBF24; font-size:0.82rem;">${'⭐'.repeat(fb.overall_rating || 5)} (${fb.overall_rating}/5) &nbsp;|&nbsp; NPS: <strong style="color:#EC4899;">${fb.nps_score || 10}</strong></div>
+          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+            <span class="badge" style="background:rgba(251,191,36,0.15); color:#FBBF24; border:1px solid #FBBF24; font-size:0.7rem;">🎪 Event: ${fb.overall_rating || 5}/5 ⭐</span>
+            <span class="badge" style="background:rgba(56,189,248,0.15); color:#38BDF8; border:1px solid #38BDF8; font-size:0.7rem;">💻 Platform: ${fb.platform_rating || fb.overall_rating || 5}/5</span>
+            <span class="badge" style="background:rgba(236,72,153,0.15); color:#EC4899; font-size:0.7rem;">NPS: ${fb.nps_score || 10}</span>
+          </div>
         </div>
-        <p style="color:#CBD5E1; font-size:0.82rem; margin:0 0 6px;">"${fb.comments}"</p>
-        <div style="font-size:0.72rem; color:var(--text-muted);">Keynote: ${fb.content_rating || 5}/5 • Venue: ${fb.venue_rating || 5}/5 • ${fb.created_at ? new Date(fb.created_at).toLocaleTimeString() : 'Just now'}</div>
+        ${fb.event_comments ? `<p style="color:#FDE047; font-size:0.82rem; margin:0 0 4px;"><strong>🎪 Event:</strong> "${fb.event_comments}"</p>` : ''}
+        ${fb.platform_comments ? `<p style="color:#67E8F9; font-size:0.82rem; margin:0 0 4px;"><strong>💻 Platform:</strong> "${fb.platform_comments}"</p>` : ''}
+        ${(!fb.event_comments && !fb.platform_comments && fb.comments) ? `<p style="color:#CBD5E1; font-size:0.82rem; margin:0 0 4px;">"${fb.comments}"</p>` : ''}
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">Keynote: ${fb.content_rating || 5}/5 • Org: ${fb.venue_rating || 5}/5 • Avatar: ${fb.platform_avatar_rating || 5}/5 • ${fb.created_at ? new Date(fb.created_at).toLocaleTimeString() : 'Just now'}</div>
       </div>
     `).join('');
   } catch (err) {
