@@ -5,11 +5,14 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "DevFestVerse"
     VERSION: str = "0.1.0"
     API_V1_STR: str = "/api/v1"
-    ENVIRONMENT: str = "development"
-    SECRET_KEY: str = "dev-insecure-secret-key-change-in-production"
+    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "dev-insecure-secret-key-change-in-production")
     
     # GCP & Google Cloud Firestore Configuration
     GCP_PROJECT: str = os.getenv("GCP_PROJECT", os.getenv("GOOGLE_CLOUD_PROJECT", ""))
+    
+    # Admin Email Configuration (loaded from env)
+    DEFAULT_ADMIN_EMAIL: str = os.getenv("DEFAULT_ADMIN_EMAIL", "")
     
     # Google Identity Services (GIS) / Google Auth
     GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "")

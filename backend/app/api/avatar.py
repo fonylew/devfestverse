@@ -111,10 +111,10 @@ def generate_svg_agent_avatar(config: AvatarConfig) -> str:
 
 @router.get("/config")
 def get_avatar_config(user: dict = Depends(get_current_user)):
-    config = user.get("avatar_config", AvatarConfig().model_dump())
+    config = user.get("avatar_config") or AvatarConfig().model_dump()
     return {
         "config": config,
-        "svg_avatar": user.get("avatar_svg", generate_svg_agent_avatar(AvatarConfig(**config)))
+        "svg_avatar": user.get("avatar_svg") or generate_svg_agent_avatar(AvatarConfig(**config))
     }
 
 @router.post("/customize")

@@ -1,60 +1,62 @@
-# DevFestVerse Implementation Walkthrough
+# DevFestVerse Implementation & Productionization Walkthrough
 
-We have fully implemented the **DevFestVerse** interactive 2D virtual event platform for **GDG Cloud Bangkok**.
+We have completed the productionization enhancements, Firebase role management integration, BGM audio player fix, and 2D map graphic rendering improvements for **DevFestVerse**.
 
 ---
 
-## What Was Built
+## Key Accomplishments
 
-### 1. 2D Interactive Engine & Pixel Agent Avatar
-- **Idle Bobbing Animation**: 2D SVG pixel agent sprites continually bob up and down when stationary.
-- **Map Hotspots**:
-  - **Main Event Ticket Verification Billboard**: Central spawn billboard verifying official DevFest tickets and awarding the "Verified Ticket Badge".
-  - **GDG Cloud Bangkok Community Billboards**: Interactive billboards for Facebook Page, Facebook Group, Discord, Instagram, and YouTube Channel.
-  - **Clickable Billboard UX**: Clicking a billboard opens an embedded `iframe` view modal first, featuring an explicit **"Open in New Tab"** button.
-  - **Sponsor Booths**: Interactive sponsor banners with embedded website `iframe` popups.
-  - **Workshop Zone**: Interactive entrance for workshop seat reservations.
+### 1. Productionization & Demo Clean-up
+- **Removed Fake Demo Seed Roles**: Stripped fake mock accounts (`user-org-1`, `user-staff-1`, `user-speaker-1`, "Dr. Speaker", `user-sponsor-1`).
+- **Firebase DB Role Management**:
+  - Dynamically binds the configured `DEFAULT_ADMIN_EMAIL` environment variable to the `ORGANIZER` (Admin) role upon login/lookup.
+  - All other users default to the `PARTICIPANT` role.
+  - Back Office role assignments (Admin promoting a user to `STAFF`, `SPEAKER`, or `SPONSOR`) persist directly into **Firebase DB (Firestore)**.
+- **Privacy & Security**: Removed all literal hardcoded admin email addresses from codebase and documentation to keep GitHub commits clean. Added `.env.example`.
 
-### 2. Session-Linked Gemini Transcriptions by Speaker
-- Speech-to-text transcriptions streamed via Gemini, rendered as live stage HUD captions, and indexed by **Session ID** and **Speaker ID** for post-session reading.
+### 2. BGM (Background Music) Engine Fix
+- Updated `backend/app/api/bgm.py` with valid audio streams and YouTube embed URLs.
+- Built HTML5 Audio + Web Audio API engine in `frontend/src/app.js` featuring first-interaction audio unlock, track switching, volume controls, and mute HUD toggle.
 
-### 3. Role Onboarding & 5 User Roles
-- **Simple Participant Register Link**: Participants join via `/register` or 1-click Google Sign-In.
-- **Role Invitation Links**: Organizers generate invite links (`/invite/speaker`, `/invite/sponsor`, `/invite/staff`) in the Back Office for elevated roles.
-- **5 User Roles**: Organizers, Staff, Speakers, Sponsors, Participants.
+### 3. 2D Map & Asset Visual Enhancements
+- Redesigned 2D canvas map rendering:
+  - Textured floor tiles and paved stone pathways.
+  - Branded **GDG Cloud Bangkok Main Stage** with animated LED equalizer graphics.
+  - Styled 2D **Sponsor Booths** with company badges and illuminated borders.
+  - Custom **Community Billboards** (Facebook Page, Facebook Group, Discord, Instagram, YouTube).
+  - Idle bobbing pixel agent character sprite with smooth walking animation, drop shadow, and Verified Ticket badge overlay.
 
-### 4. PWA Installation & Service Worker
-- Progressive Web App support with `manifest.json`, Service Worker caching (`sw.js`), and Web Push notification listener.
-
-### 5. Comprehensive Back Office APIs
-- REST & WebSocket APIs for Organizers & Staff to manage active users, role switching, announcements, lucky draw raffles, BGM playlists, workshop seats, and multi-event archives.
+### 4. Created `TODO.md`
+- Audited demo features vs production requirements and documented high-priority tasks in [TODO.md](TODO.md).
 
 ---
 
 ## Verification Results
 
 ### Automated Tests (`pytest`)
-Ran backend test suite using `uv run pytest`:
+Ran backend test suite (`uv run pytest`):
 ```bash
-======================== 16 passed, 2 warnings in 0.25s ========================
+================== 78 passed, 1 skipped, 7 warnings in 10.27s ==================
 ```
-- `test_auth_invites.py`: Passed (Quick register, Google OAuth, Role invite links)
-- `test_tickets.py`: Passed (Official ticket verification & Verified Badge)
-- `test_billboards_sponsors.py`: Passed (Community billboards & sponsor booth CRUD)
-- `test_sessions_transcribe.py`: Passed (Session agenda & Gemini speaker transcriptions)
-- `test_workshops.py`: Passed (Workshop seat reservations)
-- `test_backoffice_apis.py`: Passed (Role switching & lucky draw raffle)
 
 ---
 
-## How to Launch the Application
+## How to Launch locally
 
-1. **Start Backend FastAPI Microservice**:
+1. **Configure Environment Variables**:
+   ```bash
+   cp .env.example .env
+   # Set DEFAULT_ADMIN_EMAIL=your-admin-email@example.com
+   ```
+
+2. **Start Backend FastAPI Microservice**:
    ```bash
    uv run uvicorn backend.app.main:app --reload --port 8000
    ```
-2. **Serve Frontend PWA Platform**:
+
+3. **Serve Frontend PWA**:
    ```bash
    uv run python -m http.server 3000 --directory frontend
    ```
-3. **Open Platform**: Navigate to `http://localhost:3000` in your web browser.
+
+4. **Open Platform**: Navigate to `http://localhost:3000` in your web browser.

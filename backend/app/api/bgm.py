@@ -8,18 +8,26 @@ router = APIRouter(prefix="/bgm", tags=["Background Music"])
 BGM_PLAYLIST_DB = [
     {
         "id": "track-1",
-        "title": "Chiptune Cloud Beats (8-bit)",
-        "zone": "Lounge",
-        "type": "YOUTUBE",
-        "url": "https://www.youtube.com/embed/jfKfPfyJRdk",
+        "title": "Chiptune Cyber Beats (8-bit)",
+        "zone": "Lounge Zone",
+        "type": "AUDIO",
+        "url": "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3",
         "default": True
     },
     {
         "id": "track-2",
-        "title": "Retro Agent Synthwave",
-        "zone": "Stage Area",
-        "type": "GCS",
-        "url": "https://storage.googleapis.com/gdgcloudbkk-devfest/audio/synthwave.mp3",
+        "title": "GDG Cloud Synthwave Theme",
+        "zone": "Main Stage",
+        "type": "AUDIO",
+        "url": "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=groovy-ambient-10655.mp3",
+        "default": False
+    },
+    {
+        "id": "track-3",
+        "title": "Retro Agent Chiptune Stream",
+        "zone": "Expo Hall",
+        "type": "YOUTUBE",
+        "url": "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1",
         "default": False
     }
 ]
@@ -27,7 +35,7 @@ BGM_PLAYLIST_DB = [
 class BGMTrackCreate(BaseModel):
     title: str
     zone: str = "Global"
-    type: str = "YOUTUBE" # "YOUTUBE" or "GCS"
+    type: str = "AUDIO" # "AUDIO" or "YOUTUBE"
     url: str
 
 @router.get("")
