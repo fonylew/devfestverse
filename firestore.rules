@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny: All database reads and writes are performed exclusively
+    // by the backend Cloud Run service account via the Admin/Server SDK.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

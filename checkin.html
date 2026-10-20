@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevFest Bangkok 2026 — Organizer Check-in Scanner</title>
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,h_192,q_auto:good,w_192/v1/gcs/platform-data-goog/contentbuilder/GDG_Bevy_Favicon_y29LtMy.png" sizes="192x192">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        :root {
+            --google-blue: #4285F4;
+            --google-green: #34A853;
+            --google-yellow: #FBBC04;
+            --google-red: #EA4335;
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.25rem;
+        }
+        .scanner-shell {
+            width: 100%;
+            max-width: 460px;
+            background: var(--card-dark);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 1.4rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+        }
+        .badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            background: rgba(66, 133, 244, 0.2);
+            color: #93c5fd;
+            padding: 4px 12px;
+            border-radius: 99px;
+            margin-bottom: 0.5rem;
+        }
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.55rem;
+            margin-bottom: 0.25rem;
+        }
+        .sub {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            margin-bottom: 1.2rem;
+        }
+        .auth-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.2rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+        }
+        .staff-pill {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #86efac;
+        }
+        #reader {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            background: #000;
+        }
+        .manual-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .manual-input {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #fff;
+            padding: 0.65rem 0.9rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        .btn {
+            border: none;
+            background: var(--google-blue);
+            color: #fff;
+            font-weight: 700;
+            padding: 0.65rem 1.1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .result-card {
+            border-radius: 18px;
+            padding: 1.1rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .result-card.valid {
+            display: flex;
+            background: rgba(22, 163, 74, 0.22);
+            border: 2px solid #22c55e;
+        }
+        .result-card.used {
+            display: flex;
+            background: rgba(234, 179, 8, 0.22);
+            border: 2px solid #eab308;
+        }
+        .result-card.invalid {
+            display: flex;
+            background: rgba(220, 38, 38, 0.22);
+            border: 2px solid #ef4444;
+        }
+        .result-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .result-detail {
+            font-size: 0.85rem;
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanner-shell">
+        <span class="badge">GDG Organizer Tool</span>
+        <h1>DevFest Bangkok 2026 Check-in</h1>
+        <p class="sub">Sign in with an allowlisted GDG organizer email to scan &amp; verify HMAC-signed attendee QR passes.</p>
+
+        <div class="auth-box" id="auth-box">
+            <div id="g-signin-btn"></div>
+            <div class="staff-pill" id="staff-status">Not signed in</div>
+        </div>
+
+        <div id="scanner-section" style="display:none;">
+            <div id="reader"></div>
+
+            <div class="manual-row">
+                <input type="text" id="manual-qr" class="manual-input" placeholder="Or paste DFBKK26:... payload">
+                <button class="btn" id="verify-btn">Verify</button>
+            </div>
+        </div>
+
+        <div class="result-card" id="result-card">
+            <div class="result-title" id="result-title"></div>
+            <div class="result-detail" id="result-name"></div>
+            <div class="result-detail" id="result-email"></div>
+            <div class="result-detail" id="result-meta"></div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            googleClientId: window.DEVFEST_GOOGLE_CLIENT_ID || 'REPLACE_WITH_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+            ticketApiUrl: window.DEVFEST_TICKET_API_URL || 'https://devfest-ticket-service-567435065676.asia-southeast1.run.app'
+        };
+
+        let staffIdToken = '';
+        let scanner = null;
+        let isVerifying = false;
+
+        const staffStatus = document.getElementById('staff-status');
+        const scannerSection = document.getElementById('scanner-section');
+        const resultCard = document.getElementById('result-card');
+        const resultTitle = document.getElementById('result-title');
+        const resultName = document.getElementById('result-name');
+        const resultEmail = document.getElementById('result-email');
+        const resultMeta = document.getElementById('result-meta');
+
+        function showResult(type, title, name, email, meta) {
+            resultCard.className = `result-card ${type}`;
+            // Exclusively use .textContent to prevent XSS
+            resultTitle.textContent = title;
+            resultName.textContent = name ? `Attendee: ${name}` : '';
+            resultEmail.textContent = email ? `Email: ${email}` : '';
+            resultMeta.textContent = meta || '';
+        }
+
+        async function verifyQrPayload(qrString) {
+            if (!staffIdToken || isVerifying || !qrString) return;
+            isVerifying = true;
+            try {
+                const res = await fetch(`${CONFIG.ticketApiUrl}/checkin`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${staffIdToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ qr: qrString.trim() })
+                });
+                const data = await res.json();
+                if (res.status === 200 && data.status === 'VALID') {
+                    showResult('valid', '🟢 VALID TICKET — Checked In!', data.name, data.email, `Ticket: ${data.ticket_id}`);
+                } else if (res.status === 200 && data.status === 'ALREADY_USED') {
+                    showResult('used', '🟡 ALREADY CHECKED IN', data.name, data.email, `Ticket: ${data.ticket_id} • Used at: ${data.checked_in_at}`);
+                } else {
+                    showResult('invalid', '🔴 INVALID / FORGED TICKET', '', '', data.error || 'Verification failed');
+                }
+            } catch (err) {
+                showResult('invalid', '🔴 NETWORK ERROR', '', '', err.message);
+            } finally {
+                setTimeout(() => { isVerifying = false; }, 1800);
+            }
+        }
+
+        function startCameraScanner() {
+            if (scanner || !window.Html5Qrcode) return;
+            scanner = new Html5Qrcode('reader');
+            scanner.start(
+                { facingMode: 'environment' },
+                { fps: 10, qrbox: { width: 240, height: 240 } },
+                (decodedText) => verifyQrPayload(decodedText),
+                () => {}
+            ).catch(() => {
+                staffStatus.textContent = 'Signed in (Camera permission declined — use manual input below)';
+            });
+        }
+
+        window.addEventListener('load', () => {
+            if (window.google && window.google.accounts && !CONFIG.googleClientId.startsWith('REPLACE_')) {
+                window.google.accounts.id.initialize({
+                    client_id: CONFIG.googleClientId,
+                    callback: (resp) => {
+                        staffIdToken = resp.credential;
+                        staffStatus.textContent = '✅ Organizer token active';
+                        scannerSection.style.display = 'block';
+                        startCameraScanner();
+                    }
+                });
+                window.google.accounts.id.renderButton(
+                    document.getElementById('g-signin-btn'),
+                    { theme: 'outline', size: 'large' }
+                );
+            } else {
+                staffStatus.textContent = 'Configure GOOGLE_CLIENT_ID in checkin.html to enable Google Sign-In';
+            }
+        });
+
+        document.getElementById('verify-btn').addEventListener('click', () => {
+            const val = document.getElementById('manual-qr').value;
+            verifyQrPayload(val);
+        });
+    </script>
+</body>
+</html>

@@ -551,7 +551,7 @@
 
                     <button id="ui-toggle-btn" title="Hide or Show UI Overlay">
                         <span id="ui-toggle-icon">👁️‍🗨️</span>
-                        <span id="ui-toggle-label">Hide UI</span>
+                        <span id="ui-toggle-label">Hide</span>
                     </button>
                 </div>
             </div>
@@ -900,7 +900,7 @@
             e.stopPropagation();
             const isHidden = document.body.classList.toggle('ui-hidden');
             uiToggleIcon.textContent = isHidden ? '👁️' : '👁️‍🗨️';
-            uiToggleLabel.textContent = isHidden ? 'Show UI' : 'Hide UI';
+            uiToggleLabel.textContent = isHidden ? 'Show' : 'Hide';
         });
 
 

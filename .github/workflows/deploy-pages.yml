@@ -6,6 +6,8 @@ on:
     paths:
       - "index.html"
       - "first_draft.html"
+      - "dev.html"
+      - "checkin.html"
       - "CNAME"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
@@ -29,11 +31,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Prepare static site bundle (only index.html, first_draft.html, and CNAME)
+      - name: Prepare static site bundle (only public HTML pages and CNAME)
         run: |
           mkdir -p _site
           cp index.html _site/index.html
           cp first_draft.html _site/first_draft.html
+          cp dev.html _site/dev.html
+          cp checkin.html _site/checkin.html
           echo "gdgcloudbkk.space" > _site/CNAME
           touch _site/.nojekyll
 
