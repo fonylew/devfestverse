@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevFest Bangkok 2026 - 3D Community World</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --google-blue: #4285F4;
+            --google-red: #EA4335;
+            --google-yellow: #FBBC04;
+            --google-green: #34A853;
+            --android-green: #3DDC84;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.96);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(180deg, #7dd3fc 0%, #e0f2fe 55%, #fef3c7 100%);
+            color: var(--text-dark);
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        /* Bright Glassmorphism UI Overlay */
+        #ui-container {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem 2.2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .brand-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid var(--card-border);
+            padding: 1.1rem 1.6rem;
+            border-radius: 24px;
+            pointer-events: auto;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+        }
+
+        .top-badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 0.4rem;
+        }
+
+        .gdg-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4px 12px;
+            border-radius: 99px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .argon-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, #4285F4 0%, #9333ea 55%, #ec4899 100%);
+            padding: 4px 12px;
+            border-radius: 99px;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+            letter-spacing: 0.3px;
+        }
+
+        .dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.55rem;
+            font-weight: 700;
+            line-height: 1.05;
+            color: var(--text-dark);
+            letter-spacing: -1px;
+        }
+
+        h1 .bkk {
+            background: linear-gradient(135deg, #4285F4, #ec4899, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .right-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.65rem;
+        }
+
+        /* Camera Tour Bar */
+        .camera-nav {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 2px solid var(--card-border);
+            padding: 0.45rem;
+            border-radius: 99px;
+            pointer-events: auto;
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            max-width: 760px;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+        }
+
+        .cam-btn {
+            border: none;
+            background: transparent;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 0.5rem 0.85rem;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cam-btn:hover {
+            background: rgba(66, 133, 244, 0.12);
+            color: var(--google-blue);
+            transform: translateY(-1px);
+        }
+
+        .cam-btn.active {
+            background: var(--google-blue);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.35);
+        }
+
+        /* Backing Track Music Player Pill */
+        .music-player {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 2px solid var(--card-border);
+            padding: 0.4rem 0.9rem 0.4rem 0.5rem;
+            border-radius: 99px;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .music-toggle-btn {
+            border: none;
+            background: linear-gradient(135deg, #34A853, #10b981);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 800;
+            padding: 0.48rem 1rem;
+            border-radius: 99px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .music-toggle-btn.playing {
+            background: linear-gradient(135deg, #4285F4, #9333ea);
+            box-shadow: 0 4px 14px rgba(147, 51, 234, 0.35);
+        }
+
+        .music-toggle-btn:hover {
+            transform: scale(1.04);
+        }
+
+        /* Animated Equalizer Bars */
+        .eq-bars {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 12px;
+        }
+
+        .eq-bar {
+            width: 3px;
+            height: 4px;
+            background: #ffffff;
+            border-radius: 2px;
+            transition: height 0.2s ease;
+        }
+
+        .music-toggle-btn.playing .eq-bar:nth-child(1) { animation: eqAnim 0.45s infinite ease-in-out alternate; }
+        .music-toggle-btn.playing .eq-bar:nth-child(2) { animation: eqAnim 0.35s infinite ease-in-out alternate 0.1s; }
+        .music-toggle-btn.playing .eq-bar:nth-child(3) { animation: eqAnim 0.5s infinite ease-in-out alternate 0.2s; }
+        .music-toggle-btn.playing .eq-bar:nth-child(4) { animation: eqAnim 0.4s infinite ease-in-out alternate 0.15s; }
+
+        @keyframes eqAnim {
+            0% { height: 3px; }
+            100% { height: 12px; }
+        }
+
+        .vol-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .vol-slider {
+            width: 70px;
+            accent-color: var(--google-blue);
+            cursor: pointer;
+        }
+
+        /* Bottom Section */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .event-info-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 2px solid var(--card-border);
+            padding: 1.1rem 1.5rem;
+            border-radius: 24px;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 1.75rem;
+            flex-wrap: wrap;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            box-shadow: inset 0 0 0 1px rgba(66, 133, 244, 0.15);
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+        }
+
+        .info-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .cta-group {
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.55rem;
+        }
+
+        .hint-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .hint-pill {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.38rem 0.95rem;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .made-by-pill {
+            background: rgba(15, 23, 42, 0.88);
+            color: #ffffff;
+            padding: 0.38rem 1rem;
+            border-radius: 99px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .made-by-pill span {
+            background: linear-gradient(90deg, #60a5fa, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .register-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #4285F4 0%, #2563eb 100%);
+            color: #ffffff;
+            text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            padding: 1.05rem 2.1rem;
+            border-radius: 99px;
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .register-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 16px 36px rgba(37, 99, 235, 0.45);
+        }
+
+        .register-btn svg {
+            width: 22px;
+            height: 22px;
+            transition: transform 0.25s ease;
+        }
+
+        .register-btn:hover svg {
+            transform: translateX(4px);
+        }
+
+        @media (max-width: 960px) {
+            #ui-container { padding: 1rem; }
+            h1 { font-size: 1.95rem; }
+            .event-info-card { gap: 1rem; padding: 0.9rem 1.2rem; }
+            .camera-nav { display: none; }
+            footer { flex-direction: column; align-items: stretch; }
+            .cta-group { align-items: stretch; }
+            .hint-row { justify-content: center; }
+            .register-btn { justify-content: center; }
+        }
+    </style>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div id="ui-container">
+        <header>
+            <div class="brand-card">
+                <div class="top-badges">
+                    <div class="gdg-badge">
+                        <div class="dots">
+                            <span class="dot" style="background: var(--google-blue)"></span>
+                            <span class="dot" style="background: var(--google-red)"></span>
+                            <span class="dot" style="background: var(--google-yellow)"></span>
+                            <span class="dot" style="background: var(--google-green)"></span>
+                        </div>
+                        GDG Cloud Bangkok
+                    </div>
+                    <div class="argon-badge">✨ Made by Gemini 4 Argon</div>
+                </div>
+                <h1>DevFest <span class="bkk">Bangkok</span> 2026</h1>
+            </div>
+
+            <div class="right-controls">
+                <!-- Interactive Camera Tour -->
+                <nav class="camera-nav" id="cam-nav">
+                    <button class="cam-btn active" data-target="overview">🌏 Full World</button>
+                    <button class="cam-btn" data-target="android">🤖 Android</button>
+                    <button class="cam-btn" data-target="dash">🐦 Dash</button>
+                    <button class="cam-btn" data-target="sparky">🔥 Sparky</button>
+                    <button class="cam-btn" data-target="dino">🦖 Dino Tuk-Tuk</button>
+                    <button class="cam-btn" data-target="gemini">✨ Gemini</button>
+                    <button class="cam-btn" data-target="cloud">☁️ Cloud</button>
+                    <button class="cam-btn" data-target="community">👩‍💻 Devs & K+</button>
+                    <button class="cam-btn" data-target="skyline">🏙️ BKK Skyline</button>
+                </nav>
+
+                <!-- Backing Track Music Player -->
+                <div class="music-player">
+                    <button class="music-toggle-btn" id="music-btn">
+                        <div class="eq-bars">
+                            <span class="eq-bar"></span>
+                            <span class="eq-bar"></span>
+                            <span class="eq-bar"></span>
+                            <span class="eq-bar"></span>
+                        </div>
+                        <span id="music-label">🎵 Play BKK Tech Groove</span>
+                    </button>
+                    <div class="vol-wrap">
+                        <span>🔊</span>
+                        <input type="range" id="vol-slider" class="vol-slider" min="0" max="1" step="0.05" value="0.55" title="Music Volume">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <footer>
+            <div class="event-info-card">
+                <div class="info-item">
+                    <div class="info-icon">📅</div>
+                    <div>
+                        <div class="info-label">Event Date</div>
+                        <div class="info-value">14–15 Nov 2026</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">📍</div>
+                    <div>
+                        <div class="info-label">Venue</div>
+                        <div class="info-value">K+ Building, Bangkok</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">🧑‍💻</div>
+                    <div>
+                        <div class="info-label">Community</div>
+                        <div class="info-value">GDG & Tech Devs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-group">
+                <div class="hint-row">
+                    <div class="made-by-pill">Made by <span>Gemini 4 Argon</span></div>
+                    <div class="hint-pill">🧶 Click any mascot or dev to bounce! • Drag to orbit</div>
+                </div>
+                <a href="https://gdg.community.dev/events/details/google-gdg-cloud-bangkok-presents-devfest-bangkok-2026/cohost-gdg-cloud-bangkok/" target="_blank" rel="noopener noreferrer" class="register-btn">
+                    Join DevFest Bangkok
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+        // ==========================================
+        // 0. WEB AUDIO SYNTHESIZER: "BKK TECH GROOVE" BACKING TRACK
+        // ==========================================
+        class BangkokTechAudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.masterGain = null;
+                this.isPlaying = false;
+                this.volume = 0.55;
+                this.tempo = 120; // 120 BPM upbeat festival groove
+                this.stepIndex = 0;
+                this.nextNoteTime = 0;
+                this.timerID = null;
+
+                // Thai Pentatonic + Major 7th Tech-Pop Progression (Cmaj7 -> Am7 -> Fmaj7 -> G7)
+                // MIDI note helper
+                this.chords = [
+                    [60, 64, 67, 71], // Cmaj7
+                    [57, 60, 64, 69], // Am7
+                    [53, 57, 60, 64], // Fmaj7
+                    [55, 59, 62, 67]  // G6/7
+                ];
+                this.bassNotes = [36, 33, 29, 31]; // C2, A1, F1, G1
+                // Joyful Thai Ranat / Marimba Pentatonic Lead Pattern (16 sixteenth-note steps per bar)
+                this.melodyPattern = [
+                    72, null, 74, 76,   79, null, 76, null,   81, null, 79, 76,   74, null, 72, null,
+                    69, null, 72, 74,   76, null, 79, null,   81, null, 84, 81,   79, null, 76, null,
+                    69, null, 72, 76,   79, null, 81, null,   84, null, 81, 79,   76, null, 74, null,
+                    74, null, 76, 79,   81, null, 79, 76,     74, null, 79, null, 72, null, null, null
+                ];
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                    this.masterGain = this.ctx.createGain();
+                    this.masterGain.gain.value = this.volume;
+                    this.masterGain.connect(this.ctx.destination);
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            midiToFreq(midi) {
+                return 440 * Math.pow(2, (midi - 69) / 12);
+            }
+
+            setVolume(val) {
+                this.volume = val;
+                if (this.masterGain && this.ctx) {
+                    this.masterGain.gain.setTargetAtTime(val, this.ctx.currentTime, 0.03);
+                }
+            }
+
+            toggle() {
+                this.init();
+                if (this.isPlaying) {
+                    this.stop();
+                } else {
+                    this.start();
+                }
+                return this.isPlaying;
+            }
+
+            start() {
+                if (this.isPlaying) return;
+                this.init();
+                this.isPlaying = true;
+                this.nextNoteTime = this.ctx.currentTime + 0.05;
+                this.timerID = setInterval(() => this.scheduler(), 25);
+            }
+
+            stop() {
+                this.isPlaying = false;
+                if (this.timerID) {
+                    clearInterval(this.timerID);
+                    this.timerID = null;
+                }
+            }
+
+            scheduler() {
+                while (this.nextNoteTime < this.ctx.currentTime + 0.12) {
+                    this.scheduleStep(this.stepIndex, this.nextNoteTime);
+                    const secondsPerBeat = 60.0 / this.tempo;
+                    this.nextNoteTime += 0.25 * secondsPerBeat; // 16th note steps
+                    this.stepIndex = (this.stepIndex + 1) % 64;
+                }
+            }
+
+            scheduleStep(step, time) {
+                const bar = Math.floor(step / 16);
+                const stepInBar = step % 16;
+
+                // 1. Warm Synth Chords on beats 1 and 3
+                if (stepInBar === 0 || stepInBar === 8) {
+                    this.playChord(this.chords[bar], time, 0.75);
+                }
+
+                // 2. Bouncy Synth Bassline
+                if (stepInBar === 0 || stepInBar === 3 || stepInBar === 6 || stepInBar === 8 || stepInBar === 10 || stepInBar === 14) {
+                    const octaveJump = (stepInBar === 6 || stepInBar === 14) ? 12 : 0;
+                    this.playBass(this.bassNotes[bar] + octaveJump, time, 0.18);
+                }
+
+                // 3. Thai Ranat / Marimba Pluck Lead
+                const melNote = this.melodyPattern[step];
+                if (melNote !== null) {
+                    this.playRanatPluck(melNote, time);
+                }
+
+                // 4. Crisp Electronic Drums (Kick on 0, 4, 8, 12; Snare on 4, 12; Hats on even/offbeats)
+                if (stepInBar % 4 === 0) {
+                    this.playKick(time);
+                }
+                if (stepInBar === 4 || stepInBar === 12) {
+                    this.playSnare(time);
+                }
+                if (stepInBar % 2 === 0 || stepInBar === 7 || stepInBar === 15) {
+                    this.playHiHat(time, stepInBar % 4 === 2 ? 0.08 : 0.04);
+                }
+            }
+
+            playRanatPluck(midi, time) {
+                const osc = this.ctx.createOscillator();
+                const sub = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'triangle';
+                sub.type = 'sine';
+                const freq = this.midiToFreq(midi);
+                osc.frequency.setValueAtTime(freq, time);
+                sub.frequency.setValueAtTime(freq * 2, time); // Woody harmonic overtone
+
+                gain.gain.setValueAtTime(0.001, time);
+                gain.gain.linearRampToValueAtTime(0.16, time + 0.008);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.28);
+
+                osc.connect(gain);
+                sub.connect(gain);
+                gain.connect(this.masterGain);
+
+                osc.start(time);
+                sub.start(time);
+                osc.stop(time + 0.3);
+                sub.stop(time + 0.3);
+            }
+
+            playChord(notes, time, duration) {
+                notes.forEach((midi) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(this.midiToFreq(midi), time);
+
+                    gain.gain.setValueAtTime(0.001, time);
+                    gain.gain.linearRampToValueAtTime(0.045, time + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+                    osc.connect(gain);
+                    gain.connect(this.masterGain);
+                    osc.start(time);
+                    osc.stop(time + duration + 0.05);
+                });
+            }
+
+            playBass(midi, time, duration) {
+                const osc = this.ctx.createOscillator();
+                const filter = this.ctx.createBiquadFilter();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(this.midiToFreq(midi), time);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(420, time);
+                filter.frequency.exponentialRampToValueAtTime(140, time + duration);
+
+                gain.gain.setValueAtTime(0.001, time);
+                gain.gain.linearRampToValueAtTime(0.18, time + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.masterGain);
+
+                osc.start(time);
+                osc.stop(time + duration + 0.02);
+            }
+
+            playKick(time) {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(135, time);
+                osc.frequency.exponentialRampToValueAtTime(38, time + 0.11);
+
+                gain.gain.setValueAtTime(0.28, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
+
+                osc.connect(gain);
+                gain.connect(this.masterGain);
+                osc.start(time);
+                osc.stop(time + 0.18);
+            }
+
+            playSnare(time) {
+                const bufferSize = this.ctx.sampleRate * 0.12;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.setValueAtTime(700, time);
+
+                const gain = this.ctx.createGain();
+                gain.gain.setValueAtTime(0.1, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.11);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.masterGain);
+                noise.start(time);
+            }
+
+            playHiHat(time, amp = 0.05) {
+                const bufferSize = this.ctx.sampleRate * 0.05;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.setValueAtTime(6000, time);
+
+                const gain = this.ctx.createGain();
+                gain.gain.setValueAtTime(amp, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.045);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.masterGain);
+                noise.start(time);
+            }
+
+            // Cute Plush Bounce Chime when clicking Mascots!
+            playBounceSFX() {
+                this.init();
+                const now = this.ctx.currentTime;
+                [72, 76, 79, 84].forEach((midi, i) => {
+                    this.playRanatPluck(midi, now + i * 0.045);
+                });
+            }
+        }
+
+        const audioEngine = new BangkokTechAudioEngine();
+        const musicBtn = document.getElementById('music-btn');
+        const musicLabel = document.getElementById('music-label');
+        const volSlider = document.getElementById('vol-slider');
+
+        function updateMusicUI(playing) {
+            if (playing) {
+                musicBtn.classList.add('playing');
+                musicLabel.textContent = '⏸️ Playing: BKK Tech Groove';
+            } else {
+                musicBtn.classList.remove('playing');
+                musicLabel.textContent = '🎵 Play BKK Tech Groove';
+            }
+        }
+
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const playing = audioEngine.toggle();
+            updateMusicUI(playing);
+        });
+
+        volSlider.addEventListener('input', (e) => {
+            audioEngine.setVolume(parseFloat(e.target.value));
+        });
+
+
+        // ==========================================
+        // 1. SCENE, CAMERA & BRIGHT DAYLIGHT RENDERER
+        // ==========================================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+
+        function createSkyTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 2;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createLinearGradient(0, 0, 0, 512);
+            grad.addColorStop(0.0, '#38bdf8');
+            grad.addColorStop(0.38, '#bae6fd');
+            grad.addColorStop(0.75, '#fef3c7');
+            grad.addColorStop(1.0, '#fde68a');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 2, 512);
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+        scene.background = createSkyTexture();
+        scene.fog = new THREE.FogExp2(0xe0f2fe, 0.0065);
+
+        const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 300);
+        camera.position.set(19, 11.5, 22);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.15;
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.06;
+        controls.maxPolarAngle = Math.PI / 2 - 0.02;
+        controls.minDistance = 4;
+        controls.maxDistance = 55;
+        controls.target.set(0, 3.2, 0);
+
+        const camState = {
+            active: false,
+            pos: new THREE.Vector3(19, 11.5, 22),
+            look: new THREE.Vector3(0, 3.2, 0)
+        };
+
+        // ==========================================
+        // 2. BRIGHT SUNNY LIGHTING
+        // ==========================================
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffedd5, 1.85);
+        hemiLight.position.set(0, 40, 0);
+        scene.add(hemiLight);
+
+        const sunLight = new THREE.DirectionalLight(0xfffbeb, 2.35);
+        sunLight.position.set(20, 32, 22);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.set(2048, 2048);
+        sunLight.shadow.bias = -0.0005;
+        const d = 18;
+        sunLight.shadow.camera.left = -d;
+        sunLight.shadow.camera.right = d;
+        sunLight.shadow.camera.top = d;
+        sunLight.shadow.camera.bottom = -d;
+        scene.add(sunLight);
+
+        const fillLight = new THREE.DirectionalLight(0xe0f2fe, 1.0);
+        fillLight.position.set(-18, 14, 16);
+        scene.add(fillLight);
+
+        // ==========================================
+        // 3. PROCEDURAL FLUFFY / PLUSH TEXTURE ENGINE
+        // ==========================================
+        function createPlushFurMap() {
+            const size = 512;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#808080';
+            ctx.fillRect(0, 0, size, size);
+
+            for (let i = 0; i < 28000; i++) {
+                const x = Math.random() * size;
+                const y = Math.random() * size;
+                const len = 4 + Math.random() * 7;
+                const angle = (Math.random() - 0.5) * 1.4 + Math.PI / 4;
+                const shade = Math.floor(95 + Math.random() * 155);
+                
+                ctx.strokeStyle = `rgb(${shade},${shade},${shade})`;
+                ctx.lineWidth = 1.2 + Math.random() * 1.3;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.quadraticCurveTo(
+                    x + Math.cos(angle) * len * 0.5 + 2,
+                    y + Math.sin(angle) * len * 0.5,
+                    x + Math.cos(angle) * len,
+                    y + Math.sin(angle) * len
+                );
+                ctx.stroke();
+            }
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(5, 5);
+            return texture;
+        }
+
+        const sharedPlushBump = createPlushFurMap();
+
+        function makeFluffyMat(colorHex, sheenColorHex = 0xffffff, bumpScale = 0.09) {
+            return new THREE.MeshPhysicalMaterial({
+                color: colorHex,
+                roughness: 0.82,
+                metalness: 0.0,
+                bumpMap: sharedPlushBump,
+                bumpScale: bumpScale,
+                sheen: 1.0,
+                sheenRoughness: 0.35,
+                sheenColor: new THREE.Color(sheenColorHex)
+            });
+        }
+
+        function createGeminiGradientMat() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createLinearGradient(0, 256, 256, 0);
+            grad.addColorStop(0.0, '#3b82f6');
+            grad.addColorStop(0.5, '#9333ea');
+            grad.addColorStop(1.0, '#f43f5e');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 256, 256);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return new THREE.MeshPhysicalMaterial({
+                map: tex,
+                roughness: 0.45,
+                metalness: 0.08,
+                bumpMap: sharedPlushBump,
+                bumpScale: 0.045,
+                sheen: 1.0,
+                sheenRoughness: 0.3,
+                sheenColor: new THREE.Color(0xffffff),
+                clearcoat: 0.25
+            });
+        }
+
+        function createArgonBannerTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+
+            const grad = ctx.createLinearGradient(0, 0, 1024, 256);
+            grad.addColorStop(0.0, '#1e1b4b');
+            grad.addColorStop(0.5, '#311042');
+            grad.addColorStop(1.0, '#0f172a');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.roundRect(12, 12, 1000, 232, 116);
+            ctx.fill();
+
+            ctx.lineWidth = 10;
+            const borderGrad = ctx.createLinearGradient(0, 0, 1024, 0);
+            borderGrad.addColorStop(0.0, '#4285F4');
+            borderGrad.addColorStop(0.5, '#c084fc');
+            borderGrad.addColorStop(1.0, '#f43f5e');
+            ctx.strokeStyle = borderGrad;
+            ctx.stroke();
+
+            ctx.font = 'bold 54px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('✨ MADE BY GEMINI 4 ARGON ✨', 512, 130);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        const mats = {
+            androidGreen: makeFluffyMat(0x3DDC84, 0xdcfce7, 0.095),
+            dashSkyBlue: makeFluffyMat(0x38bdf8, 0xe0f2fe, 0.095),
+            dashDeepBlue: makeFluffyMat(0x0284c7, 0xbae6fd, 0.095),
+            plushWhite: makeFluffyMat(0xffffff, 0xffffff, 0.075),
+            plushCream: makeFluffyMat(0xfffbeb, 0xffffff, 0.075),
+            beakOrange: makeFluffyMat(0xf97316, 0xffedd5, 0.065),
+
+            sparkyYellow: makeFluffyMat(0xffca28, 0xfef08a, 0.095),
+            sparkyOrange: makeFluffyMat(0xff8f00, 0xfed7aa, 0.095),
+            sparkyCoral: makeFluffyMat(0xf4511e, 0xfecdd3, 0.085),
+            cheekPink: makeFluffyMat(0xfb7185, 0xffe4e6, 0.065),
+
+            dinoGreen: makeFluffyMat(0x22c55e, 0xdcfce7, 0.09),
+            dinoDarkGreen: makeFluffyMat(0x16a34a, 0x86efac, 0.09),
+
+            gBlue: makeFluffyMat(0x4285F4, 0xdbeafe, 0.085),
+            gRed: makeFluffyMat(0xEA4335, 0xfee2e2, 0.085),
+            gYellow: makeFluffyMat(0xFBBC04, 0xfef3c7, 0.085),
+            gGreen: makeFluffyMat(0x34A853, 0xdcfce7, 0.085),
+            purplePlush: makeFluffyMat(0x9333ea, 0xf3e8ff, 0.085),
+            tealPlush: makeFluffyMat(0x14b8a6, 0xccfbf1, 0.085),
+
+            skinLight: makeFluffyMat(0xffedd5, 0xffffff, 0.05),
+            skinWarm: makeFluffyMat(0xfdba74, 0xffedd5, 0.05),
+            skinTan: makeFluffyMat(0xd97706, 0xfef3c7, 0.05),
+            hairDark: makeFluffyMat(0x1e293b, 0x475569, 0.08),
+            hairBrown: makeFluffyMat(0x78350f, 0xb45309, 0.08),
+            denimPlush: makeFluffyMat(0x334155, 0x64748b, 0.07),
+
+            grassPlush: makeFluffyMat(0x86efac, 0xecfccb, 0.065),
+            sandPlush: makeFluffyMat(0xfde68a, 0xfef3c7, 0.055),
+
+            eyeBlack: new THREE.MeshPhysicalMaterial({ color: 0x0f172a, roughness: 0.1, clearcoat: 1.0 }),
+            thaiGold: new THREE.MeshStandardMaterial({ color: 0xfbbf24, metalness: 0.65, roughness: 0.22 }),
+            templeWhite: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 }),
+            saoRed: new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.35 }),
+            steelDark: new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.5, roughness: 0.4 }),
+            silverMetal: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.7, roughness: 0.2 }),
+            screenGlow: new THREE.MeshBasicMaterial({ color: 0x38bdf8 }),
+            glassDay: new THREE.MeshPhysicalMaterial({
+                color: 0xbae6fd,
+                transparent: true,
+                opacity: 0.5,
+                roughness: 0.08,
+                metalness: 0.1,
+                reflectivity: 0.9
+            }),
+            skylineGlass: new THREE.MeshStandardMaterial({ color: 0x60a5fa, metalness: 0.6, roughness: 0.2 }),
+            skylineWhite: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 }),
+            skylinePastel: new THREE.MeshStandardMaterial({ color: 0xfde68a, roughness: 0.4 }),
+            kGreen: new THREE.MeshStandardMaterial({ color: 0x00a950, roughness: 0.2 }),
+            roadMat: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.7 })
+        };
+
+        function enableShadow(obj) {
+            obj.traverse(child => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+        }
+
+        const interactables = [];
+        const world = new THREE.Group();
+        scene.add(world);
+
+        // ==========================================
+        // 4. MAIN BANGKOK ISLAND & LANDMARKS
+        // ==========================================
+        const islandTop = new THREE.Mesh(new THREE.CylinderGeometry(14.0, 14.4, 0.9, 64), mats.grassPlush);
+        islandTop.position.y = -0.45;
+        islandTop.receiveShadow = true;
+        world.add(islandTop);
+
+        const islandRim = new THREE.Mesh(new THREE.CylinderGeometry(14.4, 13.0, 1.4, 64), mats.sandPlush);
+        islandRim.position.y = -1.3;
+        world.add(islandRim);
+
+        const waterGeo = new THREE.RingGeometry(13.8, 65, 64);
+        const waterMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.2, metalness: 0.1 });
+        const water = new THREE.Mesh(waterGeo, waterMat);
+        water.rotation.x = -Math.PI / 2;
+        water.position.y = -0.85;
+        scene.add(water);
+
+        const track = new THREE.Mesh(new THREE.RingGeometry(7.6, 9.6, 64), mats.roadMat);
+        track.rotation.x = -Math.PI / 2;
+        track.position.y = 0.02;
+        track.receiveShadow = true;
+        world.add(track);
+
+        for (let i = 0; i < 24; i++) {
+            const angle = (i / 24) * Math.PI * 2;
+            const dash = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 0.65), mats.gYellow);
+            dash.rotation.x = -Math.PI / 2;
+            dash.rotation.z = -angle;
+            dash.position.set(Math.cos(angle) * 8.6, 0.03, Math.sin(angle) * 8.6);
+            world.add(dash);
+        }
+
+        // 4.1 Centerpiece: Wat Arun Inspired Porcelain & Gold Spire
+        const watGroup = new THREE.Group();
+        const wBase1 = new THREE.Mesh(new RoundedBoxGeometry(4.4, 0.7, 4.4, 4, 0.15), mats.templeWhite);
+        wBase1.position.y = 0.35; watGroup.add(wBase1);
+
+        const wBase2 = new THREE.Mesh(new RoundedBoxGeometry(3.4, 0.7, 3.4, 4, 0.15), mats.thaiGold);
+        wBase2.position.y = 1.05; watGroup.add(wBase2);
+
+        const wBase3 = new THREE.Mesh(new RoundedBoxGeometry(2.5, 0.8, 2.5, 4, 0.15), mats.templeWhite);
+        wBase3.position.y = 1.8; watGroup.add(wBase3);
+
+        const petalColors = [mats.gBlue, mats.gRed, mats.gGreen, mats.beakOrange];
+        for (let i = 0; i < 16; i++) {
+            const a = (i / 16) * Math.PI * 2;
+            const p = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 12), petalColors[i % 4]);
+            p.position.set(Math.cos(a) * 1.75, 1.05, Math.sin(a) * 1.75);
+            watGroup.add(p);
+        }
+
+        const prangBody = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 1.35, 2.8, 16), mats.templeWhite);
+        prangBody.position.y = 3.6; watGroup.add(prangBody);
+
+        for (let y = 2.6; y <= 4.6; y += 0.5) {
+            const r = 1.28 - (y - 2.6) * 0.2;
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.07, 12, 24), mats.thaiGold);
+            ring.rotation.x = Math.PI / 2;
+            ring.position.y = y;
+            watGroup.add(ring);
+        }
+
+        const prangSpire = new THREE.Mesh(new THREE.ConeGeometry(0.7, 2.6, 16), mats.thaiGold);
+        prangSpire.position.y = 6.3; watGroup.add(prangSpire);
+
+        const crownSphere = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), mats.plushWhite);
+        crownSphere.position.y = 7.75; watGroup.add(crownSphere);
+
+        enableShadow(watGroup);
+        world.add(watGroup);
+
+        // 4.2 Bangkok Giant Swing (Sao Chingcha)
+        const swingGroup = new THREE.Group();
+        swingGroup.position.set(4.8, 0, 3.8);
+        swingGroup.rotation.y = -Math.PI / 4;
+        const pLeft = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 4.2, 12), mats.saoRed);
+        pLeft.position.set(-0.85, 2.1, 0); pLeft.rotation.z = -0.04;
+        const pRight = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 4.2, 12), mats.saoRed);
+        pRight.position.set(0.85, 2.1, 0); pRight.rotation.z = 0.04;
+        const crossbar = new THREE.Mesh(new RoundedBoxGeometry(2.2, 0.25, 0.25, 3, 0.05), mats.saoRed);
+        crossbar.position.y = 4.1;
+        const topCarving = new THREE.Mesh(new RoundedBoxGeometry(1.7, 0.35, 0.2, 3, 0.05), mats.thaiGold);
+        topCarving.position.y = 4.35;
+        swingGroup.add(pLeft, pRight, crossbar, topCarving);
+        enableShadow(swingGroup);
+        world.add(swingGroup);
+
+        // 4.3 Accurate K+ Building (Samyan, Bangkok)
+        const kBuilding = new THREE.Group();
+        kBuilding.position.set(-4.5, 0, -3.5);
+        kBuilding.rotation.y = Math.PI / 5;
+
+        const bWidth = 3.8, bHeight = 5.4, bDepth = 3.0;
+
+        const interiorCore = new THREE.Mesh(new RoundedBoxGeometry(bWidth - 0.5, bHeight - 0.3, bDepth - 0.5, 3, 0.1), mats.plushCream);
+        interiorCore.position.y = bHeight / 2;
+        kBuilding.add(interiorCore);
+
+        for (let s = 0; s < 4; s++) {
+            const stair = new THREE.Mesh(new RoundedBoxGeometry(1.5, 0.18, 0.45, 2, 0.04), mats.beakOrange);
+            stair.position.set((s % 2 === 0 ? -0.3 : 0.3), 1.1 + s * 1.05, bDepth / 2 - 0.18);
+            stair.rotation.z = (s % 2 === 0 ? 0.38 : -0.38);
+            kBuilding.add(stair);
+        }
+
+        const glassBox = new THREE.Mesh(new RoundedBoxGeometry(bWidth - 0.1, bHeight - 0.1, bDepth - 0.1, 2, 0.05), mats.glassDay);
+        glassBox.position.y = bHeight / 2;
+        kBuilding.add(glassBox);
+
+        for (let f = 0; f <= 5; f++) {
+            const y = f * (bHeight / 5);
+            const slab = new THREE.Mesh(new THREE.BoxGeometry(bWidth + 0.08, 0.12, bDepth + 0.08), mats.steelDark);
+            slab.position.y = y + 0.06;
+            kBuilding.add(slab);
+        }
+        const colX = [-bWidth/2, -bWidth/6, bWidth/6, bWidth/2];
+        const colZ = [-bDepth/2, bDepth/2];
+        colX.forEach(x => {
+            colZ.forEach(z => {
+                const col = new THREE.Mesh(new THREE.BoxGeometry(0.12, bHeight, 0.12), mats.steelDark);
+                col.position.set(x, bHeight / 2, z);
+                kBuilding.add(col);
+            });
+        });
+
+        const roofLawn = new THREE.Mesh(new RoundedBoxGeometry(bWidth - 0.3, 0.2, bDepth - 0.3, 3, 0.05), mats.grassPlush);
+        roofLawn.position.y = bHeight + 0.1;
+        kBuilding.add(roofLawn);
+
+        [[-1.1, -0.6], [1.1, 0.5], [-0.4, 0.7]].forEach(([tx, tz]) => {
+            const bush = new THREE.Mesh(new THREE.SphereGeometry(0.42, 16, 16), mats.gGreen);
+            bush.position.set(tx, bHeight + 0.45, tz);
+            kBuilding.add(bush);
+        });
+
+        const kBadge = new THREE.Group();
+        kBadge.position.set(0, bHeight - 0.65, bDepth / 2 + 0.12);
+        const badgePlate = new THREE.Mesh(new RoundedBoxGeometry(1.75, 0.95, 0.12, 4, 0.05), mats.steelDark);
+        kBadge.add(badgePlate);
+
+        const kStem = new THREE.Mesh(new RoundedBoxGeometry(0.16, 0.62, 0.08, 2, 0.02), mats.plushWhite);
+        kStem.position.set(-0.48, 0, 0.06);
+        const kUp = new THREE.Mesh(new RoundedBoxGeometry(0.14, 0.42, 0.08, 2, 0.02), mats.plushWhite);
+        kUp.position.set(-0.26, 0.14, 0.06); kUp.rotation.z = -0.65;
+        const kDown = new THREE.Mesh(new RoundedBoxGeometry(0.14, 0.42, 0.08, 2, 0.02), mats.plushWhite);
+        kDown.position.set(-0.26, -0.14, 0.06); kDown.rotation.z = 0.65;
+
+        const plusDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.08, 24), mats.kGreen);
+        plusDisc.rotation.x = Math.PI / 2;
+        plusDisc.position.set(0.35, 0, 0.05);
+        const pH = new THREE.Mesh(new RoundedBoxGeometry(0.34, 0.1, 0.06, 2, 0.02), mats.plushWhite);
+        pH.position.set(0.35, 0, 0.09);
+        const pV = new THREE.Mesh(new RoundedBoxGeometry(0.1, 0.34, 0.06, 2, 0.02), mats.plushWhite);
+        pV.position.set(0.35, 0, 0.09);
+
+        kBadge.add(kStem, kUp, kDown, plusDisc, pH, pV);
+        kBuilding.add(kBadge);
+
+        // Floating 3D Sign: "Made by Gemini 4 Argon" above K+ Building
+        const argonSignMat = new THREE.MeshBasicMaterial({ map: createArgonBannerTexture(), transparent: true });
+        const argonSign = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 0.85), argonSignMat);
+        argonSign.position.set(0, bHeight + 1.45, 0);
+        kBuilding.add(argonSign);
+
+        kBuilding.userData = { name: 'kplus', baseY: 0, jump: 0 };
+        enableShadow(kBuilding);
+        interactables.push(kBuilding);
+        world.add(kBuilding);
+
+
+        // ==========================================
+        // 5. GOOGLE MASCOTS (INCLUDING ANDROID!)
+        // ==========================================
+
+        // 5.1 ANDROID MASCOT ("THE BOT")
+        const androidGroup = new THREE.Group();
+
+        const aTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.88, 0.82, 1.25, 32), mats.androidGreen);
+        aTorso.position.y = 1.15;
+        androidGroup.add(aTorso);
+
+        const aBottomCap = new THREE.Mesh(new THREE.SphereGeometry(0.82, 32, 16, 0, Math.PI * 2, Math.PI * 0.5, Math.PI * 0.5), mats.androidGreen);
+        aBottomCap.position.y = 0.55;
+        androidGroup.add(aBottomCap);
+
+        const androidHead = new THREE.Group();
+        androidHead.position.y = 1.88;
+
+        const aDome = new THREE.Mesh(new THREE.SphereGeometry(0.88, 32, 24, 0, Math.PI * 2, 0, Math.PI * 0.5), mats.androidGreen);
+        const aDomeFloor = new THREE.Mesh(new THREE.CircleGeometry(0.88, 32), mats.androidGreen);
+        aDomeFloor.rotation.x = Math.PI / 2;
+        androidHead.add(aDome, aDomeFloor);
+
+        const antGeo = new THREE.CapsuleGeometry(0.055, 0.34, 8, 16);
+        const antL = new THREE.Mesh(antGeo, mats.androidGreen);
+        antL.position.set(-0.42, 0.86, 0);
+        antL.rotation.z = 0.48;
+        const antR = new THREE.Mesh(antGeo, mats.androidGreen);
+        antR.position.set(0.42, 0.86, 0);
+        antR.rotation.z = -0.48;
+        androidHead.add(antL, antR);
+
+        const aEyeGeo = new THREE.SphereGeometry(0.11, 16, 16);
+        const aEyeL = new THREE.Mesh(aEyeGeo, mats.plushWhite);
+        aEyeL.position.set(-0.34, 0.36, 0.78);
+        const aEyeR = new THREE.Mesh(aEyeGeo, mats.plushWhite);
+        aEyeR.position.set(0.34, 0.36, 0.78);
+        androidHead.add(aEyeL, aEyeR);
+
+        androidGroup.add(androidHead);
+
+        const aArmGeo = new THREE.CapsuleGeometry(0.19, 0.65, 12, 16);
+        const aArmL = new THREE.Mesh(aArmGeo, mats.androidGreen);
+        aArmL.position.set(-1.12, 1.25, 0);
+        aArmL.rotation.z = 0.65;
+        const aArmR = new THREE.Mesh(aArmGeo, mats.androidGreen);
+        aArmR.position.set(1.12, 1.15, 0);
+        aArmR.rotation.z = -0.18;
+
+        const aLegGeo = new THREE.CapsuleGeometry(0.2, 0.45, 12, 16);
+        const aLegL = new THREE.Mesh(aLegGeo, mats.androidGreen);
+        aLegL.position.set(-0.38, 0.32, 0);
+        const aLegR = new THREE.Mesh(aLegGeo, mats.androidGreen);
+        aLegR.position.set(0.38, 0.32, 0);
+
+        androidGroup.add(aArmL, aArmR, aLegL, aLegR);
+
+        androidGroup.position.set(0.8, 0.05, 4.6);
+        androidGroup.rotation.y = 0.15;
+        androidGroup.userData = { name: 'android', baseY: 0.05, jump: 0 };
+        enableShadow(androidGroup);
+        interactables.push(androidGroup);
+        world.add(androidGroup);
+
+
+        // 5.2 DASH (Flutter Mascot)
+        const dashGroup = new THREE.Group();
+
+        const dBody = new THREE.Mesh(new THREE.SphereGeometry(1.05, 32, 32), mats.dashSkyBlue);
+        dBody.scale.set(1.0, 0.96, 0.92);
+        dashGroup.add(dBody);
+
+        const dHood = new THREE.Mesh(new THREE.SphereGeometry(1.06, 32, 32, 0, Math.PI * 2, 0, Math.PI * 0.58), mats.dashDeepBlue);
+        dHood.scale.set(1.0, 0.96, 0.92);
+        dHood.rotation.x = -0.35;
+        dashGroup.add(dHood);
+
+        const dBelly = new THREE.Mesh(new THREE.SphereGeometry(0.82, 32, 32), mats.plushWhite);
+        dBelly.scale.set(0.95, 0.88, 0.55);
+        dBelly.position.set(0, -0.18, 0.62);
+        dashGroup.add(dBelly);
+
+        const dEyeGeo = new THREE.SphereGeometry(0.34, 24, 24);
+        const dEyeL = new THREE.Mesh(dEyeGeo, mats.plushWhite);
+        dEyeL.scale.set(0.95, 1.1, 0.6);
+        dEyeL.position.set(-0.28, 0.25, 0.82);
+
+        const dEyeR = new THREE.Mesh(dEyeGeo, mats.plushWhite);
+        dEyeR.scale.set(0.95, 1.1, 0.6);
+        dEyeR.position.set(0.28, 0.25, 0.82);
+
+        const pupilGeo = new THREE.SphereGeometry(0.16, 16, 16);
+        const catchGeo = new THREE.SphereGeometry(0.05, 12, 12);
+        const dPupilL = new THREE.Mesh(pupilGeo, mats.eyeBlack);
+        dPupilL.scale.z = 0.5; dPupilL.position.set(-0.23, 0.26, 1.0);
+        const dCatchL = new THREE.Mesh(catchGeo, mats.plushWhite);
+        dCatchL.position.set(-0.18, 0.32, 1.07);
+
+        const dPupilR = new THREE.Mesh(pupilGeo, mats.eyeBlack);
+        dPupilR.scale.z = 0.5; dPupilR.position.set(0.23, 0.26, 1.0);
+        const dCatchR = new THREE.Mesh(catchGeo, mats.plushWhite);
+        dCatchR.position.set(0.28, 0.32, 1.07);
+
+        dashGroup.add(dEyeL, dEyeR, dPupilL, dCatchL, dPupilR, dCatchR);
+
+        const dBeak = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.42, 24), mats.beakOrange);
+        dBeak.rotation.x = Math.PI / 2;
+        dBeak.position.set(0, 0.08, 1.12);
+        dashGroup.add(dBeak);
+
+        const crestGeo = new THREE.CapsuleGeometry(0.09, 0.28, 8, 16);
+        const crestCenter = new THREE.Mesh(crestGeo, mats.dashSkyBlue);
+        crestCenter.position.set(0, 1.12, 0.05);
+        const crestLeft = new THREE.Mesh(crestGeo, mats.dashDeepBlue);
+        crestLeft.position.set(-0.16, 1.08, 0); crestLeft.rotation.z = 0.45;
+        const crestRight = new THREE.Mesh(crestGeo, mats.dashDeepBlue);
+        crestRight.position.set(0.16, 1.08, 0); crestRight.rotation.z = -0.45;
+        dashGroup.add(crestCenter, crestLeft, crestRight);
+
+        const wingGeo = new THREE.CapsuleGeometry(0.26, 0.48, 12, 24);
+        wingGeo.scale(0.45, 1.0, 0.85);
+        const dWingL = new THREE.Mesh(wingGeo, mats.dashDeepBlue);
+        dWingL.position.set(-1.02, 0.0, 0.05);
+        dWingL.rotation.z = 0.35;
+        const dWingR = new THREE.Mesh(wingGeo, mats.dashDeepBlue);
+        dWingR.position.set(1.02, 0.0, 0.05);
+        dWingR.rotation.z = -0.35;
+        dashGroup.add(dWingL, dWingR);
+
+        const footGeo = new THREE.CapsuleGeometry(0.11, 0.18, 8, 16);
+        const dFootL = new THREE.Mesh(footGeo, mats.beakOrange);
+        dFootL.rotation.x = Math.PI / 2; dFootL.position.set(-0.35, -0.95, 0.25);
+        const dFootR = new THREE.Mesh(footGeo, mats.beakOrange);
+        dFootR.rotation.x = Math.PI / 2; dFootR.position.set(0.35, -0.95, 0.25);
+        dashGroup.add(dFootL, dFootR);
+
+        dashGroup.position.set(3.6, 2.7, 1.5);
+        dashGroup.rotation.y = -0.45;
+        dashGroup.userData = { name: 'dash', baseY: 2.7, jump: 0 };
+        enableShadow(dashGroup);
+        interactables.push(dashGroup);
+        world.add(dashGroup);
+
+
+        // 5.3 SPARKY (Firebase Mascot)
+        const sparkyGroup = new THREE.Group();
+
+        const sBody = new THREE.Mesh(new THREE.SphereGeometry(0.92, 32, 32), mats.sparkyYellow);
+        sBody.scale.set(1.0, 1.08, 0.92);
+        sBody.position.y = 0.95;
+        sparkyGroup.add(sBody);
+
+        const sBelly = new THREE.Mesh(new THREE.SphereGeometry(0.68, 24, 24), mats.plushCream);
+        sBelly.scale.set(0.95, 0.9, 0.45);
+        sBelly.position.set(0, 0.82, 0.65);
+        sparkyGroup.add(sBelly);
+
+        const flameCenter = new THREE.Mesh(new THREE.ConeGeometry(0.68, 1.45, 24), mats.sparkyYellow);
+        flameCenter.position.set(0.05, 2.15, 0);
+        flameCenter.rotation.z = -0.08;
+        const flameLeft = new THREE.Mesh(new THREE.ConeGeometry(0.46, 1.15, 24), mats.sparkyOrange);
+        flameLeft.position.set(-0.42, 1.92, 0.08);
+        flameLeft.rotation.z = 0.35;
+        const flameRight = new THREE.Mesh(new THREE.ConeGeometry(0.42, 0.95, 24), mats.sparkyCoral);
+        flameRight.position.set(0.48, 1.82, 0.12);
+        flameRight.rotation.z = -0.38;
+        sparkyGroup.add(flameCenter, flameLeft, flameRight);
+
+        const sEyeL = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), mats.eyeBlack);
+        sEyeL.position.set(-0.3, 1.25, 0.82);
+        const sCatchL = new THREE.Mesh(catchGeo, mats.plushWhite);
+        sCatchL.position.set(-0.26, 1.30, 0.93);
+
+        const sEyeR = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), mats.eyeBlack);
+        sEyeR.position.set(0.3, 1.25, 0.82);
+        const sCatchR = new THREE.Mesh(catchGeo, mats.plushWhite);
+        sCatchR.position.set(0.34, 1.30, 0.93);
+
+        const cheekGeo = new THREE.SphereGeometry(0.13, 16, 16);
+        const sCheekL = new THREE.Mesh(cheekGeo, mats.cheekPink);
+        sCheekL.scale.z = 0.4; sCheekL.position.set(-0.48, 1.08, 0.78);
+        const sCheekR = new THREE.Mesh(cheekGeo, mats.cheekPink);
+        sCheekR.scale.z = 0.4; sCheekR.position.set(0.48, 1.08, 0.78);
+
+        const smile = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.045, 12, 24, Math.PI), mats.sparkyCoral);
+        smile.rotation.x = Math.PI;
+        smile.position.set(0, 1.12, 0.85);
+
+        sparkyGroup.add(sEyeL, sCatchL, sEyeR, sCatchR, sCheekL, sCheekR, smile);
+
+        const armGeo = new THREE.CapsuleGeometry(0.16, 0.35, 12, 16);
+        const sArmL = new THREE.Mesh(armGeo, mats.sparkyOrange);
+        sArmL.position.set(-0.92, 1.15, 0.1);
+        sArmL.rotation.z = 0.85;
+        const sArmR = new THREE.Mesh(armGeo, mats.sparkyOrange);
+        sArmR.position.set(0.92, 0.95, 0.1);
+        sArmR.rotation.z = -0.55;
+
+        const legGeo = new THREE.CapsuleGeometry(0.18, 0.25, 12, 16);
+        const sLegL = new THREE.Mesh(legGeo, mats.sparkyOrange);
+        sLegL.position.set(-0.38, 0.18, 0.1);
+        const sLegR = new THREE.Mesh(legGeo, mats.sparkyOrange);
+        sLegR.position.set(0.38, 0.18, 0.1);
+
+        sparkyGroup.add(sArmL, sArmR, sLegL, sLegR);
+
+        sparkyGroup.position.set(-2.9, 0.05, 3.6);
+        sparkyGroup.rotation.y = 0.32;
+        sparkyGroup.userData = { name: 'sparky', baseY: 0.05, jump: 0 };
+        enableShadow(sparkyGroup);
+        interactables.push(sparkyGroup);
+        world.add(sparkyGroup);
+
+
+        // 5.4 VOXEL CHROME DINO IN BANGKOK TUK-TUK
+        const tuktukOrbit = new THREE.Group();
+        world.add(tuktukOrbit);
+
+        const tuktukVehicle = new THREE.Group();
+        tuktukVehicle.position.set(8.6, 0.05, 0);
+        tuktukOrbit.add(tuktukVehicle);
+
+        const ttBody = new THREE.Mesh(new RoundedBoxGeometry(1.75, 0.45, 2.8, 4, 0.08), mats.gBlue);
+        ttBody.position.y = 0.42;
+        tuktukVehicle.add(ttBody);
+
+        const ttFront = new THREE.Mesh(new RoundedBoxGeometry(1.3, 1.15, 0.65, 4, 0.08), mats.dashSkyBlue);
+        ttFront.position.set(0, 1.05, 1.0);
+        const ttWindshield = new THREE.Mesh(new RoundedBoxGeometry(1.1, 0.55, 0.1, 2, 0.02), mats.glassDay);
+        ttWindshield.position.set(0, 1.55, 1.05);
+        const ttHeadlight = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.14, 20), mats.gYellow);
+        ttHeadlight.rotation.x = Math.PI / 2;
+        ttHeadlight.position.set(0, 0.95, 1.32);
+        tuktukVehicle.add(ttFront, ttWindshield, ttHeadlight);
+
+        const ttSeat = new THREE.Mesh(new RoundedBoxGeometry(1.4, 0.35, 0.9, 3, 0.06), mats.cheekPink);
+        ttSeat.position.set(0, 0.75, -0.45);
+        const ttRoof = new THREE.Mesh(new RoundedBoxGeometry(1.85, 0.22, 2.75, 4, 0.08), mats.gYellow);
+        ttRoof.position.set(0, 2.35, -0.05);
+        tuktukVehicle.add(ttSeat, ttRoof);
+
+        const strutGeo = new THREE.CylinderGeometry(0.045, 0.045, 1.65, 12);
+        [[-0.8, -1.2], [0.8, -1.2], [-0.6, 0.85], [0.6, 0.85]].forEach(([sx, sz]) => {
+            const strut = new THREE.Mesh(strutGeo, mats.plushWhite);
+            strut.position.set(sx, 1.5, sz);
+            tuktukVehicle.add(strut);
+        });
+
+        const wheelGeo = new THREE.CylinderGeometry(0.36, 0.36, 0.26, 24);
+        wheelGeo.rotateZ(Math.PI / 2);
+        [[0, 1.1], [-0.92, -0.85], [0.92, -0.85]].forEach(([wx, wz]) => {
+            const w = new THREE.Mesh(wheelGeo, mats.steelDark);
+            w.position.set(wx, 0.36, wz);
+            tuktukVehicle.add(w);
+        });
+
+        const dinoGroup = new THREE.Group();
+        const dinoPixels = [
+            "      XXXXXXXX ",
+            "     XXXXXXXXXX",
+            "     XX XXXXXXX",
+            "     XXXXXXXXXX",
+            "     XXXXXXX   ",
+            "     XXXXXXXXX ",
+            "X   XXXXXXX    ",
+            "XX XXXXXXXX XXX",
+            "XXXXXXXXXXX   X",
+            "XXXXXXXXXXX    ",
+            " XXXXXXXXX     ",
+            "  XXXXXXX      ",
+            "   XX  XX      ",
+            "   XX  XX      "
+        ];
+        const vSize = 0.115;
+        const voxGeo = new RoundedBoxGeometry(vSize * 1.02, vSize * 1.02, 0.52, 2, 0.02);
+
+        for (let r = 0; r < dinoPixels.length; r++) {
+            const rowStr = dinoPixels[r];
+            for (let c = 0; c < rowStr.length; c++) {
+                if (rowStr[c] === 'X') {
+                    const vMesh = new THREE.Mesh(voxGeo, (r + c) % 5 === 0 ? mats.dinoDarkGreen : mats.dinoGreen);
+                    const z = (c - 7) * vSize;
+                    const y = (dinoPixels.length - 1 - r) * vSize;
+                    vMesh.position.set(0, y, z);
+                    dinoGroup.add(vMesh);
+                }
+            }
+        }
+        const dinoEye = new THREE.Mesh(new RoundedBoxGeometry(0.56, vSize * 1.1, vSize * 1.1, 2, 0.02), mats.plushWhite);
+        dinoEye.position.set(0, (dinoPixels.length - 1 - 2) * vSize, 0);
+        dinoGroup.add(dinoEye);
+
+        dinoGroup.position.set(0, 0.72, -0.2);
+        tuktukVehicle.add(dinoGroup);
+
+        tuktukVehicle.userData = { name: 'dino', baseY: 0.05, jump: 0 };
+        enableShadow(tuktukVehicle);
+        interactables.push(tuktukVehicle);
+
+
+        // 5.5 GEMINI LOGO
+        const geminiGroup = new THREE.Group();
+        const geminiMat = createGeminiGradientMat();
+
+        function createSparkleMesh(radius, thickness) {
+            const shape = new THREE.Shape();
+            const r = radius;
+            const c = radius * 0.14;
+            shape.moveTo(0, r);
+            shape.quadraticCurveTo(c, c, r, 0);
+            shape.quadraticCurveTo(c, -c, 0, -r);
+            shape.quadraticCurveTo(-c, -c, -r, 0);
+            shape.quadraticCurveTo(-c, c, 0, r);
+
+            const extrudeSettings = {
+                depth: thickness,
+                bevelEnabled: true,
+                bevelSegments: 10,
+                steps: 1,
+                bevelSize: thickness * 0.8,
+                bevelThickness: thickness * 0.8
+            };
+            const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+            geo.center();
+
+            geo.computeBoundingBox();
+            const min = geo.boundingBox.min;
+            const max = geo.boundingBox.max;
+            const pos = geo.attributes.position;
+            const uvs = geo.attributes.uv;
+            for (let i = 0; i < pos.count; i++) {
+                const u = (pos.getX(i) - min.x) / (max.x - min.x);
+                const v = (pos.getY(i) - min.y) / (max.y - min.y);
+                uvs.setXY(i, u, v);
+            }
+            uvs.needsUpdate = true;
+
+            return new THREE.Mesh(geo, geminiMat);
+        }
+
+        const mainGemini = createSparkleMesh(1.35, 0.22);
+        const subGemini = createSparkleMesh(0.55, 0.14);
+        subGemini.position.set(1.25, 1.1, 0.15);
+
+        geminiGroup.add(mainGemini, subGemini);
+        geminiGroup.position.set(-1.2, 8.8, -1.2);
+        geminiGroup.userData = { name: 'gemini', baseY: 8.8, jump: 0 };
+        enableShadow(geminiGroup);
+        interactables.push(geminiGroup);
+        world.add(geminiGroup);
+
+
+        // 5.6 GOOGLE CLOUD LOGO
+        const cloudGroup = new THREE.Group();
+
+        const pillowGroup = new THREE.Group();
+        [[-0.9, -0.2, 0.75], [0.9, -0.2, 0.75], [0, 0.35, 0.95], [0, -0.35, 0.7]].forEach(([cx, cy, cr]) => {
+            const puff = new THREE.Mesh(new THREE.SphereGeometry(cr, 24, 24), mats.plushWhite);
+            puff.scale.z = 0.55;
+            puff.position.set(cx, cy, -0.32);
+            pillowGroup.add(puff);
+        });
+        cloudGroup.add(pillowGroup);
+
+        const tubeR = 0.25;
+        const blueArch = new THREE.Mesh(new THREE.TorusGeometry(0.68, tubeR, 24, 48, Math.PI * 1.15), mats.gBlue);
+        blueArch.position.set(0.15, 0.25, 0);
+        blueArch.rotation.z = -0.15;
+
+        const redArch = new THREE.Mesh(new THREE.TorusGeometry(0.52, tubeR, 24, 48, Math.PI * 0.95), mats.gRed);
+        redArch.position.set(-0.68, -0.05, 0.02);
+        redArch.rotation.z = Math.PI * 0.45;
+
+        const yellowArch = new THREE.Mesh(new THREE.TorusGeometry(0.48, tubeR, 24, 48, Math.PI * 0.95), mats.gYellow);
+        yellowArch.position.set(0.75, -0.12, 0.02);
+        yellowArch.rotation.z = -Math.PI * 0.52;
+
+        const greenBar = new THREE.Mesh(new THREE.CapsuleGeometry(tubeR, 1.35, 16, 24), mats.gGreen);
+        greenBar.rotation.z = Math.PI / 2;
+        greenBar.position.set(0.04, -0.58, 0.04);
+
+        cloudGroup.add(blueArch, redArch, yellowArch, greenBar);
+        cloudGroup.position.set(4.2, 7.4, -2.5);
+        cloudGroup.rotation.y = -0.35;
+        cloudGroup.userData = { name: 'cloud', baseY: 7.4, jump: 0 };
+        enableShadow(cloudGroup);
+        interactables.push(cloudGroup);
+        world.add(cloudGroup);
+
+
+        // ==========================================
+        // 6. GDG COMMUNITY DEVELOPERS (CUTE 3D CHIBI DEVS)
+        // ==========================================
+        const devsAnimated = [];
+
+        function createChibiDeveloper({
+            x, z, rotY = 0,
+            hoodieMat = mats.gBlue,
+            skinMat = mats.skinLight,
+            hairMat = mats.hairDark,
+            seated = false,
+            beanbagMat = mats.purplePlush,
+            hasLaptop = true,
+            hasHeadphones = false,
+            hasGlasses = false
+        }) {
+            const dev = new THREE.Group();
+
+            if (seated) {
+                const beanbag = new THREE.Mesh(new THREE.SphereGeometry(0.68, 24, 24), beanbagMat);
+                beanbag.scale.set(1.15, 0.55, 1.15);
+                beanbag.position.set(0, 0.28, -0.1);
+                dev.add(beanbag);
+            }
+
+            const bodyY = seated ? 0.65 : 0.75;
+
+            const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.32, 0.36, 12, 20), hoodieMat);
+            torso.position.y = bodyY;
+            dev.add(torso);
+
+            const lanyard = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.025, 8, 20), mats.gYellow);
+            lanyard.rotation.x = Math.PI / 2 - 0.35;
+            lanyard.position.set(0, bodyY + 0.22, 0.16);
+            const idBadge = new THREE.Mesh(new RoundedBoxGeometry(0.16, 0.2, 0.03, 2, 0.01), mats.plushWhite);
+            idBadge.position.set(0, bodyY + 0.02, 0.32);
+            dev.add(lanyard, idBadge);
+
+            const headGroup = new THREE.Group();
+            headGroup.position.y = bodyY + 0.62;
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.34, 24, 24), skinMat);
+            headGroup.add(head);
+
+            const hairCap = new THREE.Mesh(new THREE.SphereGeometry(0.36, 24, 24, 0, Math.PI * 2, 0, Math.PI * 0.55), hairMat);
+            hairCap.rotation.x = -0.25;
+            const hairBun = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), hairMat);
+            hairBun.position.set(0, 0.32, -0.15);
+            headGroup.add(hairCap, hairBun);
+
+            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.048, 12, 12), mats.eyeBlack);
+            eyeL.position.set(-0.12, 0.02, 0.31);
+            const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.048, 12, 12), mats.eyeBlack);
+            eyeR.position.set(0.12, 0.02, 0.31);
+            headGroup.add(eyeL, eyeR);
+
+            if (hasGlasses) {
+                const frameGeo = new THREE.TorusGeometry(0.085, 0.016, 8, 20);
+                const gL = new THREE.Mesh(frameGeo, mats.steelDark);
+                gL.position.set(-0.12, 0.02, 0.33);
+                const gR = new THREE.Mesh(frameGeo, mats.steelDark);
+                gR.position.set(0.12, 0.02, 0.33);
+                headGroup.add(gL, gR);
+            }
+
+            if (hasHeadphones) {
+                const band = new THREE.Mesh(new THREE.TorusGeometry(0.37, 0.035, 10, 24, Math.PI), mats.gRed);
+                const cupGeo = new THREE.CylinderGeometry(0.11, 0.11, 0.08, 16);
+                cupGeo.rotateZ(Math.PI / 2);
+                const cupL = new THREE.Mesh(cupGeo, mats.gRed);
+                cupL.position.set(-0.36, 0.02, 0);
+                const cupR = new THREE.Mesh(cupGeo, mats.gRed);
+                cupR.position.set(0.36, 0.02, 0);
+                headGroup.add(band, cupL, cupR);
+            }
+
+            dev.add(headGroup);
+
+            const armGeo = new THREE.CapsuleGeometry(0.09, 0.28, 8, 12);
+            const armL = new THREE.Mesh(armGeo, hoodieMat);
+            const armR = new THREE.Mesh(armGeo, hoodieMat);
+
+            if (hasLaptop) {
+                armL.position.set(-0.32, bodyY + 0.02, 0.22);
+                armL.rotation.x = -Math.PI / 3;
+                armR.position.set(0.32, bodyY + 0.02, 0.22);
+                armR.rotation.x = -Math.PI / 3;
+
+                const laptop = new THREE.Group();
+                laptop.position.set(0, bodyY - 0.12, 0.44);
+                const lBase = new THREE.Mesh(new RoundedBoxGeometry(0.46, 0.03, 0.32, 2, 0.01), mats.silverMetal);
+                const lLid = new THREE.Mesh(new RoundedBoxGeometry(0.46, 0.3, 0.03, 2, 0.01), mats.silverMetal);
+                lLid.position.set(0, 0.15, 0.14);
+                lLid.rotation.x = -0.25;
+                const lScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.24), mats.screenGlow);
+                lScreen.position.set(0, 0.15, 0.123);
+                lScreen.rotation.y = Math.PI;
+                lScreen.rotation.x = 0.25;
+                const sticker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 12), mats.gBlue);
+                sticker.position.set(0, 0.15, 0.16);
+                laptop.add(lBase, lLid, lScreen, sticker);
+                dev.add(laptop);
+            } else {
+                armL.position.set(-0.4, bodyY + 0.15, 0);
+                armL.rotation.z = 0.75;
+                armR.position.set(0.4, bodyY + 0.02, 0);
+                armR.rotation.z = -0.35;
+            }
+            dev.add(armL, armR);
+
+            const legGeo = new THREE.CapsuleGeometry(0.1, 0.26, 8, 12);
+            const legL = new THREE.Mesh(legGeo, mats.denimPlush);
+            const legR = new THREE.Mesh(legGeo, mats.denimPlush);
+            if (seated) {
+                legL.rotation.x = Math.PI / 2;
+                legL.position.set(-0.16, 0.25, 0.32);
+                legR.rotation.x = Math.PI / 2;
+                legR.position.set(0.16, 0.25, 0.32);
+            } else {
+                legL.position.set(-0.15, 0.22, 0);
+                legR.position.set(0.15, 0.22, 0);
+            }
+            dev.add(legL, legR);
+
+            dev.position.set(x, 0.05, z);
+            dev.rotation.y = rotY;
+            dev.userData = { name: 'dev', baseY: 0.05, jump: 0 };
+            enableShadow(dev);
+            interactables.push(dev);
+            world.add(dev);
+
+            devsAnimated.push({ group: dev, head: headGroup, armL, armR, hasLaptop, phase: Math.random() * Math.PI * 2 });
+            return dev;
+        }
+
+        createChibiDeveloper({ x: -5.4, z: 0.4, rotY: 0.5, hoodieMat: mats.gBlue, skinMat: mats.skinLight, hairMat: mats.hairDark, seated: true, beanbagMat: mats.purplePlush, hasLaptop: true, hasHeadphones: true });
+        createChibiDeveloper({ x: -3.6, z: 1.1, rotY: -0.3, hoodieMat: mats.gRed, skinMat: mats.skinWarm, hairMat: mats.hairBrown, seated: true, beanbagMat: mats.tealPlush, hasLaptop: true, hasGlasses: true });
+        createChibiDeveloper({ x: -4.6, z: 2.0, rotY: 2.4, hoodieMat: mats.gYellow, skinMat: mats.skinLight, hairMat: mats.hairDark, seated: false, hasLaptop: false, hasGlasses: true });
+        createChibiDeveloper({ x: 2.2, z: -3.8, rotY: -0.6, hoodieMat: mats.gGreen, skinMat: mats.skinTan, hairMat: mats.hairDark, seated: true, beanbagMat: mats.beakOrange, hasLaptop: true });
+        createChibiDeveloper({ x: 3.6, z: -3.2, rotY: -1.1, hoodieMat: mats.purplePlush, skinMat: mats.skinWarm, hairMat: mats.hairBrown, seated: false, hasLaptop: false, hasHeadphones: true });
+
+
+        // ==========================================
+        // 7. BANGKOK CITY LANDSCAPE BACKGROUND
+        // ==========================================
+        const bkkSkylineGroup = new THREE.Group();
+        scene.add(bkkSkylineGroup);
+
+        const cityShore = new THREE.Mesh(new THREE.RingGeometry(21, 55, 64), mats.grassPlush);
+        cityShore.rotation.x = -Math.PI / 2;
+        cityShore.position.y = -0.8;
+        bkkSkylineGroup.add(cityShore);
+
+        // 7.1 King Power MahaNakhon Tower
+        const mahaNakhon = new THREE.Group();
+        mahaNakhon.position.set(-15, -0.8, -22);
+        for (let tier = 0; tier < 14; tier++) {
+            const isPixelZone = (tier >= 4 && tier <= 10);
+            const w = isPixelZone ? 3.2 : 3.6;
+            const block = new THREE.Mesh(new RoundedBoxGeometry(w, 1.4, w, 2, 0.05), mats.skylineGlass);
+            block.position.y = tier * 1.4 + 0.7;
+            mahaNakhon.add(block);
+
+            if (isPixelZone) {
+                const angle = tier * 0.9;
+                const glowCube = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.35, 1.1), mats.thaiGold);
+                glowCube.position.set(Math.cos(angle) * 1.4, tier * 1.4 + 0.7, Math.sin(angle) * 1.4);
+                mahaNakhon.add(glowCube);
+            }
+        }
+        bkkSkylineGroup.add(mahaNakhon);
+
+        // 7.2 Iconic Chang Building (The Elephant Tower)
+        const changBuilding = new THREE.Group();
+        changBuilding.position.set(16, -0.8, -21);
+        changBuilding.rotation.y = -0.35;
+
+        [-2.2, 0, 2.2].forEach(lx => {
+            const leg = new THREE.Mesh(new RoundedBoxGeometry(1.5, 10, 2.6, 2, 0.08), mats.skylineWhite);
+            leg.position.set(lx, 5, 0);
+            changBuilding.add(leg);
+        });
+        const changTop = new THREE.Mesh(new RoundedBoxGeometry(6.2, 3.2, 2.7, 2, 0.08), mats.skylineWhite);
+        changTop.position.set(0, 11.2, 0);
+        changBuilding.add(changTop);
+
+        const changEye = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 2.8, 24), mats.steelDark);
+        changEye.rotation.x = Math.PI / 2;
+        changEye.position.set(-2.1, 11.4, 0);
+        const changTusk = new THREE.Mesh(new RoundedBoxGeometry(0.45, 2.2, 2.85, 2, 0.05), mats.gYellow);
+        changTusk.position.set(-3.1, 9.2, 0);
+        changBuilding.add(changEye, changTusk);
+        bkkSkylineGroup.add(changBuilding);
+
+        // 7.3 Rama VIII Cable-Stayed Bridge
+        const bridgeGroup = new THREE.Group();
+        bridgeGroup.position.set(-22, -0.8, -6);
+        bridgeGroup.rotation.y = Math.PI / 5;
+
+        const pylon = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 1.1, 17, 16), mats.skylineWhite);
+        pylon.position.set(0, 8.5, 0);
+        const pylonCap = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.8, 16), mats.thaiGold);
+        pylonCap.position.set(0, 17.8, 0);
+
+        const bridgeDeck = new THREE.Mesh(new THREE.BoxGeometry(18, 0.45, 2.2), mats.skylineWhite);
+        bridgeDeck.position.set(4, 3.2, 0);
+        bridgeGroup.add(pylon, pylonCap, bridgeDeck);
+
+        const cableMat = new THREE.LineBasicMaterial({ color: 0xf59e0b });
+        for (let c = 1; c <= 8; c++) {
+            const pts = [
+                new THREE.Vector3(0, 8 + c * 1.0, 0),
+                new THREE.Vector3(c * 1.5, 3.4, 0)
+            ];
+            const cableGeo = new THREE.BufferGeometry().setFromPoints(pts);
+            bridgeGroup.add(new THREE.Line(cableGeo, cableMat));
+        }
+        bkkSkylineGroup.add(bridgeGroup);
+
+        // 7.4 Additional Bangkok High-Rise Skyline Silhouette
+        const skylineTowers = [
+            [-26, -16, 3.2, 13, mats.skylineGlass],
+            [-8, -25, 3.5, 15, mats.skylinePastel],
+            [-2, -26, 2.8, 11, mats.skylineGlass],
+            [4, -25, 3.8, 16, mats.skylineWhite],
+            [9, -24, 3.0, 12, mats.skylineGlass],
+            [24, -15, 3.4, 14, mats.skylinePastel],
+            [27, -6, 3.0, 10, mats.skylineGlass]
+        ];
+        skylineTowers.forEach(([sx, sz, sw, sh, smat]) => {
+            const tMesh = new THREE.Mesh(new RoundedBoxGeometry(sw, sh, sw, 2, 0.08), smat);
+            tMesh.position.set(sx, sh / 2 - 0.8, sz);
+            bkkSkylineGroup.add(tMesh);
+        });
+
+        // 7.5 Elevated BTS Skytrain Viaduct & Moving Skytrain
+        const btsViaduct = new THREE.Group();
+        btsViaduct.position.set(0, 3.2, -16.5);
+        const beam = new THREE.Mesh(new THREE.BoxGeometry(56, 0.55, 1.6), mats.skylineWhite);
+        btsViaduct.add(beam);
+        for (let px = -24; px <= 24; px += 6) {
+            const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.45, 4.2, 16), mats.roadMat);
+            pillar.position.set(px, -2.1, 0);
+            btsViaduct.add(pillar);
+        }
+        scene.add(btsViaduct);
+
+        const btsTrain = new THREE.Group();
+        for (let car = -1; car <= 1; car++) {
+            const carGroup = new THREE.Group();
+            carGroup.position.x = car * 3.1;
+            const cBody = new THREE.Mesh(new RoundedBoxGeometry(2.85, 1.05, 1.25, 3, 0.12), mats.plushWhite);
+            const cStripe = new THREE.Mesh(new THREE.BoxGeometry(2.88, 0.22, 1.28), mats.kGreen);
+            cStripe.position.y = -0.12;
+            const cWin = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.32, 1.3), mats.steelDark);
+            cWin.position.y = 0.18;
+            carGroup.add(cBody, cStripe, cWin);
+            btsTrain.add(carGroup);
+        }
+        btsTrain.position.set(0, 4.05, -16.5);
+        scene.add(btsTrain);
+
+        // 7.6 Chao Phraya Long-Tail Boats
+        const riverOrbit = new THREE.Group();
+        scene.add(riverOrbit);
+
+        function createLongTailBoat(radius, angle) {
+            const boat = new THREE.Group();
+            const hull = new THREE.Mesh(new THREE.CapsuleGeometry(0.32, 1.8, 12, 16), mats.beakOrange);
+            hull.rotation.z = Math.PI / 2;
+            hull.scale.set(1, 1, 0.6);
+            const canopy = new THREE.Mesh(new RoundedBoxGeometry(1.1, 0.45, 0.7, 2, 0.05), mats.gBlue);
+            canopy.position.y = 0.35;
+            const ribbon = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), mats.cheekPink);
+            ribbon.position.set(1.15, 0.25, 0);
+            boat.add(hull, canopy, ribbon);
+            boat.position.set(Math.cos(angle) * radius, -0.65, Math.sin(angle) * radius);
+            boat.rotation.y = -angle + Math.PI / 2;
+            riverOrbit.add(boat);
+        }
+        createLongTailBoat(16.2, 0.5);
+        createLongTailBoat(17.5, Math.PI + 0.8);
+
+
+        // ==========================================
+        // 8. FLUFFY SKY CLOUDS & TROPICAL PALM TREES
+        // ==========================================
+        function createSkyCloud(x, y, z, scale = 1) {
+            const c = new THREE.Group();
+            [[-0.8, 0, 0.7], [0, 0.3, 0.95], [0.85, 0.05, 0.75], [0, -0.15, 0.7]].forEach(([px, py, pr]) => {
+                const m = new THREE.Mesh(new THREE.SphereGeometry(pr, 20, 20), mats.plushWhite);
+                m.position.set(px, py, 0);
+                c.add(m);
+            });
+            c.position.set(x, y, z);
+            c.scale.setScalar(scale);
+            scene.add(c);
+            return c;
+        }
+
+        const skyClouds = [
+            createSkyCloud(-12, 12, -10, 1.4),
+            createSkyCloud(13, 13.5, -11, 1.6),
+            createSkyCloud(-14, 10.5, 5, 1.1),
+            createSkyCloud(12, 10.5, 6, 1.2)
+        ];
+
+        [[-6.2, 2.2], [5.8, -0.8], [-1.2, -5.8], [2.5, 5.8]].forEach(([tx, tz]) => {
+            const tree = new THREE.Group();
+            const trunk = new THREE.Mesh(new THREE.CapsuleGeometry(0.14, 0.9, 8, 12), mats.beakOrange);
+            trunk.position.y = 0.5;
+            const foliage1 = new THREE.Mesh(new THREE.SphereGeometry(0.55, 16, 16), mats.gGreen);
+            foliage1.position.y = 1.15;
+            const foliage2 = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16), mats.dinoGreen);
+            foliage2.position.set(0.25, 1.45, 0.15);
+            tree.add(trunk, foliage1, foliage2);
+            tree.position.set(tx, 0, tz);
+            enableShadow(tree);
+            world.add(tree);
+        });
+
+
+        // ==========================================
+        // 9. CAMERA TOUR & CLICK INTERACTIVITY
+        // ==========================================
+        const cameraPresets = {
+            overview:  { pos: [19, 11.5, 22], look: [0, 3.2, 0] },
+            android:   { pos: [2.2, 2.8, 9.2], look: [0.8, 1.4, 4.6], obj: androidGroup },
+            dash:      { pos: [6.4, 3.8, 5.2], look: [3.6, 2.7, 1.5], obj: dashGroup },
+            sparky:    { pos: [-5.2, 2.6, 7.5], look: [-2.9, 1.2, 3.6], obj: sparkyGroup },
+            dino:      { pos: [13.5, 4.0, 9.0], look: [0, 1.2, 0], obj: tuktukVehicle },
+            gemini:    { pos: [-1.2, 9.4, 3.8], look: [-1.2, 8.8, -1.2], obj: geminiGroup },
+            cloud:     { pos: [6.8, 8.0, 2.2], look: [4.2, 7.4, -2.5], obj: cloudGroup },
+            community: { pos: [-1.5, 4.2, 4.8], look: [-4.5, 2.2, -1.2], obj: kBuilding },
+            skyline:   { pos: [0, 9.5, 25], look: [0, 5.5, -18] }
+        };
+
+        document.querySelectorAll('.cam-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.cam-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const key = btn.dataset.target;
+                const preset = cameraPresets[key];
+                if (preset) {
+                    camState.pos.set(...preset.pos);
+                    camState.look.set(...preset.look);
+                    camState.active = true;
+                    if (preset.obj) {
+                        preset.obj.userData.jump = 1.0;
+                        audioEngine.playBounceSFX();
+                    }
+                }
+            });
+        });
+
+        controls.addEventListener('start', () => {
+            camState.active = false;
+        });
+
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+
+        window.addEventListener('pointerdown', (e) => {
+            if (e.target.closest('header, footer')) return;
+
+            pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+            pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(pointer, camera);
+            const hits = raycaster.intersectObjects(interactables, true);
+
+            if (hits.length > 0) {
+                let root = hits[0].object;
+                while (root.parent && !interactables.includes(root)) {
+                    root = root.parent;
+                }
+                if (interactables.includes(root)) {
+                    root.userData.jump = 1.0;
+                    audioEngine.playBounceSFX();
+                }
+            }
+        });
+
+
+        // ==========================================
+        // 10. LIVELY ANIMATION LOOP
+        // ==========================================
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const t = clock.getElapsedTime();
+
+            // Extra rhythmic bounce when music is playing!
+            const beatPulse = audioEngine.isPlaying ? Math.abs(Math.sin(t * Math.PI * 2)) * 0.08 : 0;
+
+            // 1. Android Bot bouncing, tilting dome head & waving
+            androidGroup.position.y = androidGroup.userData.baseY + Math.abs(Math.sin(t * 3.8)) * 0.16 + beatPulse;
+            androidHead.rotation.z = Math.sin(t * 3.8) * 0.12;
+            androidHead.position.y = 1.88 + Math.abs(Math.cos(t * 7.6)) * 0.06;
+            aArmL.rotation.z = 0.65 + Math.sin(t * 8) * 0.35;
+
+            // 2. Tuk-Tuk & Voxel Chrome Dino cruising around the island
+            tuktukOrbit.rotation.y = -t * 0.58;
+            tuktukVehicle.position.y = tuktukVehicle.userData.baseY + Math.abs(Math.sin(t * 16)) * 0.05;
+            dinoGroup.position.y = 0.72 + Math.abs(Math.sin(t * 8)) * 0.06 + beatPulse;
+
+            // 3. Dash hovering & flapping fluffy wings
+            dashGroup.position.y = dashGroup.userData.baseY + Math.sin(t * 3.2) * 0.25 + beatPulse;
+            dWingL.rotation.z = 0.35 + Math.sin(t * 14) * 0.45;
+            dWingR.rotation.z = -0.35 - Math.sin(t * 14) * 0.45;
+
+            // 4. Sparky waving & flame tips dancing
+            sparkyGroup.position.y = sparkyGroup.userData.baseY + Math.abs(Math.sin(t * 3.5)) * 0.14 + beatPulse;
+            sArmL.rotation.z = 0.85 + Math.sin(t * 7) * 0.35;
+            flameLeft.rotation.z = 0.35 + Math.sin(t * 5) * 0.08;
+            flameRight.rotation.z = -0.38 + Math.cos(t * 5) * 0.08;
+
+            // 5. Gemini Sparkle rotating & pulsing
+            mainGemini.rotation.y = t * 0.9;
+            subGemini.rotation.y = -t * 1.4;
+            subGemini.position.y = 1.1 + Math.sin(t * 3) * 0.15;
+            geminiGroup.position.y = geminiGroup.userData.baseY + Math.sin(t * 2.2) * 0.22;
+
+            // 6. Google Cloud bobbing gently
+            cloudGroup.position.y = cloudGroup.userData.baseY + Math.cos(t * 2.0) * 0.22;
+
+            // 7. Community Developers typing, nodding & waving to the music
+            devsAnimated.forEach(dev => {
+                dev.head.rotation.y = Math.sin(t * 2.2 + dev.phase) * 0.22;
+                dev.head.rotation.x = Math.sin(t * 4.5 + dev.phase) * 0.08 + (audioEngine.isPlaying ? Math.sin(t * 8) * 0.06 : 0);
+                if (dev.hasLaptop) {
+                    dev.armL.rotation.x = -Math.PI / 3 + Math.sin(t * 15 + dev.phase) * 0.12;
+                    dev.armR.rotation.x = -Math.PI / 3 + Math.cos(t * 15 + dev.phase) * 0.12;
+                } else {
+                    dev.armL.rotation.z = 0.75 + Math.sin(t * 7 + dev.phase) * 0.35;
+                }
+            });
+
+            // 8. Bangkok BTS Skytrain gliding across the background viaduct
+            btsTrain.position.x = ((t * 6.5) % 48) - 24;
+
+            // 9. Chao Phraya Long-Tail Boats cruising
+            riverOrbit.rotation.y = t * 0.18;
+
+            // 10. Sky Clouds drifting
+            skyClouds.forEach((c, idx) => {
+                c.position.x += Math.sin(t * 0.3 + idx) * 0.008;
+            });
+
+            // 11. Bounce & Spin reaction when clicked
+            interactables.forEach(obj => {
+                if (obj.userData.jump > 0) {
+                    const jumpArc = Math.sin(obj.userData.jump * Math.PI);
+                    obj.position.y = obj.userData.baseY + jumpArc * 1.1;
+                    if (obj.userData.name !== 'kplus') {
+                        obj.rotation.y += 0.12;
+                    }
+                    obj.userData.jump -= 0.035;
+                    if (obj.userData.jump < 0) obj.userData.jump = 0;
+                }
+            });
+
+            // 12. Smooth Camera Tour Interpolation
+            if (camState.active) {
+                camera.position.lerp(camState.pos, 0.06);
+                controls.target.lerp(camState.look, 0.08);
+                if (camera.position.distanceTo(camState.pos) < 0.08) {
+                    camState.active = false;
+                }
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
