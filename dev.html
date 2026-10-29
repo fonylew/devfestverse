@@ -426,24 +426,89 @@
         }
 
         .register-btn {
+            position: relative;
+            isolation: isolate;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            background: linear-gradient(135deg, #4285F4 0%, #2563eb 100%);
+            gap: 11px;
+            background: linear-gradient(135deg, #4285F4 0%, #2563eb 55%, #1d4ed8 100%);
             color: #ffffff;
             text-decoration: none;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.1rem;
             font-weight: 700;
-            padding: 0.95rem 2.0rem;
+            padding: 0.85rem 1.85rem 0.85rem 1.35rem;
             border-radius: 99px;
-            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+            border: 1.5px solid rgba(255, 255, 255, 0.55);
+            box-shadow:
+                0 0 18px rgba(66, 133, 244, 0.65),
+                0 0 36px rgba(56, 189, 248, 0.35),
+                0 12px 28px rgba(37, 99, 235, 0.35),
+                inset 0 2px 0 rgba(255, 255, 255, 0.35);
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: ctaPulseHalo 2.2s ease-in-out infinite;
+            pointer-events: auto;
+        }
+
+        .register-btn::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6, #facc15, #38bdf8);
+            background-size: 200% 200%;
+            filter: blur(10px);
+            opacity: 0.75;
+            z-index: -1;
+            animation: ctaHaloGlow 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes ctaPulseHalo {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow:
+                    0 0 16px rgba(66, 133, 244, 0.6),
+                    0 0 32px rgba(56, 189, 248, 0.35),
+                    0 12px 28px rgba(37, 99, 235, 0.35),
+                    inset 0 2px 0 rgba(255, 255, 255, 0.35);
+            }
+            50% {
+                transform: scale(1.06);
+                box-shadow:
+                    0 0 28px rgba(96, 165, 250, 0.95),
+                    0 0 54px rgba(56, 189, 248, 0.65),
+                    0 16px 36px rgba(37, 99, 235, 0.5),
+                    inset 0 2px 0 rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        @keyframes ctaHaloGlow {
+            0% { background-position: 0% 50%; opacity: 0.65; }
+            50% { background-position: 100% 50%; opacity: 0.95; }
+            100% { background-position: 200% 50%; opacity: 0.65; }
         }
 
         .register-btn:hover {
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 16px 36px rgba(37, 99, 235, 0.45);
+            animation-play-state: paused;
+            transform: translateY(-3px) scale(1.08);
+            box-shadow:
+                0 0 32px rgba(96, 165, 250, 1),
+                0 0 64px rgba(56, 189, 248, 0.75),
+                0 18px 40px rgba(37, 99, 235, 0.55),
+                inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .register-btn .eventpop-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ffffff;
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+            flex-shrink: 0;
+            display: block;
         }
 
         .register-btn svg {
@@ -495,18 +560,31 @@
         body.ui-hidden #ui-container .camera-nav,
         body.ui-hidden #ui-container .time-nav,
         body.ui-hidden #ui-container .music-player,
-        body.ui-hidden #ui-container footer {
+        body.ui-hidden #ui-container .event-info-card,
+        body.ui-hidden #ui-container .hint-row,
+        body.ui-hidden #ui-container .ticket-action-btn {
             opacity: 0;
             pointer-events: none !important;
             transform: translateY(8px) scale(0.97);
             visibility: hidden;
         }
 
+        body.ui-hidden #ui-container .cta-group,
+        body.ui-hidden #ui-container .cta-btn-row {
+            pointer-events: none;
+        }
+
+        body.ui-hidden #ui-container .register-btn {
+            pointer-events: auto !important;
+        }
+
         #ui-container header > *,
         #ui-container .camera-nav,
         #ui-container .time-nav,
         #ui-container .music-player,
-        #ui-container footer {
+        #ui-container .event-info-card,
+        #ui-container .hint-row,
+        #ui-container .ticket-action-btn {
             transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s ease;
         }
 
@@ -730,7 +808,12 @@
         @media (max-width: 960px) {
             #ui-container { padding: 1rem; }
             h1 { font-size: 1.9rem; }
+            .argon-badge { display: none; }
+            .time-btn .time-label { display: none; }
+            .time-btn { padding: 0.42rem 0.62rem; font-size: 0.92rem; }
             .event-info-card { gap: 1rem; padding: 0.9rem 1.2rem; }
+            .info-tech-stack { display: none; }
+            .hint-pill { display: none; }
             .camera-nav { display: none; }
             footer { flex-direction: column; align-items: stretch; }
             .cta-group { align-items: stretch; }
@@ -842,11 +925,11 @@
                 <!-- Time of Day & Backing Track Controls -->
                 <div class="top-row-controls">
                     <div class="time-nav" id="time-nav" title="Switch Time of Day &amp; Weather">
-                        <button class="time-btn active" data-time="dawn">🌤️ Dawn</button>
-                        <button class="time-btn" data-time="day">☀️ Day</button>
-                        <button class="time-btn" data-time="sunset">🌅 Sunset</button>
-                        <button class="time-btn" data-time="night">🌙 Night</button>
-                        <button class="time-btn" data-time="rain">🌧️ Raining</button>
+                        <button class="time-btn active" data-time="dawn" title="Dawn">🌤️ <span class="time-label">Dawn</span></button>
+                        <button class="time-btn" data-time="day" title="Day">☀️ <span class="time-label">Day</span></button>
+                        <button class="time-btn" data-time="sunset" title="Sunset">🌅 <span class="time-label">Sunset</span></button>
+                        <button class="time-btn" data-time="night" title="Night">🌙 <span class="time-label">Night</span></button>
+                        <button class="time-btn" data-time="rain" title="Raining">🌧️ <span class="time-label">Raining</span></button>
                     </div>
 
                     <div class="music-player">
@@ -889,7 +972,7 @@
                         <div class="info-value">K+ Building, Bangkok</div>
                     </div>
                 </div>
-                <div class="info-item">
+                <div class="info-item info-tech-stack">
                     <div class="info-icon">⚡</div>
                     <div>
                         <div class="info-label">Tech Stack</div>
@@ -907,8 +990,9 @@
                     <button type="button" class="ticket-action-btn" id="ticket-action-btn">
                         <span id="ticket-action-label">🎟️ Register / Show QR</span>
                     </button>
-                    <a href="https://gdg.community.dev/events/details/google-gdg-cloud-bangkok-presents-devfest-bangkok-2026/cohost-gdg-cloud-bangkok/" target="_blank" rel="noopener noreferrer" class="register-btn">
-                        Join DevFest Bangkok
+                    <a href="https://www.eventpop.me/s/devfest-bangkok-2026" target="_blank" rel="noopener noreferrer" class="register-btn">
+                        <img src="https://p-a.popcdn.net/assets/mobile-logo-a00ae1f2656c417cc4db8cc9935ad7de7b061df3ea5523546777c09b01a1f4eb.png" alt="Eventpop" class="eventpop-logo">
+                        <span>Get Ticket</span>
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                         </svg>
