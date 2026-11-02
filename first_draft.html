@@ -2136,9 +2136,9 @@
         // ==========================================
         const LINE_SHOP_URL = 'https://shop.line.me/@837etxse';
         const shopGroup = new THREE.Group();
-        const shopPosition = new THREE.Vector3(6.7, 0, 3.1);
+        const shopPosition = new THREE.Vector3(5.45, 0, 3.35);
         shopGroup.position.copy(shopPosition);
-        shopGroup.rotation.y = -0.35;
+        shopGroup.rotation.y = -0.32;
 
         function drawGDGBracketLogo(ctx, cx, cy, scale = 1.0, withBadgeBg = false) {
             ctx.save();
@@ -2955,7 +2955,7 @@
         // ==========================================
         const cameraPresets = {
             overview:  { pos: [19, 11.5, 22], look: [0, 3.2, 0] },
-            shop:      { pos: [5.0, 2.65, 7.8], look: [6.7, 1.65, 3.1], obj: shopGroup },
+            shop:      { pos: [3.9, 2.65, 8.1], look: [5.45, 1.65, 3.35], obj: shopGroup },
             android:   { pos: [2.2, 2.8, 9.2], look: [0.8, 1.4, 4.6], obj: androidGroup },
             dash:      { pos: [6.4, 3.8, 5.2], look: [3.6, 2.7, 1.5], obj: dashGroup },
             sparky:    { pos: [-5.2, 2.6, 7.5], look: [-2.9, 1.2, 3.6], obj: sparkyGroup },
@@ -3155,10 +3155,11 @@
             controls.update();
 
             if (shopFloatingBadge) {
-                shopBadgeAnchor.set(6.7, 4.18 + shopGroup.position.y, 3.1);
+                shopBadgeAnchor.set(5.45, 4.18 + shopGroup.position.y, 3.35);
                 shopBadgeAnchor.project(camera);
                 if (shopBadgeAnchor.z < 1.0 && shopBadgeAnchor.x >= -1.15 && shopBadgeAnchor.x <= 1.15 && shopBadgeAnchor.y >= -1.15 && shopBadgeAnchor.y <= 1.15) {
-                    const sx = (shopBadgeAnchor.x * 0.5 + 0.5) * window.innerWidth;
+                    const rawSx = (shopBadgeAnchor.x * 0.5 + 0.5) * window.innerWidth;
+                    const sx = Math.max(96, Math.min(window.innerWidth - 96, rawSx));
                     const sy = (-shopBadgeAnchor.y * 0.5 + 0.5) * window.innerHeight;
                     shopFloatingBadge.style.left = `${sx}px`;
                     shopFloatingBadge.style.top = `${sy}px`;

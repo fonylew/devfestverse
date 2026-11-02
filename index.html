@@ -831,8 +831,8 @@
                 <!-- Time of Day & Backing Track Controls -->
                 <div class="top-row-controls">
                     <div class="time-nav" id="time-nav" title="Switch Time of Day &amp; Weather">
-                        <button class="time-btn active" data-time="dawn" title="Dawn">🌤️ <span class="time-label">Dawn</span></button>
-                        <button class="time-btn" data-time="day" title="Day">☀️ <span class="time-label">Day</span></button>
+                        <button class="time-btn" data-time="dawn" title="Dawn">🌤️ <span class="time-label">Dawn</span></button>
+                        <button class="time-btn active" data-time="day" title="Day">☀️ <span class="time-label">Day</span></button>
                         <button class="time-btn" data-time="sunset" title="Sunset">🌅 <span class="time-label">Sunset</span></button>
                         <button class="time-btn" data-time="night" title="Night">🌙 <span class="time-label">Night</span></button>
                         <button class="time-btn" data-time="rain" title="Raining">🌧️ <span class="time-label">Raining</span></button>
@@ -1410,8 +1410,18 @@
         scene.background = createSkyTexture('day');
         scene.fog = new THREE.FogExp2(0xdbeafe, 0.0018);
 
+        function getOverviewPose() {
+            const aspect = window.innerWidth / Math.max(window.innerHeight, 1);
+            const portraitZoom = aspect < 1.15 ? Math.min(1.42, Math.max(1.0, 1.08 / Math.max(aspect, 0.52))) : 1.0;
+            return {
+                pos: [0.55, 5.2 * Math.pow(portraitZoom, 0.45), 25.0 * portraitZoom],
+                look: [0.45, 3.5, 0]
+            };
+        }
+
+        const initialOverview = getOverviewPose();
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 450);
-        camera.position.set(0, 4.6, 21.5);
+        camera.position.set(...initialOverview.pos);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1428,12 +1438,12 @@
         controls.maxPolarAngle = Math.PI / 2 - 0.02;
         controls.minDistance = 3.0;
         controls.maxDistance = 85;
-        controls.target.set(0, 3.6, 0);
+        controls.target.set(...initialOverview.look);
 
         const camState = {
             active: false,
-            pos: new THREE.Vector3(0, 4.6, 21.5),
-            look: new THREE.Vector3(0, 3.6, 0)
+            pos: new THREE.Vector3(...initialOverview.pos),
+            look: new THREE.Vector3(...initialOverview.look)
         };
 
         // ==========================================
@@ -2652,6 +2662,13 @@
         roofGDGLogo.position.set(0, 1.05, 0);
         roofBillboard.add(roofGDGLogo);
 
+        roofBillboard.userData = {
+            name: 'gdg-bangkok',
+            baseY: bHeight + 1.35,
+            jump: 0,
+            url: 'https://gdg.community.dev/gdg-bangkok/'
+        };
+        interactables.push(roofBillboard);
         kBuilding.add(roofBillboard);
 
         kBuilding.userData = { name: 'kplus', baseY: 0, jump: 0 };
@@ -2693,7 +2710,14 @@
         hwyGDG3D.position.set(0, 4.05, 0);
         highwayBillboard.add(hwyGDG3D);
 
+        highwayBillboard.userData = {
+            name: 'gdg-cloud-bangkok',
+            baseY: 0,
+            jump: 0,
+            url: 'https://gdg.community.dev/gdg-cloud-bangkok/'
+        };
         enableShadow(highwayBillboard);
+        interactables.push(highwayBillboard);
         world.add(highwayBillboard);
 
 
@@ -4603,9 +4627,9 @@
         // ==========================================
         const LINE_SHOP_URL = 'https://shop.line.me/@837etxse';
         const shopGroup = new THREE.Group();
-        const shopPosition = new THREE.Vector3(6.7, 0, 3.1);
+        const shopPosition = new THREE.Vector3(5.45, 0, 3.35);
         shopGroup.position.copy(shopPosition);
-        shopGroup.rotation.y = -0.35;
+        shopGroup.rotation.y = -0.32;
 
         // 1. High-Contrast Rooftop Marquee Sign Texture ("DEVFEST SHOP • PRE-ORDER")
         function createShopMarqueeTexture() {
@@ -5426,7 +5450,7 @@
         // 9. CAMERA TOUR & CLICK INTERACTIVITY
         // ==========================================
         const cameraPresets = {
-            overview:    { pos: [0, 4.6, 21.5],     look: [0, 3.6, 0] },
+            overview:    { pos: [0.55, 5.2, 25.0],   look: [0.45, 3.5, 0] },
             antigravity: { pos: [3.2, 5.4, 4.8],    look: [2.5, 4.8, -2.2], obj: antigravityGroup },
             android:     { pos: [2.2, 2.6, 8.8],    look: [0.8, 1.35, 4.6], obj: androidGroup },
             dash:        { pos: [6.8, 4.1, 5.4],    look: [4.2, 3.6, 1.4],  obj: dashGroup },
@@ -5435,13 +5459,14 @@
             gemini:      { pos: [-1.2, 9.4, 4.2],   look: [-1.2, 8.9, -1.2], obj: geminiGroup },
             cloud:       { pos: [5.5, 7.8, 3.5],    look: [4.5, 7.4, -2.5], obj: cloudGroup },
             community:   { pos: [-1.5, 4.2, 4.8],   look: [-4.6, 2.2, -1.2], obj: kBuilding },
-            shop:        { pos: [5.0, 2.65, 7.8],   look: [6.7, 1.65, 3.1], obj: shopGroup },
+            shop:        { pos: [3.9, 2.65, 8.1],   look: [5.45, 1.65, 3.35], obj: shopGroup },
             skyline:     { pos: [0, 9.5, 25],       look: [0, 5.5, -18] }
         };
 
         function activatePreset(key, instant = false) {
-            const preset = cameraPresets[key];
-            if (!preset) return;
+            const basePreset = cameraPresets[key];
+            if (!basePreset) return;
+            const preset = key === 'overview' ? { ...basePreset, ...getOverviewPose() } : basePreset;
             document.querySelectorAll('.cam-btn').forEach(b => {
                 b.classList.toggle('active', b.dataset.target === key);
             });
@@ -5840,10 +5865,10 @@
 
         window.addEventListener('pointerup', (e) => {
             if (e.target.closest('header, footer, #shop-floating-badge')) return;
-            if (pointerDownRoot === shopGroup) {
+            if (pointerDownRoot && pointerDownRoot.userData && pointerDownRoot.userData.url) {
                 const moveDist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
                 if (moveDist < 12) {
-                    window.open(LINE_SHOP_URL, '_blank', 'noopener,noreferrer');
+                    window.open(pointerDownRoot.userData.url, '_blank', 'noopener,noreferrer');
                 }
             }
             pointerDownRoot = null;
@@ -5857,8 +5882,8 @@
             pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
             pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(pointer, camera);
-            const shopHits = raycaster.intersectObject(shopGroup, true);
-            document.body.style.cursor = shopHits.length > 0 ? 'pointer' : '';
+            const linkHits = raycaster.intersectObjects([shopGroup, roofBillboard, highwayBillboard], true);
+            document.body.style.cursor = linkHits.length > 0 ? 'pointer' : '';
         });
 
 
@@ -6004,13 +6029,13 @@
                     const curAngle = w.angle + t * w.speed * w.dir;
                     let wx = Math.cos(curAngle) * w.radius;
                     let wz = Math.sin(curAngle) * w.radius;
-                    const dxShop = wx - 6.7;
-                    const dzShop = wz - 3.1;
+                    const dxShop = wx - 5.45;
+                    const dzShop = wz - 3.35;
                     const distShop = Math.hypot(dxShop, dzShop);
                     if (distShop < 1.95) {
                         const pushAng = Math.atan2(dzShop, dxShop);
-                        wx = 6.7 + Math.cos(pushAng) * 1.95;
-                        wz = 3.1 + Math.sin(pushAng) * 1.95;
+                        wx = 5.45 + Math.cos(pushAng) * 1.95;
+                        wz = 3.35 + Math.sin(pushAng) * 1.95;
                     }
                     w.group.position.x = wx;
                     w.group.position.z = wz;
@@ -6160,7 +6185,7 @@
                 if (obj.userData.jump > 0) {
                     const jumpArc = Math.sin(obj.userData.jump * Math.PI);
                     obj.position.y = obj.userData.baseY + jumpArc * 1.1;
-                    if (obj.userData.name !== 'kplus' && obj.userData.name !== 'shop') {
+                    if (obj.userData.name !== 'kplus' && !obj.userData.url) {
                         obj.rotation.y += 0.12;
                     }
                     obj.userData.jump -= 0.035;
@@ -6181,10 +6206,11 @@
 
             // Project 3D Merch Shop crown position to 2D screen coordinates for the floating LINE Shop CTA pill
             if (shopFloatingBadge) {
-                shopBadgeAnchor.set(6.7, 4.18 + shopGroup.position.y, 3.1);
+                shopBadgeAnchor.set(5.45, 4.18 + shopGroup.position.y, 3.35);
                 shopBadgeAnchor.project(camera);
                 if (shopBadgeAnchor.z < 1.0 && shopBadgeAnchor.x >= -1.15 && shopBadgeAnchor.x <= 1.15 && shopBadgeAnchor.y >= -1.15 && shopBadgeAnchor.y <= 1.15) {
-                    const sx = (shopBadgeAnchor.x * 0.5 + 0.5) * window.innerWidth;
+                    const rawSx = (shopBadgeAnchor.x * 0.5 + 0.5) * window.innerWidth;
+                    const sx = Math.max(96, Math.min(window.innerWidth - 96, rawSx));
                     const sy = (-shopBadgeAnchor.y * 0.5 + 0.5) * window.innerHeight;
                     shopFloatingBadge.style.left = `${sx}px`;
                     shopFloatingBadge.style.top = `${sy}px`;
@@ -6201,6 +6227,13 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            const activeCamBtn = document.querySelector('.cam-btn.active');
+            if (!activeCamBtn || activeCamBtn.dataset.target === 'overview') {
+                const pose = getOverviewPose();
+                camera.position.set(...pose.pos);
+                controls.target.set(...pose.look);
+                controls.update();
+            }
         });
 
         animate();
