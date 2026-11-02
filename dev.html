@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QTRFEX6KDK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-QTRFEX6KDK');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -521,6 +530,80 @@
             transform: translateX(4px);
         }
 
+        /* Floating 3D-Anchored LINE Shop Pre-Order Callout Badge */
+        #shop-floating-badge {
+            position: fixed;
+            z-index: 15;
+            left: 0;
+            top: 0;
+            transform: translate(-50%, -100%);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: linear-gradient(135deg, #06C755 0%, #059669 55%, #0f172a 100%);
+            color: #ffffff;
+            text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 0.42rem 0.92rem;
+            border-radius: 99px;
+            border: 2px solid #ffffff;
+            box-shadow:
+                0 0 18px rgba(6, 199, 85, 0.75),
+                0 8px 22px rgba(15, 23, 42, 0.32);
+            pointer-events: auto;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, opacity 0.25s ease;
+            animation: shopBadgeFloat 2.0s ease-in-out infinite;
+        }
+
+        #shop-floating-badge::after {
+            content: '';
+            position: absolute;
+            bottom: -7px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 7px 6px 0 6px;
+            border-style: solid;
+            border-color: #ffffff transparent transparent transparent;
+        }
+
+        @keyframes shopBadgeFloat {
+            0%, 100% {
+                transform: translate(-50%, -100%) scale(1);
+                box-shadow: 0 0 16px rgba(6, 199, 85, 0.7), 0 8px 20px rgba(15, 23, 42, 0.3);
+            }
+            50% {
+                transform: translate(-50%, calc(-100% - 5px)) scale(1.06);
+                box-shadow: 0 0 26px rgba(6, 199, 85, 0.95), 0 12px 26px rgba(15, 23, 42, 0.4);
+            }
+        }
+
+        #shop-floating-badge:hover {
+            animation-play-state: paused;
+            transform: translate(-50%, calc(-100% - 4px)) scale(1.1);
+            box-shadow: 0 0 32px rgba(6, 199, 85, 1), 0 14px 28px rgba(15, 23, 42, 0.45);
+        }
+
+        .shop-badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fef08a;
+            box-shadow: 0 0 8px #fef08a;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 960px) {
+            #shop-floating-badge {
+                font-size: 0.72rem;
+                padding: 0.34rem 0.75rem;
+                gap: 5px;
+            }
+        }
+
         /* Floating UI Visibility Toggle Button */
         #ui-toggle-btn {
             position: fixed;
@@ -948,6 +1031,11 @@
         </div>
     </div>
 
+    <a href="https://shop.line.me/@837etxse" target="_blank" rel="noopener noreferrer" id="shop-floating-badge" title="Click to Pre-Order Official DevFest Bangkok 2026 Merch on LINE Shop">
+        <span class="shop-badge-dot"></span>
+        <span>🛍️ Pre-Order Shop ↗</span>
+    </a>
+
     <div id="ui-container">
         <header>
             <div class="brand-card">
@@ -980,6 +1068,7 @@
                 <!-- Interactive Camera Tour -->
                 <nav class="camera-nav" id="cam-nav">
                     <button class="cam-btn active" data-target="overview">🌏 Full World</button>
+                    <button class="cam-btn" data-target="shop">🛍️ Merch Shop</button>
                     <button class="cam-btn" data-target="antigravity">🚀 Antigravity</button>
                     <button class="cam-btn" data-target="android">🤖 Android</button>
                     <button class="cam-btn" data-target="dash">🐦 Flutter &amp; Dash</button>
@@ -5021,6 +5110,652 @@
             world.add(stall);
         });
 
+        // ==========================================
+        // 7.55 DEVFEST BANGKOK 2026 MERCH & PRE-ORDER BOUTIQUE (LINE SHOP)
+        // ==========================================
+        const LINE_SHOP_URL = 'https://shop.line.me/@837etxse';
+        const shopGroup = new THREE.Group();
+        const shopPosition = new THREE.Vector3(6.7, 0, 3.1);
+        shopGroup.position.copy(shopPosition);
+        shopGroup.rotation.y = -0.35;
+
+        // 1. High-Contrast Rooftop Marquee Sign Texture ("DEVFEST SHOP • PRE-ORDER")
+        function createShopMarqueeTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+
+            const grad = ctx.createLinearGradient(0, 0, 1024, 360);
+            grad.addColorStop(0.0, '#0f172a');
+            grad.addColorStop(0.55, '#1e293b');
+            grad.addColorStop(1.0, '#064e3b');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.roundRect(10, 10, 1004, 340, 36);
+            ctx.fill();
+
+            const borderGrad = ctx.createLinearGradient(0, 0, 1024, 0);
+            borderGrad.addColorStop(0.0, '#06C755');
+            borderGrad.addColorStop(0.28, '#4285F4');
+            borderGrad.addColorStop(0.55, '#EA4335');
+            borderGrad.addColorStop(0.78, '#FBBC04');
+            borderGrad.addColorStop(1.0, '#06C755');
+            ctx.lineWidth = 14;
+            ctx.strokeStyle = borderGrad;
+            ctx.stroke();
+
+            // Left white badge with GDG (< >) logo
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(42, 54, 240, 252, 30);
+            ctx.fill();
+            drawGDGBracketLogo(ctx, 162, 180, 1.05);
+
+            // Title: DEVFEST SHOP
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 66px "Space Grotesk", "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('DEVFEST SHOP', 316, 126);
+
+            // LINE Green Pre-Order CTA Pill
+            ctx.fillStyle = '#06C755';
+            ctx.beginPath();
+            ctx.roundRect(316, 186, 646, 96, 48);
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#fef08a';
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 38px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('🛍️ PRE-ORDER • LINE SHOP ↗', 352, 236);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = 4;
+            return tex;
+        }
+
+        // 2. Black "DevFest 2026 Bangkok" Pre-Order T-Shirt Graphic Texture
+        function createDevFestShirtTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+
+            // Matte charcoal-black tee fabric
+            ctx.fillStyle = '#12151c';
+            ctx.fillRect(0, 0, 512, 512);
+
+            // Subtle fabric weave highlights
+            ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+            ctx.lineWidth = 1;
+            for (let y = 0; y < 512; y += 6) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(512, y);
+                ctx.stroke();
+            }
+
+            // Chest Header: <> DevFest [2026]
+            drawGDGBracketLogo(ctx, 108, 126, 0.34);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 44px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('DevFest', 152, 127);
+
+            // White pill "2026"
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(342, 106, 86, 40, 20);
+            ctx.fill();
+            ctx.fillStyle = '#111827';
+            ctx.font = '800 22px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('2026', 385, 127);
+
+            // White pill "Bangkok" below DevFest
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(176, 158, 160, 30, 15);
+            ctx.fill();
+            ctx.fillStyle = '#111827';
+            ctx.font = '800 17px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Bangkok', 256, 174);
+
+            // Traditional white Thai cloud curls across mid-chest
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.78)';
+            ctx.lineWidth = 2.5;
+            [[105, 212], [180, 202], [265, 208], [340, 200], [408, 214]].forEach(([cx, cy]) => {
+                ctx.beginPath();
+                ctx.arc(cx - 14, cy, 8, Math.PI * 0.8, Math.PI * 2.1);
+                ctx.arc(cx, cy - 5, 11, Math.PI * 0.9, Math.PI * 2.1);
+                ctx.arc(cx + 14, cy, 8, Math.PI * 0.9, Math.PI * 2.2);
+                ctx.closePath();
+                ctx.stroke();
+            });
+
+            // White perspective grid at bottom of chest print
+            const gridTop = 310, gridBot = 358, gridLeft = 66, gridRight = 446;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.82)';
+            ctx.lineWidth = 2;
+            for (let r = 0; r <= 3; r++) {
+                const gy = gridTop + (r / 3) * (gridBot - gridTop);
+                ctx.beginPath();
+                ctx.moveTo(gridLeft - r * 6, gy);
+                ctx.lineTo(gridRight + r * 6, gy);
+                ctx.stroke();
+            }
+            for (let c = 0; c <= 8; c++) {
+                const u = c / 8;
+                const tx = gridLeft + u * (gridRight - gridLeft);
+                const bx = (gridLeft - 18) + u * ((gridRight + 18) - (gridLeft - 18));
+                ctx.beginPath();
+                ctx.moveTo(tx, gridTop);
+                ctx.lineTo(bx, gridBot);
+                ctx.stroke();
+            }
+
+            // Cute Mascot Parade on the Grid:
+            // (a) Green Android Bot on left
+            ctx.fillStyle = '#3DDC84';
+            ctx.beginPath();
+            ctx.arc(124, 286, 20, Math.PI, 0);
+            ctx.fill();
+            ctx.fillRect(104, 288, 40, 28);
+            // (b) White & Gold Thai Spirit House / Pavilion
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillRect(166, 280, 44, 36);
+            ctx.fillStyle = '#d97706';
+            ctx.beginPath();
+            ctx.moveTo(160, 280);
+            ctx.lineTo(188, 252);
+            ctx.lineTo(216, 280);
+            ctx.closePath();
+            ctx.fill();
+            // (c) 4-Color Gemini Diamond Kite flying above
+            ctx.save();
+            ctx.translate(226, 226);
+            const kiteGrad = ctx.createLinearGradient(-16, -16, 16, 16);
+            kiteGrad.addColorStop(0, '#EA4335');
+            kiteGrad.addColorStop(0.35, '#FBBC04');
+            kiteGrad.addColorStop(0.7, '#34A853');
+            kiteGrad.addColorStop(1, '#4285F4');
+            ctx.fillStyle = kiteGrad;
+            ctx.beginPath();
+            ctx.moveTo(0, -18);
+            ctx.lineTo(15, 0);
+            ctx.lineTo(0, 18);
+            ctx.lineTo(-15, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+            // (d) White Thai Elephant Mascot in Center
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(266, 272, 22, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillRect(248, 290, 36, 34);
+            ctx.fillStyle = '#facc15';
+            ctx.beginPath();
+            ctx.moveTo(256, 250);
+            ctx.lineTo(266, 232);
+            ctx.lineTo(276, 250);
+            ctx.closePath();
+            ctx.fill();
+            // (e) White pixel cacti
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(310, 276, 8, 42);
+            ctx.fillRect(302, 286, 24, 8);
+            // (f) Blue Dash & Chrome Dino & Yellow Sparky on right
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath();
+            ctx.arc(356, 274, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#facc15';
+            ctx.beginPath();
+            ctx.arc(406, 286, 18, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#EA4335';
+            ctx.fillRect(394, 298, 24, 20);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        // 3. Black GDG Thailand Canvas Tote Bag Pocket Texture
+        function createToteBagPocketTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 320;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#141821';
+            ctx.fillRect(0, 0, 256, 320);
+
+            // Subtle pocket stitch line
+            ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(8, 8, 240, 304);
+
+            drawGDGBracketLogo(ctx, 88, 92, 0.42);
+
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = '700 28px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Google', 48, 156);
+            ctx.fillText('Developer', 48, 190);
+            ctx.fillText('Group', 48, 224);
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = '800 22px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Thailand', 48, 262);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        // 4. White GDG Thailand Icon Desk Mat Texture
+        function createDeskMatTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 440;
+            const ctx = canvas.getContext('2d');
+
+            const bgGrad = ctx.createLinearGradient(0, 0, 1024, 440);
+            bgGrad.addColorStop(0, '#f8fafc');
+            bgGrad.addColorStop(1, '#cbd5e1');
+            ctx.fillStyle = bgGrad;
+            ctx.beginPath();
+            ctx.roundRect(8, 8, 1008, 424, 42);
+            ctx.fill();
+
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = '#94a3b8';
+            ctx.stroke();
+
+            // Grid of 6 rows x 11 columns of minimalist black icons + colorful mascot accents
+            const rows = 6, cols = 11;
+            const startX = 88, endX = 835;
+            const startY = 58, endY = 382;
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const ix = startX + (c / (cols - 1)) * (endX - startX);
+                    const iy = startY + (r / (rows - 1)) * (endY - startY);
+
+                    // Featured colorful icons matching the desk mat reference photo:
+                    if (r === 0 && c === 4) {
+                        // Green Android Head
+                        ctx.fillStyle = '#3DDC84';
+                        ctx.beginPath();
+                        ctx.arc(ix, iy + 6, 15, Math.PI, 0);
+                        ctx.fill();
+                        ctx.fillStyle = '#ffffff';
+                        ctx.beginPath();
+                        ctx.arc(ix - 6, iy - 1, 2.2, 0, Math.PI * 2);
+                        ctx.arc(ix + 6, iy - 1, 2.2, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (r === 1 && c === 7) {
+                        // 4-Color Gemini Star
+                        ctx.save();
+                        ctx.translate(ix, iy);
+                        ctx.fillStyle = '#3186FF';
+                        ctx.beginPath();
+                        ctx.moveTo(0, -16);
+                        ctx.quadraticCurveTo(3, -3, 16, 0);
+                        ctx.quadraticCurveTo(3, 3, 0, 16);
+                        ctx.quadraticCurveTo(-3, 3, -16, 0);
+                        ctx.quadraticCurveTo(-3, -3, 0, -16);
+                        ctx.fill();
+                        ctx.fillStyle = '#EA4335';
+                        ctx.beginPath();
+                        ctx.arc(0, -10, 5, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#FBBC04';
+                        ctx.beginPath();
+                        ctx.arc(-10, 0, 5, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#34A853';
+                        ctx.beginPath();
+                        ctx.arc(0, 10, 5, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    } else if (r === 2 && c === 1) {
+                        // Blue Dash / Bot icon
+                        ctx.fillStyle = '#38bdf8';
+                        ctx.beginPath();
+                        ctx.arc(ix, iy, 13, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#f97316';
+                        ctx.beginPath();
+                        ctx.arc(ix, iy + 3, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (r === 4 && c === 4) {
+                        // 4-Color Antigravity 'A' Ribbon
+                        ctx.lineWidth = 5;
+                        ctx.lineCap = 'round';
+                        ctx.strokeStyle = '#EA4335';
+                        ctx.beginPath();
+                        ctx.moveTo(ix - 11, iy + 11);
+                        ctx.lineTo(ix, iy - 12);
+                        ctx.stroke();
+                        ctx.strokeStyle = '#4285F4';
+                        ctx.beginPath();
+                        ctx.moveTo(ix, iy - 12);
+                        ctx.lineTo(ix + 11, iy + 11);
+                        ctx.stroke();
+                    } else if (r === 5 && c === 8) {
+                        // Yellow Sparky flame
+                        ctx.fillStyle = '#facc15';
+                        ctx.beginPath();
+                        ctx.arc(ix, iy + 2, 13, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#f97316';
+                        ctx.beginPath();
+                        ctx.moveTo(ix - 9, iy - 4);
+                        ctx.lineTo(ix, iy - 16);
+                        ctx.lineTo(ix + 9, iy - 4);
+                        ctx.fill();
+                    } else {
+                        // Crisp black line-art tech icon glyph
+                        ctx.strokeStyle = '#1e293b';
+                        ctx.lineWidth = 2.6;
+                        const shapeType = (r * 7 + c * 3) % 5;
+                        ctx.beginPath();
+                        if (shapeType === 0) {
+                            ctx.arc(ix, iy, 11, 0, Math.PI * 2);
+                            ctx.moveTo(ix - 11, iy);
+                            ctx.lineTo(ix + 11, iy);
+                        } else if (shapeType === 1) {
+                            ctx.roundRect(ix - 11, iy - 9, 22, 18, 4);
+                            ctx.moveTo(ix - 5, iy + 13);
+                            ctx.lineTo(ix + 5, iy + 13);
+                        } else if (shapeType === 2) {
+                            ctx.moveTo(ix, iy - 12);
+                            ctx.lineTo(ix + 11, iy - 4);
+                            ctx.lineTo(ix + 11, iy + 10);
+                            ctx.lineTo(ix - 11, iy + 10);
+                            ctx.lineTo(ix - 11, iy - 4);
+                            ctx.closePath();
+                        } else if (shapeType === 3) {
+                            ctx.arc(ix, iy - 2, 9, Math.PI * 0.8, Math.PI * 0.2);
+                            ctx.moveTo(ix - 6, iy + 9);
+                            ctx.lineTo(ix + 6, iy + 9);
+                        } else {
+                            ctx.rect(ix - 10, iy - 10, 20, 20);
+                            ctx.moveTo(ix - 5, iy);
+                            ctx.lineTo(ix + 5, iy);
+                        }
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Bottom-Right Corner GDG Thailand Badge on Desk Mat
+            drawGDGBracketLogo(ctx, 924, 304, 0.34);
+            ctx.fillStyle = '#0f172a';
+            ctx.font = '800 19px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('Google', 885, 340);
+            ctx.fillText('Developer', 885, 360);
+            ctx.fillText('Group', 885, 380);
+            ctx.fillStyle = '#2563eb';
+            ctx.font = '800 16px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Thailand', 885, 400);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        // --- Build 3D Boutique Structure ---
+        // Glowing LINE Green & Gold Welcome Halo Ring on Plaza Floor
+        const shopHaloMat = new THREE.MeshBasicMaterial({
+            color: 0x06C755,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.55
+        });
+        const shopFloorHalo = new THREE.Mesh(new THREE.RingGeometry(1.65, 1.92, 48), shopHaloMat);
+        shopFloorHalo.rotation.x = -Math.PI / 2;
+        shopFloorHalo.position.y = 0.025;
+        shopGroup.add(shopFloorHalo);
+
+        const shopPlatform = new THREE.Mesh(new RoundedBoxGeometry(2.85, 0.16, 1.75, 3, 0.05), mats.templeWhite);
+        shopPlatform.position.y = 0.08;
+        const shopPlatformTrim = new THREE.Mesh(new RoundedBoxGeometry(2.94, 0.06, 1.84, 3, 0.02), mats.thaiGold);
+        shopPlatformTrim.position.y = 0.16;
+        shopGroup.add(shopPlatform, shopPlatformTrim);
+
+        // Main Boutique Display Counter
+        const shopCounter = new THREE.Mesh(new RoundedBoxGeometry(2.55, 0.82, 1.25, 4, 0.08), mats.templeWhite);
+        shopCounter.position.y = 0.54;
+        const shopCounterStripe = new THREE.Mesh(
+            new RoundedBoxGeometry(2.60, 0.18, 1.29, 3, 0.04),
+            new THREE.MeshStandardMaterial({ color: 0x06C755, roughness: 0.3, emissive: 0x06C755, emissiveIntensity: 0.18 })
+        );
+        shopCounterStripe.position.y = 0.54;
+        const shopCounterTop = new THREE.Mesh(new RoundedBoxGeometry(2.70, 0.12, 1.38, 3, 0.04), mats.thaiGold);
+        shopCounterTop.position.y = 0.98;
+        shopGroup.add(shopCounter, shopCounterStripe, shopCounterTop);
+
+        // 4 Golden Boutique Corner Columns
+        [-1.18, 1.18].forEach(px => {
+            [-0.52, 0.52].forEach(pz => {
+                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 2.15, 12), mats.thaiGold);
+                col.position.set(px, 1.22, pz);
+                shopGroup.add(col);
+            });
+        });
+
+        // Cute Multi-Color Striped Festival Awning Roof
+        const awningGroup = new THREE.Group();
+        awningGroup.position.y = 2.32;
+        const awningBase = new THREE.Mesh(new RoundedBoxGeometry(2.88, 0.24, 1.62, 4, 0.06), mats.templeWhite);
+        awningGroup.add(awningBase);
+
+        const stripeMats = [mats.gBlue, mats.gRed, mats.gYellow, mats.gGreen, mats.kGreen, mats.gBlue, mats.gRed];
+        for (let st = 0; st < 7; st++) {
+            const sx = -1.14 + st * 0.38;
+            const stripe = new THREE.Mesh(new RoundedBoxGeometry(0.34, 0.28, 1.68, 3, 0.05), stripeMats[st]);
+            stripe.position.x = sx;
+            const scallop = new THREE.Mesh(new THREE.SphereGeometry(0.17, 12, 12), stripeMats[st]);
+            scallop.position.set(sx, -0.10, 0.80);
+            awningGroup.add(stripe, scallop);
+        }
+        const awningGoldRim = new THREE.Mesh(new RoundedBoxGeometry(2.94, 0.07, 1.70, 3, 0.02), mats.thaiGold);
+        awningGoldRim.position.y = 0.14;
+        awningGroup.add(awningGoldRim);
+        shopGroup.add(awningGroup);
+
+        // Warm Glowing Boutique Lanterns under Awning
+        [-0.95, 0.95].forEach(lx => {
+            const lantern = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 14), mats.sparkyYellow);
+            lantern.scale.y = 1.25;
+            lantern.position.set(lx, 2.04, 0.68);
+            shopGroup.add(lantern);
+        });
+
+        // Rooftop Marquee Sign ("DEVFEST SHOP • PRE-ORDER")
+        const shopSignFrame = new THREE.Mesh(new RoundedBoxGeometry(2.65, 0.96, 0.16, 3, 0.05), mats.steelDark);
+        shopSignFrame.position.set(0, 2.96, 0);
+        const shopSignMat = new THREE.MeshBasicMaterial({ map: createShopMarqueeTexture(), side: THREE.DoubleSide });
+        const shopSignFront = new THREE.Mesh(new THREE.PlaneGeometry(2.52, 0.86), shopSignMat);
+        shopSignFront.position.set(0, 2.96, 0.09);
+        const shopSignBack = new THREE.Mesh(new THREE.PlaneGeometry(2.52, 0.86), shopSignMat);
+        shopSignBack.position.set(0, 2.96, -0.09);
+        shopSignBack.rotation.y = Math.PI;
+        shopGroup.add(shopSignFrame, shopSignFront, shopSignBack);
+
+        // Cute 3D Sculpted Shopping Bag Crown on Top of the Sign
+        const shopCrownBag = new THREE.Group();
+        shopCrownBag.position.set(0, 3.68, 0);
+        const crownBagBody = new THREE.Mesh(
+            new RoundedBoxGeometry(0.46, 0.42, 0.22, 3, 0.05),
+            new THREE.MeshStandardMaterial({ color: 0x06C755, roughness: 0.25, emissive: 0x06C755, emissiveIntensity: 0.22 })
+        );
+        const crownBagHandle = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.028, 10, 24, Math.PI), mats.thaiGold);
+        crownBagHandle.position.set(0, 0.21, 0);
+        shopCrownBag.add(crownBagBody, crownBagHandle);
+        shopGroup.add(shopCrownBag);
+
+        // --- Product 1: 3D Black "DevFest 2026 Bangkok" T-Shirt on Center Display Mannequin ---
+        const shirtDisplayGroup = new THREE.Group();
+        shirtDisplayGroup.position.set(0.0, 1.56, -0.05);
+
+        const shirtStandBase = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.06, 16), mats.thaiGold);
+        shirtStandBase.position.y = -0.50;
+        const shirtStandPole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.55, 10), mats.thaiGold);
+        shirtStandPole.position.y = -0.25;
+        const shirtHanger = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.62, 10), mats.thaiGold);
+        shirtHanger.rotation.z = Math.PI / 2;
+        shirtHanger.position.y = 0.34;
+        shirtDisplayGroup.add(shirtStandBase, shirtStandPole, shirtHanger);
+
+        const blackTeeMat = new THREE.MeshStandardMaterial({ color: 0x12151c, roughness: 0.78, metalness: 0.05 });
+        const shirtTorso = new THREE.Mesh(new RoundedBoxGeometry(0.62, 0.72, 0.16, 3, 0.04), blackTeeMat);
+        const shirtPrintPlane = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.56, 0.64),
+            new THREE.MeshBasicMaterial({ map: createDevFestShirtTexture() })
+        );
+        shirtPrintPlane.position.z = 0.083;
+
+        // Left & Right T-Shirt Short Sleeves
+        [-1, 1].forEach(side => {
+            const sleeve = new THREE.Mesh(new RoundedBoxGeometry(0.24, 0.30, 0.14, 3, 0.04), blackTeeMat);
+            sleeve.position.set(side * 0.36, 0.16, 0);
+            sleeve.rotation.z = side * 0.48;
+            shirtDisplayGroup.add(sleeve);
+        });
+        // Crew-neck collar
+        const shirtCollar = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.028, 10, 24), blackTeeMat);
+        shirtCollar.rotation.x = Math.PI / 2;
+        shirtCollar.position.y = 0.36;
+        shirtDisplayGroup.add(shirtTorso, shirtPrintPlane, shirtCollar);
+        shopGroup.add(shirtDisplayGroup);
+
+        // --- Product 2: 3D Black GDG Thailand Canvas Tote Bag on Right Pedestal ---
+        const toteBagGroup = new THREE.Group();
+        toteBagGroup.position.set(0.82, 1.32, 0.12);
+        toteBagGroup.rotation.y = -0.28;
+
+        const toteBody = new THREE.Mesh(new RoundedBoxGeometry(0.52, 0.46, 0.22, 3, 0.04), blackTeeMat);
+        const totePocket = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.28, 0.34),
+            new THREE.MeshBasicMaterial({ map: createToteBagPocketTexture() })
+        );
+        totePocket.position.set(0, -0.02, 0.114);
+
+        // Dual arched canvas strap handles
+        [-0.04, 0.04].forEach(hz => {
+            const handle = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.026, 10, 24, Math.PI), blackTeeMat);
+            handle.position.set(0, 0.22, hz);
+            toteBagGroup.add(handle);
+        });
+        toteBagGroup.add(toteBody, totePocket);
+        shopGroup.add(toteBagGroup);
+
+        // --- Product 3: White GDG Thailand Icon Desk Mat on Front Countertop Display ---
+        const deskMatGroup = new THREE.Group();
+        deskMatGroup.position.set(0.0, 1.07, 0.38);
+        deskMatGroup.rotation.x = 0.28; // tilted slightly toward viewer so all icons are visible
+
+        const deskMatBase = new THREE.Mesh(
+            new RoundedBoxGeometry(1.10, 0.03, 0.48, 3, 0.012),
+            new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.4 })
+        );
+        const deskMatTop = new THREE.Mesh(
+            new THREE.PlaneGeometry(1.06, 0.45),
+            new THREE.MeshBasicMaterial({ map: createDeskMatTexture() })
+        );
+        deskMatTop.rotation.x = -Math.PI / 2;
+        deskMatTop.position.y = 0.017;
+        deskMatGroup.add(deskMatBase, deskMatTop);
+        shopGroup.add(deskMatGroup);
+
+        // --- Product 4: Hanging Rack of 8 Cute Acrylic Keychains on Left Counter ---
+        const keychainRackGroup = new THREE.Group();
+        keychainRackGroup.position.set(-0.84, 1.04, 0.14);
+
+        const kcBase = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.05, 16), mats.thaiGold);
+        kcBase.position.y = 0.025;
+        const kcPole = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.68, 10), mats.thaiGold);
+        kcPole.position.y = 0.36;
+        const kcBar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.56, 10), mats.thaiGold);
+        kcBar1.rotation.z = Math.PI / 2;
+        kcBar1.position.y = 0.68;
+        const kcBar2 = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.56, 10), mats.thaiGold);
+        kcBar2.rotation.z = Math.PI / 2;
+        kcBar2.position.y = 0.42;
+        keychainRackGroup.add(kcBase, kcPole, kcBar1, kcBar2);
+
+        const keychainCharms = [];
+        const charmConfigs = [
+            { x: -0.21, y: 0.68, mat: mats.gBlue,       accMat: mats.gRed,        shape: 'gdg' },
+            { x: -0.07, y: 0.68, mat: geminiMat,        accMat: mats.thaiGold,    shape: 'gemini' },
+            { x:  0.07, y: 0.68, mat: mats.dashSkyBlue, accMat: mats.gYellow,     shape: 'cloud' },
+            { x:  0.21, y: 0.68, mat: mats.gRed,        accMat: mats.gBlue,       shape: 'agy' },
+            { x: -0.21, y: 0.42, mat: mats.dinoGreen,   accMat: mats.beakOrange,  shape: 'android' },
+            { x: -0.07, y: 0.42, mat: mats.dashSkyBlue, accMat: mats.thaiGold,    shape: 'dash' },
+            { x:  0.07, y: 0.42, mat: mats.sparkyYellow,accMat: mats.sparkyCoral, shape: 'sparky' },
+            { x:  0.21, y: 0.42, mat: mats.steelDark,   accMat: mats.gGreen,      shape: 'dino' }
+        ];
+
+        charmConfigs.forEach((kc, idx) => {
+            const charmPivot = new THREE.Group();
+            charmPivot.position.set(kc.x, kc.y, 0.04);
+
+            // Silver keyring loop
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.032, 0.007, 8, 16), mats.silverMetal);
+            ring.position.y = -0.035;
+            // White acrylic die-cut backing plate
+            const acrylicBack = new THREE.Mesh(new RoundedBoxGeometry(0.11, 0.12, 0.018, 2, 0.02), mats.plushWhite);
+            acrylicBack.position.y = -0.11;
+            // Cute colorful 3D charm relief
+            const charmGem = new THREE.Mesh(
+                idx % 2 === 0 ? new THREE.OctahedronGeometry(0.048, 1) : new RoundedBoxGeometry(0.075, 0.075, 0.028, 2, 0.015),
+                kc.mat
+            );
+            charmGem.position.set(0, -0.11, 0.012);
+            const charmDot = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 8), kc.accMat);
+            charmDot.position.set(0.02, -0.09, 0.022);
+
+            charmPivot.add(ring, acrylicBack, charmGem, charmDot);
+            keychainRackGroup.add(charmPivot);
+            keychainCharms.push(charmPivot);
+        });
+        shopGroup.add(keychainRackGroup);
+
+        // Cheerful Chibi Shopkeeper Developer in Black DevFest Tee waving behind the counter
+        const shopkeeper = createChibiDeveloper({
+            x: 0,
+            z: -0.68,
+            rotY: 0,
+            hoodieMat: blackTeeMat,
+            skinMat: mats.skinLight,
+            hairMat: mats.hairDark,
+            seated: false,
+            hasLaptop: false,
+            hasGlasses: true,
+            addToWorld: false
+        });
+        shopGroup.add(shopkeeper.group);
+        const skIdx = interactables.indexOf(shopkeeper.group);
+        if (skIdx !== -1) interactables.splice(skIdx, 1);
+        devsAnimated.push(shopkeeper);
+
+        shopGroup.userData = { name: 'shop', baseY: 0, jump: 0, url: LINE_SHOP_URL };
+        enableShadow(shopGroup);
+        interactables.push(shopGroup);
+        world.add(shopGroup);
+
         // 7.6 Sala Thai Riverside Pavilions
         [[-13.2, 0, Math.PI / 2], [13.2, 0, -Math.PI / 2]].forEach(([sx, sz, sRot]) => {
             const sala = new THREE.Group();
@@ -5212,6 +5947,7 @@
             gemini:      { pos: [-1.2, 9.4, 4.2],   look: [-1.2, 8.9, -1.2], obj: geminiGroup },
             cloud:       { pos: [5.5, 7.8, 3.5],    look: [4.5, 7.4, -2.5], obj: cloudGroup },
             community:   { pos: [-1.5, 4.2, 4.8],   look: [-4.6, 2.2, -1.2], obj: kBuilding },
+            shop:        { pos: [5.0, 2.65, 7.8],   look: [6.7, 1.65, 3.1], obj: shopGroup },
             skyline:     { pos: [0, 9.5, 25],       look: [0, 5.5, -18] }
         };
 
@@ -5577,9 +6313,23 @@
 
         const raycaster = new THREE.Raycaster();
         const pointer = new THREE.Vector2();
+        const shopFloatingBadge = document.getElementById('shop-floating-badge');
+        const shopBadgeAnchor = new THREE.Vector3();
+        let pointerDownPos = { x: 0, y: 0 };
+        let pointerDownRoot = null;
+
+        if (shopFloatingBadge) {
+            shopFloatingBadge.addEventListener('click', () => {
+                shopGroup.userData.jump = 1.0;
+                audioEngine.playBounceSFX();
+            });
+        }
 
         window.addEventListener('pointerdown', (e) => {
-            if (e.target.closest('header, footer')) return;
+            if (e.target.closest('header, footer, #shop-floating-badge')) return;
+
+            pointerDownPos = { x: e.clientX, y: e.clientY };
+            pointerDownRoot = null;
 
             pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
             pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -5595,8 +6345,32 @@
                 if (interactables.includes(root)) {
                     root.userData.jump = 1.0;
                     audioEngine.playBounceSFX();
+                    pointerDownRoot = root;
                 }
             }
+        });
+
+        window.addEventListener('pointerup', (e) => {
+            if (e.target.closest('header, footer, #shop-floating-badge')) return;
+            if (pointerDownRoot === shopGroup) {
+                const moveDist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+                if (moveDist < 12) {
+                    window.open(LINE_SHOP_URL, '_blank', 'noopener,noreferrer');
+                }
+            }
+            pointerDownRoot = null;
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (e.target.closest('header, footer, #shop-floating-badge')) {
+                document.body.style.cursor = '';
+                return;
+            }
+            pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+            pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(pointer, camera);
+            const shopHits = raycaster.intersectObject(shopGroup, true);
+            document.body.style.cursor = shopHits.length > 0 ? 'pointer' : '';
         });
 
 
@@ -5691,6 +6465,18 @@
             // 6. Google Cloud bobbing gently
             cloudGroup.position.y = cloudGroup.userData.baseY + Math.cos(t * 2.0) * 0.22;
 
+            // 6.5 DevFest Bangkok 2026 Merch & Pre-Order Boutique (LINE Shop) Display Animations
+            shirtDisplayGroup.rotation.y = Math.sin(t * 2.1) * 0.16;
+            toteBagGroup.rotation.y = -0.22 + Math.cos(t * 1.9) * 0.10;
+            shopCrownBag.position.y = 3.68 + Math.sin(t * 3.2) * 0.08 + beatPulse;
+            shopCrownBag.rotation.y = Math.sin(t * 1.5) * 0.28;
+            shopFloorHalo.scale.setScalar(1.0 + Math.sin(t * 3.8) * 0.05);
+            shopHaloMat.opacity = 0.42 + Math.sin(t * 3.8) * 0.16;
+            keychainCharms.forEach((kc, idx) => {
+                kc.rotation.z = Math.sin(t * 3.4 + idx * 0.7) * 0.12;
+                kc.rotation.y = Math.cos(t * 2.1 + idx * 0.5) * 0.18;
+            });
+
             // 7A. Seated / Coding Developers typing, nodding & waving
             devsAnimated.forEach(dev => {
                 dev.head.rotation.y = Math.sin(t * 2.2 + dev.phase) * 0.22;
@@ -5728,8 +6514,16 @@
                 const stride = t * 7.8 + w.stridePhase;
                 if (w.mode === 'ring') {
                     const curAngle = w.angle + t * w.speed * w.dir;
-                    const wx = Math.cos(curAngle) * w.radius;
-                    const wz = Math.sin(curAngle) * w.radius;
+                    let wx = Math.cos(curAngle) * w.radius;
+                    let wz = Math.sin(curAngle) * w.radius;
+                    const dxShop = wx - 6.7;
+                    const dzShop = wz - 3.1;
+                    const distShop = Math.hypot(dxShop, dzShop);
+                    if (distShop < 1.95) {
+                        const pushAng = Math.atan2(dzShop, dxShop);
+                        wx = 6.7 + Math.cos(pushAng) * 1.95;
+                        wz = 3.1 + Math.sin(pushAng) * 1.95;
+                    }
                     w.group.position.x = wx;
                     w.group.position.z = wz;
                     // Tangent direction along the ring
@@ -5878,7 +6672,7 @@
                 if (obj.userData.jump > 0) {
                     const jumpArc = Math.sin(obj.userData.jump * Math.PI);
                     obj.position.y = obj.userData.baseY + jumpArc * 1.1;
-                    if (obj.userData.name !== 'kplus') {
+                    if (obj.userData.name !== 'kplus' && obj.userData.name !== 'shop') {
                         obj.rotation.y += 0.12;
                     }
                     obj.userData.jump -= 0.035;
@@ -5896,6 +6690,22 @@
             }
 
             controls.update();
+
+            // Project 3D Merch Shop crown position to 2D screen coordinates for the floating LINE Shop CTA pill
+            if (shopFloatingBadge) {
+                shopBadgeAnchor.set(6.7, 4.18 + shopGroup.position.y, 3.1);
+                shopBadgeAnchor.project(camera);
+                if (shopBadgeAnchor.z < 1.0 && shopBadgeAnchor.x >= -1.15 && shopBadgeAnchor.x <= 1.15 && shopBadgeAnchor.y >= -1.15 && shopBadgeAnchor.y <= 1.15) {
+                    const sx = (shopBadgeAnchor.x * 0.5 + 0.5) * window.innerWidth;
+                    const sy = (-shopBadgeAnchor.y * 0.5 + 0.5) * window.innerHeight;
+                    shopFloatingBadge.style.left = `${sx}px`;
+                    shopFloatingBadge.style.top = `${sy}px`;
+                    shopFloatingBadge.style.display = 'inline-flex';
+                } else {
+                    shopFloatingBadge.style.display = 'none';
+                }
+            }
+
             renderer.render(scene, camera);
         }
 
