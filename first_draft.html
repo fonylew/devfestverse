@@ -1501,10 +1501,11 @@
         enableShadow(watGroup);
         world.add(watGroup);
 
-        // 4.2 Bangkok Giant Swing (Sao Chingcha)
+        // 4.2 Bangkok Giant Swing (Sao Chingcha) — below Google Cloud logo, behind Flutter bird (tall so crossbar rises clearly above Dash)
         const swingGroup = new THREE.Group();
-        swingGroup.position.set(4.8, 0, 3.8);
-        swingGroup.rotation.y = -Math.PI / 4;
+        swingGroup.position.set(4.1, 0, -1.6);
+        swingGroup.rotation.y = -0.35;
+        swingGroup.scale.set(1.22, 1.32, 1.22);
         const pLeft = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 4.2, 12), mats.saoRed);
         pLeft.position.set(-0.85, 2.1, 0); pLeft.rotation.z = -0.04;
         const pRight = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 4.2, 12), mats.saoRed);
