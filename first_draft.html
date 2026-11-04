@@ -600,20 +600,18 @@
             box-shadow: 0 10px 28px rgba(15, 23, 42, 0.3);
         }
 
-        /* Mobile & Tablet Responsive UI (including iPad Landscape) */
-        @media (max-width: 1199px), (hover: none) and (pointer: coarse) {
-            #ui-container { padding: 1rem; }
-            h1 { font-size: 1.95rem; }
-            .argon-badge { display: none; }
-            .camera-nav { display: none; }
-            #music-label { display: none; }
-            .vol-wrap { display: none; }
-            .music-player { padding: 0.35rem; }
-            .music-toggle-btn { padding: 0.44rem 0.78rem; font-size: 0.92rem; }
-            .event-info-card { gap: 1rem; padding: 0.9rem 1.2rem; }
-            .info-tech-stack { display: none; }
-            .hint-pill { display: none; }
-        }
+        /* Minimal Tablet-Style UI across Laptop, Desktop & Tablet */
+        #ui-container { padding: 1rem; }
+        h1 { font-size: 1.95rem; }
+        .argon-badge { display: none; }
+        .camera-nav { display: none; }
+        #music-label { display: none; }
+        .vol-wrap { display: none; }
+        .music-player { padding: 0.35rem; }
+        .music-toggle-btn { padding: 0.44rem 0.78rem; font-size: 0.92rem; }
+        .event-info-card { gap: 1rem; padding: 0.9rem 1.2rem; }
+        .info-tech-stack { display: none; }
+        .hint-pill { display: none; }
 
         /* Mobile Portrait Stack */
         @media (max-width: 767px) and (orientation: portrait) {
@@ -2801,7 +2799,7 @@
         }
         bkkSkylineGroup.add(mahaNakhon);
 
-        // 7.2 Iconic Chang Building (The Elephant Tower)
+        // 7.2 Iconic Chang Building (The Elephant Tower) + "Build with Google AI" Clickable Rooftop Billboard
         const changBuilding = new THREE.Group();
         changBuilding.position.set(16, -0.8, -21);
         changBuilding.rotation.y = -0.35;
@@ -2811,17 +2809,229 @@
             leg.position.set(lx, 5, 0);
             changBuilding.add(leg);
         });
-        const changTop = new THREE.Mesh(new RoundedBoxGeometry(6.2, 3.2, 2.7, 2, 0.08), mats.skylineWhite);
-        changTop.position.set(0, 11.2, 0);
-        changBuilding.add(changTop);
 
-        const changEye = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 2.8, 24), mats.steelDark);
-        changEye.rotation.x = Math.PI / 2;
-        changEye.position.set(-2.1, 11.4, 0);
+        function createGoogleAiBillboardTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 480;
+            const ctx = canvas.getContext('2d');
+
+            const bgGrad = ctx.createLinearGradient(0, 0, 1024, 480);
+            bgGrad.addColorStop(0.0, '#ffffff');
+            bgGrad.addColorStop(1.0, '#f8fafc');
+            ctx.fillStyle = bgGrad;
+            ctx.beginPath();
+            ctx.roundRect(12, 12, 1000, 456, 38);
+            ctx.fill();
+
+            ctx.lineWidth = 14;
+            ctx.strokeStyle = '#4285F4';
+            ctx.stroke();
+
+            ctx.fillStyle = '#e0f2fe';
+            ctx.beginPath();
+            ctx.arc(178, 240, 118, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#bae6fd';
+            ctx.stroke();
+            drawGDGBracketLogo(ctx, 178, 240, 1.05);
+
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#0f172a';
+            ctx.font = '800 84px "Space Grotesk", "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Build with', 322, 178);
+
+            ctx.fillStyle = '#4285F4';
+            ctx.font = '800 104px "Space Grotesk", "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Google AI', 322, 296);
+
+            ctx.fillStyle = '#eff6ff';
+            ctx.beginPath();
+            ctx.roundRect(844, 128, 134, 224, 32);
+            ctx.fill();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#4285F4';
+            ctx.stroke();
+
+            ctx.save();
+            ctx.translate(904, 212);
+            ctx.strokeStyle = '#4285F4';
+            ctx.lineWidth = 7;
+            ctx.lineCap = 'round';
+            [
+                [-26, -34, -40, -48],
+                [0, -40, 0, -58],
+                [26, -32, 40, -46],
+                [-34, -8, -52, -8]
+            ].forEach(([x1, y1, x2, y2]) => {
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            });
+            ctx.beginPath();
+            ctx.moveTo(-14, -22);
+            ctx.lineTo(-14, 52);
+            ctx.lineTo(4, 36);
+            ctx.lineTo(18, 66);
+            ctx.lineTo(32, 58);
+            ctx.lineTo(18, 28);
+            ctx.lineTo(42, 28);
+            ctx.closePath();
+            ctx.fillStyle = '#0f172a';
+            ctx.fill();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#1d4ed8';
+            ctx.font = '800 24px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('CLICK ↗', 911, 318);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = 4;
+            return tex;
+        }
+
+        function createGoogleAiSoftGlowTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createRadialGradient(256, 128, 40, 256, 128, 245);
+            grad.addColorStop(0.0, 'rgba(66, 133, 244, 0.55)');
+            grad.addColorStop(0.65, 'rgba(66, 133, 244, 0.22)');
+            grad.addColorStop(1.0, 'rgba(66, 133, 244, 0.0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 512, 256);
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        const googleAiBillboard = new THREE.Group();
+        googleAiBillboard.position.set(0, 11.2, 0);
+
+        const changTop = new THREE.Mesh(new RoundedBoxGeometry(6.2, 3.2, 2.7, 2, 0.08), mats.skylineWhite);
+        googleAiBillboard.add(changTop);
+
+        const googleAiHaloMat = new THREE.MeshBasicMaterial({
+            color: 0x4285F4,
+            transparent: true,
+            opacity: 0.28
+        });
+        const googleAiHaloRing = new THREE.Mesh(new RoundedBoxGeometry(6.52, 3.52, 0.14, 3, 0.16), googleAiHaloMat);
+        googleAiHaloRing.position.set(0, 0, 1.28);
+        googleAiBillboard.add(googleAiHaloRing);
+
+        const googleAiSoftGlowMat = new THREE.MeshBasicMaterial({
+            map: createGoogleAiSoftGlowTexture(),
+            transparent: true,
+            opacity: 0.26,
+            depthWrite: false,
+            side: THREE.DoubleSide
+        });
+        const googleAiSoftGlowMesh = new THREE.Mesh(new THREE.PlaneGeometry(7.2, 4.15), googleAiSoftGlowMat);
+        googleAiSoftGlowMesh.position.set(0, 0, 1.22);
+        googleAiBillboard.add(googleAiSoftGlowMesh);
+
+        const googleAiSignMat = new THREE.MeshBasicMaterial({
+            map: createGoogleAiBillboardTexture(),
+            side: THREE.DoubleSide
+        });
+        const googleAiSignFront = new THREE.Mesh(new THREE.PlaneGeometry(5.96, 2.98), googleAiSignMat);
+        googleAiSignFront.position.set(0, 0, 1.37);
+        const googleAiSignBack = new THREE.Mesh(new THREE.PlaneGeometry(5.96, 2.98), googleAiSignMat);
+        googleAiSignBack.position.set(0, 0, -1.37);
+        googleAiSignBack.rotation.y = Math.PI;
+        googleAiBillboard.add(googleAiSignFront, googleAiSignBack);
+
+        googleAiBillboard.userData = {
+            name: 'google-ai-billboard',
+            baseY: 11.2,
+            jump: 0,
+            url: 'https://g.dev/ai/build'
+        };
+        interactables.push(googleAiBillboard);
+        changBuilding.add(googleAiBillboard);
+
         const changTusk = new THREE.Mesh(new RoundedBoxGeometry(0.45, 2.2, 2.85, 2, 0.05), mats.gYellow);
         changTusk.position.set(-3.1, 9.2, 0);
-        changBuilding.add(changEye, changTusk);
+        changBuilding.add(changTusk);
         bkkSkylineGroup.add(changBuilding);
+
+        // 7.25 "Gemini Prompt Maxxing" (#PromptMaxxing) Clickable Billboard on Prominent Left-Center Background Skyscraper
+        function createPromptChallengeBillboardTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 423;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(6, 6, 1012, 411, 28);
+            ctx.fill();
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = 4;
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.roundRect(4, 4, 1016, 415, 24);
+                ctx.fill();
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                tex.needsUpdate = true;
+            };
+            img.src = 'prompt-maxxing.png';
+
+            return tex;
+        }
+
+        const promptChallengeBillboard = new THREE.Group();
+        promptChallengeBillboard.position.set(-8.0, 12.6, -21.8);
+        promptChallengeBillboard.rotation.y = 0.22;
+
+        const pcBoardBacking = new THREE.Mesh(new RoundedBoxGeometry(6.5, 2.82, 0.32, 3, 0.08), mats.skylineWhite);
+        promptChallengeBillboard.add(pcBoardBacking);
+
+        const promptChallengeHaloMat = new THREE.MeshBasicMaterial({
+            color: 0x4285F4,
+            transparent: true,
+            opacity: 0.26
+        });
+        const promptChallengeHaloRing = new THREE.Mesh(new RoundedBoxGeometry(6.8, 3.1, 0.14, 3, 0.14), promptChallengeHaloMat);
+        promptChallengeHaloRing.position.set(0, 0, 0.08);
+        promptChallengeBillboard.add(promptChallengeHaloRing);
+
+        const promptChallengeSignMat = new THREE.MeshBasicMaterial({
+            map: createPromptChallengeBillboardTexture(),
+            side: THREE.DoubleSide
+        });
+        const pcSignFront = new THREE.Mesh(new THREE.PlaneGeometry(6.3, 2.6), promptChallengeSignMat);
+        pcSignFront.position.set(0, 0, 0.18);
+        const pcSignBack = new THREE.Mesh(new THREE.PlaneGeometry(6.3, 2.6), promptChallengeSignMat);
+        pcSignBack.position.set(0, 0, -0.18);
+        pcSignBack.rotation.y = Math.PI;
+        promptChallengeBillboard.add(pcSignFront, pcSignBack);
+
+        promptChallengeBillboard.userData = {
+            name: 'prompt-challenge-billboard',
+            baseY: 12.6,
+            jump: 0,
+            url: 'https://g.dev/ai/promptchallenge'
+        };
+        interactables.push(promptChallengeBillboard);
+        bkkSkylineGroup.add(promptChallengeBillboard);
 
         // 7.3 Rama VIII Cable-Stayed Bridge
         const bridgeGroup = new THREE.Group();
@@ -3031,10 +3241,10 @@
 
         window.addEventListener('pointerup', (e) => {
             if (e.target.closest('header, footer, #shop-floating-badge')) return;
-            if (pointerDownRoot === shopGroup) {
+            if (pointerDownRoot && pointerDownRoot.userData && pointerDownRoot.userData.url) {
                 const moveDist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
                 if (moveDist < 12) {
-                    window.open(LINE_SHOP_URL, '_blank', 'noopener,noreferrer');
+                    window.open(pointerDownRoot.userData.url, '_blank', 'noopener,noreferrer');
                 }
             }
             pointerDownRoot = null;
@@ -3048,7 +3258,7 @@
             pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
             pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(pointer, camera);
-            const shopHits = raycaster.intersectObject(shopGroup, true);
+            const shopHits = raycaster.intersectObjects([shopGroup, googleAiBillboard, promptChallengeBillboard], true);
             document.body.style.cursor = shopHits.length > 0 ? 'pointer' : '';
         });
 
@@ -3093,8 +3303,14 @@
             subGemini.position.y = 1.1 + Math.sin(t * 3) * 0.15;
             geminiGroup.position.y = geminiGroup.userData.baseY + Math.sin(t * 2.2) * 0.22;
 
-            // 6. Google Cloud bobbing gently
+            // 6. Google Cloud bobbing gently + Subtle Google Blue pulsing halo on background AI billboards
             cloudGroup.position.y = cloudGroup.userData.baseY + Math.cos(t * 2.0) * 0.22;
+            const aiHaloPulse = 0.5 + 0.5 * Math.sin(t * 2.6);
+            googleAiHaloRing.scale.set(1.0 + aiHaloPulse * 0.022, 1.0 + aiHaloPulse * 0.028, 1.0);
+            googleAiHaloMat.opacity = 0.18 + aiHaloPulse * 0.20;
+            googleAiSoftGlowMat.opacity = 0.16 + aiHaloPulse * 0.18;
+            promptChallengeHaloRing.scale.set(1.0 + aiHaloPulse * 0.022, 1.0 + aiHaloPulse * 0.028, 1.0);
+            promptChallengeHaloMat.opacity = 0.18 + aiHaloPulse * 0.18;
 
             // 6.5 DevFest Bangkok 2026 Merch & Pre-Order Boutique (LINE Shop) Display Animations
             shirtDisplayGroup.rotation.y = Math.sin(t * 2.1) * 0.16;
@@ -3136,7 +3352,7 @@
                 if (obj.userData.jump > 0) {
                     const jumpArc = Math.sin(obj.userData.jump * Math.PI);
                     obj.position.y = obj.userData.baseY + jumpArc * 1.1;
-                    if (obj.userData.name !== 'kplus' && obj.userData.name !== 'shop') {
+                    if (obj.userData.name !== 'kplus' && !obj.userData.url) {
                         obj.rotation.y += 0.12;
                     }
                     obj.userData.jump -= 0.035;
